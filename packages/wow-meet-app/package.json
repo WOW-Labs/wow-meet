@@ -1,5 +1,5 @@
 {
-  "name": "wow-meet-app",
+  "name": "@wow-lab/wow-meet-app",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -7,9 +7,7 @@
     "dev": "next dev",
     "postinstall": "prisma generate",
     "lint": "next lint",
-    "start": "next start",
-    "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "start": "next start"
   },
   "dependencies": {
     "@emotion/styled": "^11.11.0",
@@ -21,6 +19,7 @@
     "@trpc/next": "^10.26.0",
     "@trpc/react-query": "^10.26.0",
     "@trpc/server": "^10.26.0",
+    "@wow-lab/common": "workspace:^",
     "next": "^13.4.2",
     "next-auth": "^4.22.1",
     "react": "18.2.0",
@@ -29,13 +28,6 @@
     "zod": "^3.21.4"
   },
   "devDependencies": {
-    "@storybook/addon-essentials": "^7.0.24",
-    "@storybook/addon-interactions": "^7.0.24",
-    "@storybook/addon-links": "^7.0.24",
-    "@storybook/blocks": "^7.0.24",
-    "@storybook/nextjs": "^7.0.24",
-    "@storybook/react": "^7.0.24",
-    "@storybook/testing-library": "^0.0.14-next.2",
     "@types/eslint": "^8.37.0",
     "@types/node": "^18.16.0",
     "@types/prettier": "^2.7.2",
@@ -51,8 +43,6 @@
     "prettier": "^2.8.8",
     "prettier-plugin-tailwindcss": "^0.2.8",
     "prisma": "^4.14.0",
-    "sb": "^7.0.24",
-    "storybook": "^7.0.24",
     "tailwindcss": "^3.3.0",
     "typescript": "^5.0.4"
   },

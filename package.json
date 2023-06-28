@@ -4,7 +4,8 @@
   "description": "",
   "packageManager": "pnpm@8.5.1",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "common": "pnpm -F @wow-lab/common",
+    "app": "pnpm -F @wow-lab/wow-meet-app"
   },
   "keywords": [],
   "author": "",
