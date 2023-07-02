@@ -1,11 +1,13 @@
-import  Test from '../components/common/Test'
+/** @jsxImportSource @emotion/react */
+
+import { Example } from "@wow-lab/common";
 import { api } from "~/utils/api";
 
 export default function Home() {
 
   return (
     <>
-        <Test label='hello'/>
+    <Example bgColor={"red"}/>
     </>
   );
 }
