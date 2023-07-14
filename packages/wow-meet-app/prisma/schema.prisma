@@ -80,7 +80,7 @@ model Meeting {
 
 model Schedule {
     id        String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-    meetingId String
+    meetingId String @unique
 
     type      String
     dateRange DateTime[]
@@ -92,7 +92,7 @@ model Schedule {
 
 model Vote {
     id        String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-    meetingId String
+    meetingId String @unique
     type      String // 장소인지 일반 투표인지
 
     title String
