@@ -73,4 +73,33 @@ export const paticipantsRouter = createTRPCRouter({
         return { success: false };
       }
     }),
+  deleteParticipant: publicProcedure
+    .input(
+      z.object({
+        meetingId: z.string(),
+        user: z.object({ name: z.string(), password: z.string().optional() }),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      try {
+        const targetParticipant =
+          await ctx.prisma.participants.findFirstOrThrow({
+            where: {
+              meetingId: input.meetingId,
+              name: input.user.name,
+              password: input.user.password || "",
+            },
+            select: { id: true },
+          });
+
+        await ctx.prisma.participants.delete({
+          where: { id: targetParticipant.id },
+        });
+
+        return { success: true };
+      } catch (err) {
+        console.log(err);
+        return { success: false };
+      }
+    }),
 });
