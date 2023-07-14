@@ -116,4 +116,32 @@ export const meetingRouter = createTRPCRouter({
         };
       } catch (err) {}
     }),
+  addVoteItem: publicProcedure
+    .input(
+      z.object({
+        meetingId: z.string(),
+        toBeAddedlist: z.array(z.string()),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      try {
+        await ctx.prisma.vote.update({
+          where: { meetingId: input.meetingId },
+          data: {
+            options: {
+              push: input.toBeAddedlist,
+            },
+          },
+        });
+
+        return {
+          success: true,
+        };
+      } catch (err) {
+        console.log(err);
+        return {
+          success: false,
+        };
+      }
+    }),
 });
