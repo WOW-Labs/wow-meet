@@ -25,6 +25,12 @@ const Home: NextPage = () => {
       },
     });
 
+  const updateVoteList = api.meeting.addVoteItem.useMutation({
+    onSuccess(data) {
+      console.log(data);
+    },
+  });
+
   const handleCreate = () => {
     createMeeting.mutate({
       title: "hello",
@@ -72,6 +78,13 @@ const Home: NextPage = () => {
     });
   };
 
+  const handleUpdateVoteList = () => {
+    updateVoteList.mutate({
+      meetingId: "clk2i27t80000ajufx0hsc633",
+      toBeAddedlist: ["하이하이", "에드한 것임"],
+    });
+  };
+
   return (
     <div>
       <button onClick={handleCreate}>미팅 생성</button>
@@ -81,6 +94,8 @@ const Home: NextPage = () => {
       <button onClick={handleUpdatePartiInfo}>
         참여자 스케줄 정보 업데이트
       </button>
+      <br />
+      <button onClick={handleUpdateVoteList}>투표 정보 추가</button>
     </div>
   );
 };
