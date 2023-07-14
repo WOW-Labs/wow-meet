@@ -31,6 +31,12 @@ const Home: NextPage = () => {
     },
   });
 
+  const deleteParitipant = api.paticipants.deleteParticipant.useMutation({
+    onSuccess(data) {
+      console.log(data);
+    },
+  });
+
   const handleCreate = () => {
     createMeeting.mutate({
       title: "hello",
@@ -85,6 +91,13 @@ const Home: NextPage = () => {
     });
   };
 
+  const handleDeleteParicipant = () => {
+    deleteParitipant.mutate({
+      meetingId: "clk2i27t80000ajufx0hsc633",
+      user: { name: "봉승우" },
+    });
+  };
+
   return (
     <div>
       <button onClick={handleCreate}>미팅 생성</button>
@@ -96,6 +109,8 @@ const Home: NextPage = () => {
       </button>
       <br />
       <button onClick={handleUpdateVoteList}>투표 정보 추가</button>
+      <br />
+      <button onClick={handleDeleteParicipant}>참가자 삭제</button>
     </div>
   );
 };
