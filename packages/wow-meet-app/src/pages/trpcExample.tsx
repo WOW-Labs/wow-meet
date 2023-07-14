@@ -3,7 +3,7 @@ import { api } from "~/utils/api";
 
 const Home: NextPage = () => {
   const { data } = api.meeting.read.useQuery({
-    meetingId: "clje5eu6p0001ajj0jnppezae",
+    meetingId: "clk2i27t80000ajufx0hsc633",
   });
   console.log(data);
   const createMeeting = api.meeting.create.useMutation({
@@ -17,6 +17,13 @@ const Home: NextPage = () => {
       console.log(data);
     },
   });
+
+  const updateParicipantSchedule =
+    api.paticipants.updateMeetingParticipationSchedule.useMutation({
+      onSuccess(data) {
+        console.log(data);
+      },
+    });
 
   const handleCreate = () => {
     createMeeting.mutate({
@@ -38,7 +45,7 @@ const Home: NextPage = () => {
   const handleCreateParticipant = () => {
     createParticipant.mutate({
       isPriority: true,
-      meetingId: "clje5eu6p0001ajj0jnppezae",
+      meetingId: "clk2i27t80000ajufx0hsc633",
       name: "봉승우",
       schelduleList: [
         { date: new Date(), weight: 0 },
@@ -51,11 +58,29 @@ const Home: NextPage = () => {
     });
   };
 
+  const handleUpdatePartiInfo = () => {
+    updateParicipantSchedule.mutate({
+      meetingId: "clk2i27t80000ajufx0hsc633",
+      user: { name: "봉승우" },
+      schelduleList: [
+        { date: new Date(), weight: 1 },
+        { date: new Date(), weight: 1 },
+        { date: new Date(), weight: 1 },
+        { date: new Date(), weight: 0 },
+        { date: new Date(), weight: 0 },
+      ],
+    });
+  };
+
   return (
     <div>
-      <button onClick={handleCreate}>업로드</button>
+      <button onClick={handleCreate}>미팅 생성</button>
       <br />
-      <button onClick={handleCreateParticipant}>참여자 입력</button>
+      <button onClick={handleCreateParticipant}>참여자 추가</button>
+      <br />
+      <button onClick={handleUpdatePartiInfo}>
+        참여자 스케줄 정보 업데이트
+      </button>
     </div>
   );
 };
