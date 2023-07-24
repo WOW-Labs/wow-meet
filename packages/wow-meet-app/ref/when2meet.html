@@ -1,0 +1,1388 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-3L5STP8FEF"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+
+            gtag('config', 'G-3L5STP8FEF');
+        </script>
+        <title>그룹 테스트 - When2meet</title>
+        <meta charset="UTF-8">
+        <meta name="robots" content="noindex">
+        <LINK REL=StyleSheet HREF="style.css" TYPE="text/css" MEDIA=screen>
+        <LINK REL=StyleSheet HREF="style2.css" TYPE="text/css" MEDIA=screen>
+        <HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
+            <script src="moment.js"></script>
+            <script src="moment-timezone-with-data-1970-2030.min.js"></script>
+            <!-- Global site tag (gtag.js) - Google Ads: 996267299 -->
+            <script async src="https://www.googletagmanager.com/gtag/js?id=AW-996267299"></script>
+            <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag() {
+                    dataLayer.push(arguments);
+                }
+                gtag('js', new Date());
+
+                gtag('config', 'AW-996267299');
+            </script>
+    </head>
+    <body bgcolor=black onload="PageLoaded();">
+        <div id=MenuTop>
+            <div id=MenuTopLeft>
+                <a href="?About">About When2meet</a>
+                <a href=".">Plan a New Event</a>
+            </div>
+            <div id=MenuTopRight>
+                <a href="">
+                <!-- Name -->
+                </a>
+                <a href="">
+                <!-- Sign Out -->
+                </a>
+            </div>
+            <br clear=all>
+        </div>
+        <div id=MainBody style="background:white; margin:0px;border:0px;padding:0px;">
+            <script src="prototype-1.7.3.js" type="text/javascript"></script>
+            <script src="jquery-1.6.2.min.js"></script>
+            <script type="text/javascript">
+                jQuery.noConflict();
+
+                var AnchorRow = 0;
+                var AnchorColumn = 0;
+                var HoverRow = 0;
+                var HoverColumn = 0;
+                var WriteMode = "";
+                var Dates = [];
+                var xMousePos;
+                var yMousePos;
+                var xMouseRef;
+                var yMouseRef;
+                var count = 0;
+                var Months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                var DaysOfWeek = ["S", "M", "T", "W", "R", "F", "S"];
+
+                if (document.layers) {
+                    // Netscape
+                    document.captureEvents(Event.MOUSEMOVE);
+                    document.onmousemove = captureMousePosition;
+                } else if (document.all) {
+                    // Internet Explorer
+                    document.onmousemove = captureMousePosition;
+                } else if (document.getElementById) {
+                    // Netscape 6
+                    document.onmousemove = captureMousePosition;
+                }
+
+                var mousewheelevt = (/Firefox/i.test(navigator.userAgent)) ? "DOMMouseScroll" : "mousewheel"
+                //FF doesn't recognize mousewheel as of FF3.x
+
+                function wheel(event) {
+                    var evt = window.event || event
+                    //equalize event object
+                    var delta = evt.detail ? evt.detail * (-240) : evt.wheelDelta
+                    delta = delta / Math.abs(delta);
+                    //    ShiftCalendar(-7*delta);
+                }
+
+                function captureMousePosition(e) {
+                    if (document.layers) {
+                        xMousePos = e.pageX;
+                        yMousePos = e.pageY;
+                        xMousePosMax = window.innerWidth + window.pageXOffset;
+                        yMousePosMax = window.innerHeight + window.pageYOffset;
+                    } else if (document.all) {
+                        xMousePos = window.event.x + document.body.scrollLeft;
+                        yMousePos = window.event.y + document.body.scrollTop;
+                        xMousePosMax = document.body.clientWidth + document.body.scrollLeft;
+                        yMousePosMax = document.body.clientHeight + document.body.scrollTop;
+                    } else if (document.getElementById) {
+                        xMousePos = e.pageX;
+                        yMousePos = e.pageY;
+                        xMousePosMax = window.innerWidth + window.pageXOffset;
+                        yMousePosMax = window.innerHeight + window.pageYOffset;
+                    }
+                }
+
+                function MouseDownDate(Row, Column) {
+                    IsMouseDownDates = true;
+                    AnchorRow = Row;
+                    AnchorColumn = Column;
+                    HoverRow = Row;
+                    HoverColumn = Column;
+                    if (ArraySearch(Dates, document.getElementById("DateOf-" + Row + "-" + Column).value)) {
+                        WriteMode = "erase";
+                    } else {
+                        WriteMode = "write";
+                    }
+                    ReColor();
+                }
+
+                function MouseOverDate(Row, Column) {
+                    if (IsMouseDownDates) {
+                        HoverRow = Row;
+                        HoverColumn = Column;
+                        ReColor();
+                    }
+                }
+
+                function AddHighlightedDates(HighlightedDates) {
+                    var DateNum = -1;
+                    while (DateNum < HighlightedDates.length) {
+                        Dates.push(HighlightedDates[DateNum]);
+                        DateNum++;
+                    }
+                    Dates = Unique(Dates);
+                    document.getElementById("PossibleDates").value = Dates.join("|");
+                }
+
+                function RemoveHighlightedDates(HighlightedDates) {
+                    var DateNum = -1;
+                    NewDates = [];
+                    while (DateNum < Dates.length) {
+                        if (!ArraySearch(HighlightedDates, Dates[DateNum])) {
+                            NewDates.push(Dates[DateNum]);
+                        }
+                        DateNum++;
+                    }
+                    Dates = Unique(NewDates);
+                    document.getElementById("PossibleDates").value = Dates.join("|");
+                }
+
+                function Unique(InputArray) {
+                    var a = [];
+                    for (var i = 0; i < InputArray.length; i++) {
+                        unique = 1;
+                        for (var j = i + 1; j < InputArray.length; j++) {
+                            if (InputArray[i] == InputArray[j]) {
+                                unique = 0;
+                            }
+                        }
+                        if (unique && (InputArray[i] != null) && (InputArray[i] != "")) {
+                            a.push(InputArray[i]);
+                        }
+                    }
+                    return a.sort();
+                }
+
+                function MouseUp() {
+
+                    if (WriteMode != "") {
+                        var HighlightedDates = [];
+                        for (Row = 1; Row <= 6; Row++) {
+                            for (Column = 1; Column <= 7; Column++) {
+                                if (((AnchorRow - Row) * (Row - HoverRow) >= 0) && ((AnchorColumn - Column) * (Column - HoverColumn) >= 0)) {
+                                    HighlightedDates.push(document.getElementById("DateOf-" + Row + "-" + Column).value);
+                                }
+                                document.getElementById("Day-" + Row + "-" + Column).style.border = '1px solid black';
+                                document.getElementById("Day-" + Row + "-" + Column).style.padding = '2px';
+                                document.getElementById("Day-" + Row + "-" + Column).style.margin = '1px';
+                            }
+                        }
+
+                        if (WriteMode == "write") {
+                            AddHighlightedDates(HighlightedDates);
+                        } else {
+                            // WriteMode == "erase"
+                            RemoveHighlightedDates(HighlightedDates);
+                        }
+                    }
+                    WriteMode = "";
+
+                    IsMouseDownDates = false;
+                    IsMouseDownSideLabel = false;
+                    IsMouseDownTopLabel = false;
+
+                }
+
+                function ArraySearch(arr, obj) {
+                    for (var i = 0; i < arr.length; i++) {
+                        if (arr[i] == obj)
+                            return true;
+                    }
+                    return false;
+                }
+
+                function ShiftCalendar(Delta) {
+                    for (Row = 1; Row <= 5; Row++) {
+                        var ThisWeek = false;
+                        for (Column = 1; Column <= 7; Column++) {
+                            var DateOfCell = document.getElementById("DateOf-" + Row + "-" + Column).value.split("-");
+                            t = new Date(DateOfCell[0],DateOfCell[1] - 1,DateOfCell[2],12,0);
+                            t.setTime(t.getTime() + 60 * 60 * 24 * 1000 * Delta);
+                            var Month = t.getMonth() + 1;
+                            if (Month < 10) {
+                                Month = '0' + Month;
+                            }
+
+                            var DayOfMonth = t.getDate();
+                            if (DayOfMonth < 10) {
+                                DayOfMonth = '0' + DayOfMonth;
+                            }
+
+                            var FullDateString = t.getFullYear() + "-" + Month + "-" + DayOfMonth;
+
+                            document.getElementById("DateOf-" + Row + "-" + Column).value = FullDateString;
+                            if ((Row == 1) && (Column == 1)) {
+                                document.getElementById("TopLeftDate").value = FullDateString;
+                            }
+                            if (FullDateString == DateLoaded) {
+                                document.getElementById("Day-" + Row + "-" + Column).style.fontWeight = "bold";
+                                ThisWeek = true;
+                            } else {
+                                document.getElementById("Day-" + Row + "-" + Column).style.fontWeight = "normal";
+                            }
+                            document.getElementById("Day-" + Row + "-" + Column).innerHTML = t.getDate();
+
+                        }
+
+                        var DateOfCell = document.getElementById("DateOf-" + Row + "-1").value.split("-");
+                        var DateOfCell2 = document.getElementById("DateOf-" + Row + "-7").value.split("-");
+                        var MonthName;
+                        var Year;
+
+                        if (DateOfCell[1] == DateOfCell2[1]) {
+                            MonthName = Months[DateOfCell[1] - 1];
+                        } else {
+                            MonthName = Months[DateOfCell[1] - 1] + "/" + Months[DateOfCell2[1] - 1];
+                        }
+                        if (ThisWeek) {
+                            document.getElementById("Month-" + Row).innerHTML = "<b>" + MonthName + "</b>";
+                        } else {
+                            document.getElementById("Month-" + Row).innerHTML = MonthName;
+                        }
+
+                        if (DateOfCell[0] == DateOfCell2[0]) {
+                            Year = DateOfCell[0];
+                        } else {
+                            Year = DateOfCell[0] + "/" + DateOfCell2[0];
+                        }
+                        if (ThisWeek) {
+                            document.getElementById("Year-" + Row).innerHTML = "<b>" + Year + "</b>";
+                        } else {
+                            document.getElementById("Year-" + Row).innerHTML = Year;
+                        }
+
+                    }
+
+                    for (Column = 1; Column <= 7; Column++) {
+                        var DateOfCell = document.getElementById("DateOf-1-" + Column).value.split("-");
+                        var t = new Date(DateOfCell[0],DateOfCell[1] - 1,DateOfCell[2],12,0);
+                        document.getElementById("DayOfWeek-" + Column).innerHTML = DaysOfWeek[t.getDay()];
+                        document.getElementById("DateOf-6-" + Column).value = t.getDay();
+                    }
+
+                    ReColor();
+                }
+
+                function ShiftToDate(NewTopLeftDate, ShiftToLeft) {
+                    var CalendarStartTimeString = document.getElementById("DateOf-1-1").value.split("-");
+                    CalendarStartTime = new Date(CalendarStartTimeString[0],CalendarStartTimeString[1] - 1,CalendarStartTimeString[2],12,0);
+                    var NewStartTimeString = NewTopLeftDate.split("-");
+                    NewStartTime = new Date(NewStartTimeString[0],NewStartTimeString[1] - 1,NewStartTimeString[2],12,0);
+
+                    ShiftDays = (NewStartTime.getTime() - CalendarStartTime.getTime()) / (60 * 60 * 24 * 1000);
+                    if (ShiftToLeft) {
+                        ShiftCalendar(ShiftDays);
+                    } else {
+                        ShiftCalendar(7 * Math.floor(ShiftDays / 7));
+                    }
+                }
+
+                function ReColorOld() {
+                    for (Row = 1; Row <= 6; Row++) {
+                        for (Column = 1; Column <= 7; Column++) {
+                            if ((WriteMode != "") && ((AnchorRow - Row) * (Row - HoverRow) >= 0) && ((AnchorColumn - Column) * (Column - HoverColumn) >= 0)) {
+
+                                if (WriteMode == "write") {
+                                    document.getElementById("Day-" + Row + "-" + Column).style.backgroundColor = 'green';
+                                    document.getElementById("Day-" + Row + "-" + Column).style.color = 'white';
+                                } else {
+                                    document.getElementById("Day-" + Row + "-" + Column).style.backgroundColor = '#ffdede';
+                                    document.getElementById("Day-" + Row + "-" + Column).style.color = 'black';
+                                }
+                                document.getElementById("Day-" + Row + "-" + Column).style.border = '0px solid black';
+                                document.getElementById("Day-" + Row + "-" + Column).style.padding = '4px';
+                                document.getElementById("Day-" + Row + "-" + Column).style.margin = '0px';
+                            } else {
+                                document.getElementById("Day-" + Row + "-" + Column).style.border = '1px solid black';
+                                document.getElementById("Day-" + Row + "-" + Column).style.padding = '2px';
+                                document.getElementById("Day-" + Row + "-" + Column).style.margin = '1px';
+
+                                if (ArraySearch(Dates, document.getElementById("DateOf-" + Row + "-" + Column).value)) {
+                                    document.getElementById("Day-" + Row + "-" + Column).style.backgroundColor = 'green';
+                                    document.getElementById("Day-" + Row + "-" + Column).style.color = 'white';
+                                } else {
+                                    document.getElementById("Day-" + Row + "-" + Column).style.backgroundColor = '#ffdede';
+                                    document.getElementById("Day-" + Row + "-" + Column).style.color = 'black';
+                                }
+
+                            }
+                        }
+                    }
+                }
+
+                function DateTypesChanged() {
+                    if (document.getElementById("DateTypes").value == "SpecificDates") {
+                        document.getElementById("SpecificDates").style.display = '';
+                        document.getElementById("DaysOfTheWeek").style.display = 'none';
+                        document.getElementById("Today").style.display = '';
+                    } else {
+                        document.getElementById("SpecificDates").style.display = 'none';
+                        document.getElementById("DaysOfTheWeek").style.display = '';
+                        document.getElementById("Today").style.display = 'none';
+                    }
+                }
+
+                function PageLoaded() {
+                    var select = document.getElementById("ParticipantTimeZone");
+                    timezones = moment.tz.names();
+                    var timezone = moment.tz.guess();
+                    document.getElementById("ParticipantTimeZone").style.display = '';
+                    document.getElementById("YourTimeZone").innerHTML = 'Your Time Zone: ';
+
+                    for (var i = 0; i < timezones.length; i++) {
+                        var opt = timezones[i];
+                        var el = document.createElement("option");
+                        el.textContent = opt;
+                        el.value = opt;
+                        select.appendChild(el);
+                        if (timezone == opt)
+                            select.options[i].selected = true;
+                    }
+                    if (timezone != "Asia/Seoul") {
+                        LoadAvailabilityGrids();
+                    }
+                }
+
+                function LoadAvailabilityGrids() {
+                    participantTimeZone = document.getElementById("ParticipantTimeZone").options[document.getElementById("ParticipantTimeZone").selectedIndex].value;
+                    new Ajax.Request("AvailabilityGrids.php",{
+                        method: "post",
+                        parameters: "20362916-o2Zjg&id=20362916&code=o2Zjg&participantTimeZone=" + participantTimeZone,
+                        asynchronous: true,
+                        onSuccess: function(t) {
+                            document.getElementById("AvailabilityGrids").innerHTML = t.responseText;
+                            if (UserID) {
+                                document.getElementById("SignIn").style.display = 'none';
+                                document.getElementById("YouGrid").style.display = '';
+                                document.getElementById("UserName").innerHTML = PeopleNames[PeopleIDs.indexOf(UserID)];
+                                ReColorIndividual();
+                            }
+                        }
+                    });
+
+                }
+
+                /******* STUFF WRITTEN FOR NEW VERSION *******/
+
+                document.ondragstart = function() {
+                    return false;
+                }
+                ;
+                document.onmouseup = SelectStop;
+                var ChangeToAvailable = false;
+                var IsMouseDown = false;
+                var PeopleNames = new Array();
+                var PeopleIDs = new Array();
+                var UserID = 0;
+                var TimeOfSlot = new Array();
+                var AvailableAtSlot = new Array();
+                var Col = new Array();
+                var Row = new Array();
+                var FromCol = -1;
+                var ToCol = -1;
+                var FromRow = -1;
+                var ToRow = -1;
+
+                function ReColorIndividual() {
+                    for (var i = 0; i < TimeOfSlot.length; i++) {
+                        if (FromCol < ToCol) {
+                            ColA = FromCol;
+                            ColB = ToCol;
+                        } else {
+                            ColA = ToCol;
+                            ColB = FromCol;
+                        }
+                        if (FromRow < ToRow) {
+                            RowA = FromRow;
+                            RowB = ToRow;
+                        } else {
+                            RowA = ToRow;
+                            RowB = FromRow;
+                        }
+
+                        var currentElement = document.getElementById("YouTime" + TimeOfSlot[i]);
+                        if (currentElement) {
+                            var dataCol = Number(currentElement.getAttribute("data-col"));
+                            var dataRow = Number(currentElement.getAttribute("data-row"));
+
+                            var WithinX = ((ColA <= dataCol) && (dataCol <= ColB));
+                            var WithinY = ((RowA <= dataRow) && (dataRow <= RowB));
+
+                            if (ChangeToAvailable)
+                                NewColor = "#339900";
+                            else
+                                NewColor = "#ffdede";
+                            if (WithinX && WithinY && IsMouseDown) {
+                                currentElement.style.background = NewColor;
+                                currentElement.style.borderColor = NewColor;
+                                if (ColA == dataCol)
+                                    currentElement.style.borderLeftColor = "black";
+                                if (ColB == dataCol)
+                                    currentElement.style.borderRightColor = "black";
+                                if (RowA == dataRow)
+                                    currentElement.style.borderTopColor = "black";
+                                if (RowB == dataRow)
+                                    currentElement.style.borderBottomColor = "black";
+                            } else {
+                                if (-1 != AvailableAtSlot[i].indexOf(UserID)) {
+                                    currentElement.style.background = "#339900";
+                                    currentElement.style.borderColor = "black";
+                                } else {
+                                    currentElement.style.background = "#ffdede";
+                                    currentElement.style.borderColor = "black";
+                                }
+                            }
+                        }
+                    }
+                }
+
+                function ReColorGroup() {
+                    var MinAvailable = 10000;
+                    var MaxAvailable = 0;
+                    var SelfIsAvailable = false;
+                    for (var i = 0; i < AvailableAtSlot.length; i++) {
+                        if (AvailableAtSlot[i].length < MinAvailable)
+                            MinAvailable = AvailableAtSlot[i].length;
+                        if (AvailableAtSlot[i].length > MaxAvailable)
+                            MaxAvailable = AvailableAtSlot[i].length;
+                        if (AvailableAtSlot[i].indexOf(UserID) != -1)
+                            SelfIsAvailable = true;
+                    }
+                    if ((AvailableIDs.indexOf(UserID) != -1) && (!SelfIsAvailable)) {
+                        SplitSpot = AvailableIDs.indexOf(UserID);
+                        AvailableIDs.splice(SplitSpot, 1);
+                    } else if ((AvailableIDs.indexOf(UserID) == -1) && SelfIsAvailable)
+                        AvailableIDs.push(UserID);
+
+                    document.getElementById("MinAvailable").innerHTML = MinAvailable + "/" + AvailableIDs.length;
+                    document.getElementById("MaxAvailable").innerHTML = MaxAvailable + "/" + AvailableIDs.length;
+
+                    TableStart = "<table width=100 height=10 cellpadding=0 cellspacing=0 style='border: solid 1px black'><tr>";
+                    TableEnd = "</tr></table>";
+                    TableContent = "";
+                    for (var i = MinAvailable; i <= MaxAvailable; i++) {
+                        Red = Green = Blue = Math.round(255 / 2);
+                        if (MinAvailable != MaxAvailable) {
+                            Red = Math.round(((204) * (MaxAvailable - i) / (MaxAvailable - MinAvailable)) + 51);
+                            Green = Math.round(((102) * (MaxAvailable - i) / (MaxAvailable - MinAvailable)) + 153);
+                            Blue = Math.round(((255) * (MaxAvailable - i) / (MaxAvailable - MinAvailable)) + 0);
+                        }
+
+                        TableContent += "<td bgcolor=#" + (Red * 256 * 256 + Green * 256 + Blue).toString(16) + ">&nbsp;</td>";
+                    }
+
+                    document.getElementById("GroupKey").innerHTML = TableStart + TableContent + TableEnd;
+
+                    for (var i = 0; i < AvailableAtSlot.length; i++) {
+                        Red = Green = Blue = Math.round(255 / 2);
+                        if (MinAvailable != MaxAvailable) {
+                            Red = Math.round(((204) * (MaxAvailable - AvailableAtSlot[i].length) / (MaxAvailable - MinAvailable)) + 51);
+                            Green = Math.round(((102) * (MaxAvailable - AvailableAtSlot[i].length) / (MaxAvailable - MinAvailable)) + 153);
+                            Blue = Math.round(((255) * (MaxAvailable - AvailableAtSlot[i].length) / (MaxAvailable - MinAvailable)) + 0);
+                        }
+                        document.getElementById("GroupTime" + TimeOfSlot[i]).style.background = "#" + (Red * 256 * 256 + Green * 256 + Blue).toString(16);
+                    }
+                }
+
+                function ShowSlot(Time, TimeString="") {
+                    e = document.getElementById("ParticipantTimeZone");
+                    timezone = e[e.selectedIndex].value;
+
+                    if (isNaN(Time) || (Time == 0)) {
+                        document.getElementById("AvailableDate").innerHTML = "&nbsp;";
+                        document.getElementById("Available").innerHTML = "";
+                        document.getElementById("Unavailable").innerHTML = "";
+                        document.getElementById("AvailableFraction").innerHTML = "0/" + AvailableIDs.length;
+                        return;
+                    }
+
+                    AvailableList = "";
+                    UnavailableList = "";
+                    AvailableCount = 0;
+                    Count = 0;
+                    for (var i = 0; i < AvailableIDs.length; i++) {
+                        Count++;
+                        var found = (-1 != AvailableAtSlot[TimeOfSlot.indexOf(Time)].indexOf(AvailableIDs[i]));
+                        if (found) {
+                            AvailableList += PeopleNames[PeopleIDs.indexOf(AvailableIDs[i])] + "<br>";
+                            AvailableCount++;
+                        } else
+                            UnavailableList += PeopleNames[PeopleIDs.indexOf(AvailableIDs[i])] + "<br>";
+                    }
+                    document.getElementById("Available").innerHTML = AvailableList;
+                    document.getElementById("Unavailable").innerHTML = UnavailableList;
+                    document.getElementById("AvailableFraction").innerHTML = AvailableCount + "/" + Count;
+
+                    var date = new Date(Time * 1000);
+
+                    var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+                    var monthName = monthNames[moment.tz(date, timezone).format('M') - 1];
+
+                    var dayOfWeekNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+                    var dayOfWeekName = dayOfWeekNames[moment.tz(date, timezone).format('e')];
+
+                    var dayOfMonth = moment.tz(date, timezone).format('D');
+
+                    var hours = moment.tz(date, timezone).format('H');
+                    var suffix = "am";
+                    if (hours >= 12)
+                        suffix = "pm";
+                    if (hours > 12)
+                        hours = hours - 12;
+                    if (hours == 0)
+                        hours = 12;
+                    var minutes = moment.tz(date, timezone).format('mm');
+                    var year = moment.tz(date, timezone).format('YYYY');
+                    var timeString = hours + ':' + minutes.substr(-2) + " " + suffix;
+
+                    document.getElementById("AvailableDate").innerHTML = TimeString;
+                    document.getElementById("SlotAvailability").style.display = '';
+                    document.getElementById("LeftPanel").style.display = 'none';
+                }
+
+                function ShowSlotByTouch(event) {
+                    if (event.touches.length == 1) {
+                        var touch = event.touches[0];
+                        var elem = document.elementFromPoint(touch.clientX, touch.clientY);
+                        var Time = Number(elem.id.replace('GroupTime', ''));
+                        ShowSlot(Time);
+                    }
+                }
+
+                function ShowSlotByTouchMove(event) {
+                    if (event.touches.length == 1) {
+                        event.preventDefault();
+                    }
+                    ShowSlotByTouch(event);
+                }
+
+                function RestoreLeftSide(event) {
+                    document.getElementById("SlotAvailability").style.display = 'none';
+                    document.getElementById("LeftPanel").style.display = '';
+                }
+
+                function ProcessLogin() {
+
+                    var parameters = "id=20362916" + "&name=" + encodeURIComponent(document.getElementById('name').value) + "&password=" + encodeURIComponent(document.getElementById('password').value);
+                    new Ajax.Request("ProcessLogin.php",{
+                        method: "post",
+                        parameters: "id=20362916" + "&name=" + encodeURIComponent(document.getElementById('name').value) + "&password=" + encodeURIComponent(document.getElementById('password').value),
+                        asynchronous: true,
+                        onSuccess: function(t) {
+                            PersonID = parseInt(t.responseText);
+                            if (PersonID) {
+                                UserID = PersonID;
+                                ReColorIndividual();
+                                document.getElementById("SignIn").style.display = 'none';
+                                document.getElementById("YouGrid").style.display = '';
+                                if (-1 == PeopleIDs.indexOf(UserID)) {
+                                    PeopleIDs.push(UserID);
+                                    PeopleNames.push(document.getElementById('name').value);
+                                }
+                                document.getElementById("UserName").innerHTML = PeopleNames[PeopleIDs.indexOf(UserID)];
+                            } else {
+                                alert(t.responseText);
+                            }
+                        }
+                    });
+                    return false;
+                }
+
+                function SelectFromHere(e) {
+                    timeOfSlot = Number(e.target.getAttribute("data-time"));
+                    slotID = TimeOfSlot.indexOf(timeOfSlot);
+                    ChangeToAvailable = (-1 == AvailableAtSlot[slotID].indexOf(UserID));
+                    IsMouseDown = true;
+
+                    ToCol = Number(e.target.getAttribute("data-col"));
+                    ToRow = Number(e.target.getAttribute("data-row"));
+                    FromCol = ToCol;
+                    FromRow = ToRow;
+                    ReColorIndividual();
+                }
+
+                function SelectToHere(e) {
+                    if (IsMouseDown) {
+                        ToCol = Number(e.target.getAttribute("data-col"));
+                        ToRow = Number(e.target.getAttribute("data-row"));
+                        ReColorIndividual();
+                    }
+                }
+
+                function SelectFromHereByTouch(event) {
+                    if (event.touches.length == 1) {
+                        //      event.preventDefault();
+                        //     var touch = event.touches[0];
+                        //     var elem = document.elementFromPoint(touch.clientX, touch.clientY);
+                        //     var Time = Number(elem.id.replace('YouTime', ''));
+                        SelectFromHere(event);
+                    } else {
+                        return true;
+                    }
+                }
+
+                function SelectToHereByTouch(event) {
+                    if (event.touches.length == 1) {
+                        event.preventDefault();
+                        var touch = event.touches[0];
+                        var elem = document.elementFromPoint(touch.clientX, touch.clientY);
+                        if (elem.hasAttribute("data-col")) {
+                            ToCol = Number(elem.getAttribute("data-col"));
+                            ToRow = Number(elem.getAttribute("data-row"));
+                            ReColorIndividual();
+                        }
+                    } else {
+                        return true;
+                    }
+                }
+
+                function SelectStopByTouch(event) {
+                    SelectStop();
+                }
+
+                function SelectStop() {
+                    if (!IsMouseDown)
+                        return;
+                    var TimesToToggle = new Array();
+                    var binaryAvailability = "";
+                    for (var i = 0; i < TimeOfSlot.length; i++) {
+                        if (FromCol < ToCol) {
+                            ColA = FromCol;
+                            ColB = ToCol;
+                        } else {
+                            ColA = ToCol;
+                            ColB = FromCol;
+                        }
+                        if (FromRow < ToRow) {
+                            RowA = FromRow;
+                            RowB = ToRow;
+                        } else {
+                            RowA = ToRow;
+                            RowB = FromRow;
+                        }
+
+                        var currentElement = document.getElementById("YouTime" + TimeOfSlot[i]);
+                        if (currentElement) {
+                            var dataCol = Number(currentElement.getAttribute("data-col"));
+                            var dataRow = Number(currentElement.getAttribute("data-row"));
+
+                            var WithinX = ((ColA <= dataCol) && (dataCol <= ColB));
+                            var WithinY = ((RowA <= dataRow) && (dataRow <= RowB));
+
+                            if (WithinX && WithinY) {
+                                TimesToToggle.push(TimeOfSlot[i]);
+                                if (ChangeToAvailable && (-1 == AvailableAtSlot[i].indexOf(UserID)))
+                                    AvailableAtSlot[i].push(UserID);
+                                if ((!ChangeToAvailable) && (-1 != AvailableAtSlot[i].indexOf(UserID))) {
+                                    SplitSpot = AvailableAtSlot[i].indexOf(UserID);
+                                    AvailableAtSlot[i].splice(SplitSpot, 1);
+                                }
+                            }
+                            if (-1 != AvailableAtSlot[i].indexOf(UserID)) {
+                                binaryAvailability += "1";
+                            } else {
+                                binaryAvailability += "0";
+                            }
+                        }
+                    }
+
+                    new Ajax.Request("SaveTimes.php",{
+                        method: "post",
+                        parameters: "person=" + UserID + "&event=20362916" + "&slots=" + TimesToToggle.join(",") + "&availability=" + binaryAvailability + "&ChangeToAvailable=" + ChangeToAvailable,
+                        asynchronous: true,
+                        onSuccess: function(t) {//   alert(t.responseText);
+                        }
+                    });
+
+                    IsMouseDown = false;
+                    FromCol = -1;
+                    ToCol = -1;
+                    FromRow = -1;
+                    ToRow = -1;
+                    ReColorIndividual();
+                    ReColorGroup();
+                }
+
+                TimeOfSlot[0] = 1687996800;
+                AvailableAtSlot[0] = new Array();
+                TimeOfSlot[1] = 1687997700;
+                AvailableAtSlot[1] = new Array();
+                TimeOfSlot[2] = 1687998600;
+                AvailableAtSlot[2] = new Array();
+                TimeOfSlot[3] = 1687999500;
+                AvailableAtSlot[3] = new Array();
+                TimeOfSlot[4] = 1688000400;
+                AvailableAtSlot[4] = new Array();
+                TimeOfSlot[5] = 1688001300;
+                AvailableAtSlot[5] = new Array();
+                TimeOfSlot[6] = 1688002200;
+                AvailableAtSlot[6] = new Array();
+                TimeOfSlot[7] = 1688003100;
+                AvailableAtSlot[7] = new Array();
+                TimeOfSlot[8] = 1688004000;
+                AvailableAtSlot[8] = new Array();
+                TimeOfSlot[9] = 1688004900;
+                AvailableAtSlot[9] = new Array();
+                TimeOfSlot[10] = 1688005800;
+                AvailableAtSlot[10] = new Array();
+                TimeOfSlot[11] = 1688006700;
+                AvailableAtSlot[11] = new Array();
+                TimeOfSlot[12] = 1688007600;
+                AvailableAtSlot[12] = new Array();
+                TimeOfSlot[13] = 1688008500;
+                AvailableAtSlot[13] = new Array();
+                TimeOfSlot[14] = 1688009400;
+                AvailableAtSlot[14] = new Array();
+                TimeOfSlot[15] = 1688010300;
+                AvailableAtSlot[15] = new Array();
+                TimeOfSlot[16] = 1688011200;
+                AvailableAtSlot[16] = new Array();
+                TimeOfSlot[17] = 1688012100;
+                AvailableAtSlot[17] = new Array();
+                TimeOfSlot[18] = 1688013000;
+                AvailableAtSlot[18] = new Array();
+                TimeOfSlot[19] = 1688013900;
+                AvailableAtSlot[19] = new Array();
+                TimeOfSlot[20] = 1688014800;
+                AvailableAtSlot[20] = new Array();
+                TimeOfSlot[21] = 1688015700;
+                AvailableAtSlot[21] = new Array();
+                TimeOfSlot[22] = 1688016600;
+                AvailableAtSlot[22] = new Array();
+                TimeOfSlot[23] = 1688017500;
+                AvailableAtSlot[23] = new Array();
+                TimeOfSlot[24] = 1688018400;
+                AvailableAtSlot[24] = new Array();
+                TimeOfSlot[25] = 1688019300;
+                AvailableAtSlot[25] = new Array();
+                TimeOfSlot[26] = 1688020200;
+                AvailableAtSlot[26] = new Array();
+                TimeOfSlot[27] = 1688021100;
+                AvailableAtSlot[27] = new Array();
+                TimeOfSlot[28] = 1688022000;
+                AvailableAtSlot[28] = new Array();
+                TimeOfSlot[29] = 1688022900;
+                AvailableAtSlot[29] = new Array();
+                TimeOfSlot[30] = 1688023800;
+                AvailableAtSlot[30] = new Array();
+                TimeOfSlot[31] = 1688024700;
+                AvailableAtSlot[31] = new Array();
+                TimeOfSlot[32] = 1688083200;
+                AvailableAtSlot[32] = new Array();
+                TimeOfSlot[33] = 1688084100;
+                AvailableAtSlot[33] = new Array();
+                TimeOfSlot[34] = 1688085000;
+                AvailableAtSlot[34] = new Array();
+                TimeOfSlot[35] = 1688085900;
+                AvailableAtSlot[35] = new Array();
+                TimeOfSlot[36] = 1688086800;
+                AvailableAtSlot[36] = new Array();
+                TimeOfSlot[37] = 1688087700;
+                AvailableAtSlot[37] = new Array();
+                TimeOfSlot[38] = 1688088600;
+                AvailableAtSlot[38] = new Array();
+                TimeOfSlot[39] = 1688089500;
+                AvailableAtSlot[39] = new Array();
+                TimeOfSlot[40] = 1688090400;
+                AvailableAtSlot[40] = new Array();
+                TimeOfSlot[41] = 1688091300;
+                AvailableAtSlot[41] = new Array();
+                TimeOfSlot[42] = 1688092200;
+                AvailableAtSlot[42] = new Array();
+                TimeOfSlot[43] = 1688093100;
+                AvailableAtSlot[43] = new Array();
+                TimeOfSlot[44] = 1688094000;
+                AvailableAtSlot[44] = new Array();
+                TimeOfSlot[45] = 1688094900;
+                AvailableAtSlot[45] = new Array();
+                TimeOfSlot[46] = 1688095800;
+                AvailableAtSlot[46] = new Array();
+                TimeOfSlot[47] = 1688096700;
+                AvailableAtSlot[47] = new Array();
+                TimeOfSlot[48] = 1688097600;
+                AvailableAtSlot[48] = new Array();
+                TimeOfSlot[49] = 1688098500;
+                AvailableAtSlot[49] = new Array();
+                TimeOfSlot[50] = 1688099400;
+                AvailableAtSlot[50] = new Array();
+                TimeOfSlot[51] = 1688100300;
+                AvailableAtSlot[51] = new Array();
+                TimeOfSlot[52] = 1688101200;
+                AvailableAtSlot[52] = new Array();
+                TimeOfSlot[53] = 1688102100;
+                AvailableAtSlot[53] = new Array();
+                TimeOfSlot[54] = 1688103000;
+                AvailableAtSlot[54] = new Array();
+                TimeOfSlot[55] = 1688103900;
+                AvailableAtSlot[55] = new Array();
+                TimeOfSlot[56] = 1688104800;
+                AvailableAtSlot[56] = new Array();
+                TimeOfSlot[57] = 1688105700;
+                AvailableAtSlot[57] = new Array();
+                TimeOfSlot[58] = 1688106600;
+                AvailableAtSlot[58] = new Array();
+                TimeOfSlot[59] = 1688107500;
+                AvailableAtSlot[59] = new Array();
+                TimeOfSlot[60] = 1688108400;
+                AvailableAtSlot[60] = new Array();
+                TimeOfSlot[61] = 1688109300;
+                AvailableAtSlot[61] = new Array();
+                TimeOfSlot[62] = 1688110200;
+                AvailableAtSlot[62] = new Array();
+                TimeOfSlot[63] = 1688111100;
+                AvailableAtSlot[63] = new Array();
+                PeopleNames[0] = '다현';
+                PeopleIDs[0] = 84921251;
+                PeopleNames[1] = '봉승우';
+                PeopleIDs[1] = 84921245;
+                PeopleNames[2] = '시경';
+                PeopleIDs[2] = 84921258;
+                PeopleNames[3] = '준규';
+                PeopleIDs[3] = 84921256;
+                AvailableAtSlot[39].push(84921245);
+                AvailableAtSlot[38].push(84921245);
+                AvailableAtSlot[37].push(84921245);
+                AvailableAtSlot[7].push(84921245);
+                AvailableAtSlot[6].push(84921245);
+                AvailableAtSlot[5].push(84921245);
+                AvailableAtSlot[52].push(84921251);
+                AvailableAtSlot[51].push(84921251);
+                AvailableAtSlot[50].push(84921251);
+                AvailableAtSlot[49].push(84921251);
+                AvailableAtSlot[48].push(84921251);
+                AvailableAtSlot[47].push(84921251);
+                AvailableAtSlot[46].push(84921251);
+                AvailableAtSlot[45].push(84921251);
+                AvailableAtSlot[44].push(84921251);
+                AvailableAtSlot[43].push(84921251);
+                AvailableAtSlot[42].push(84921251);
+                AvailableAtSlot[41].push(84921251);
+                AvailableAtSlot[40].push(84921251);
+                AvailableAtSlot[39].push(84921251);
+                AvailableAtSlot[38].push(84921251);
+                AvailableAtSlot[37].push(84921251);
+                AvailableAtSlot[60].push(84921256);
+                AvailableAtSlot[59].push(84921256);
+                AvailableAtSlot[58].push(84921256);
+                AvailableAtSlot[28].push(84921256);
+                AvailableAtSlot[27].push(84921256);
+                AvailableAtSlot[26].push(84921256);
+                AvailableAtSlot[41].push(84921258);
+                AvailableAtSlot[40].push(84921258);
+                AvailableAtSlot[39].push(84921258);
+                AvailableAtSlot[38].push(84921258);
+                AvailableAtSlot[37].push(84921258);
+                AvailableAtSlot[36].push(84921258);
+                AvailableAtSlot[35].push(84921258);
+                AvailableAtSlot[34].push(84921258);
+                AvailableAtSlot[33].push(84921258);
+                AvailableAtSlot[9].push(84921258);
+                AvailableAtSlot[8].push(84921258);
+                AvailableAtSlot[7].push(84921258);
+                AvailableAtSlot[6].push(84921258);
+                AvailableAtSlot[5].push(84921258);
+                AvailableAtSlot[4].push(84921258);
+                AvailableAtSlot[3].push(84921258);
+                AvailableAtSlot[2].push(84921258);
+                AvailableAtSlot[1].push(84921258);
+                var AvailableIDs = new Array();
+                AvailableIDs.push(84921251);
+                AvailableIDs.push(84921245);
+                AvailableIDs.push(84921258);
+                AvailableIDs.push(84921256);
+            </script>
+            <div id="NewEventNameDiv" style="padding:20px 0px 20px 20px;font-size:30px;">
+                그룹 테스트<br>
+                <div style="font-size: 12px;padding-top:12px;">
+                    To invite people to this event, you can <a href="mailto:?subject=Scheduling 그룹 테스트&body=Hi All,%0A%0AI'm trying to see when we're all available for: 그룹 테스트%0A%0APlease visit%0A    https://www.when2meet.com/?20362916-o2Zjg%0Ato let me know when you're available.%0A%0AThanks,%0A%0A">email them</a>
+                    , send them a <a href="https://www.facebook.com/dialog/send?app_id=259470627404374&link=https://www.when2meet.com/?20362916-o2Zjg&redirect_uri=https://www.when2meet.com/thanks.php?name=%EA%B7%B8%EB%A3%B9+%ED%85%8C%EC%8A%A4%ED%8A%B8">Facebook message</a>
+                    , or just direct them to https://www.when2meet.com/?20362916-o2Zjg<br>
+                    <div id="ChooseTimeZone" style="padding-top:12px; height:12px;">
+                        <span id="YourTimeZone">&nbsp;</span>
+                        <select name="ParticipantTimeZone" id="ParticipantTimeZone" onchange="LoadAvailabilityGrids();" style="display:none;"></select>
+                        <br>
+                    </div>
+                </div>
+            </div>
+            <div id=AvailabilityGrids>
+                <script type="text/javascript">
+                    PeopleNames[0] = '다현';
+                    PeopleIDs[0] = 84921251;
+                    PeopleNames[1] = '봉승우';
+                    PeopleIDs[1] = 84921245;
+                    PeopleNames[2] = '시경';
+                    PeopleIDs[2] = 84921258;
+                    PeopleNames[3] = '준규';
+                    PeopleIDs[3] = 84921256;
+                    // hexAvailability: 0700000007000000
+
+                    // hexAvailability: 0000000007fff800
+
+                    // hexAvailability: 0000003800000038
+
+                    // hexAvailability: 7fc000007fc00000
+                    var AvailableIDs = new Array();
+                    AvailableIDs.push(84921251);
+                    AvailableIDs.push(84921245);
+                    AvailableIDs.push(84921258);
+                    AvailableIDs.push(84921256);
+                </script>
+                <div onselectstart="return false;" style="width:50%;display:inline-block;*display:inline;zoom:1; white-space:nowrap;overflow:auto; vertical-align:top; text-align:center;">
+                    <div class='HalfPanel'>
+                        <div id="SlotAvailability" style="display:none;">
+                            <div class='GridTitle'>
+                                <div id="AvailableFraction" style="display:inline-block;*display:inline;zoom:1;"></div>
+                                &nbsp;Available        
+                                <div class='GridSubtitle'>
+                                    <div id="AvailableDate"></div>
+                                    <table>
+                                        <tr>
+                                            <td width=200 align=center>
+                                                <b>
+                                                    <u>Available</u>
+                                                </b>
+                                            </td>
+                                            <td width=200 align=center>
+                                                <b>
+                                                    <u>Unavailable</u>
+                                                </b>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td valign=top align=center>
+                                                <div id="Available">
+                                            </td>
+                                            <td valign=top align=center>
+                                                <div id="Unavailable">
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div id='YouAvailability'>
+                            <div id='LeftPanel'>
+                                <div id="SignIn">
+                                    <div class='GridTitle'>
+                                        Sign In<br>
+                                        <div class='GridSubtitle'>
+                                            <table>
+                                                <tr>
+                                                    <td>Your Name:</td>
+                                                    <td align=left>
+                                                        <input style='width:150px' id=name>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Password (optional):</td>
+                                                    <td align=left>
+                                                        <input style='width:150px' id=password type=password>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                            <input type=button value="Sign In" onclick="ProcessLogin()">
+                                            <br>
+                                            <br>
+                                            Name/Password are only for this event.<br>
+                                            New to this event? Make up a password.<br>Returning? Use the same name/password.          
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="YouGrid" style='display:none;'>
+                                    <div class='GridTitle' style='display:inline-block;*display:inline;zoom:1; margin-left:40px;'>
+                                        <span id='UserName'></span>
+                                        's Availability
+                                        <div class='GridSubtitle'>
+                                            <div style='padding:5px;' onselectstart="return true;">
+                                                Unavailable
+                                                <div style='display:inline-block;*display:inline;zoom:1;vertical-align:middle;padding:0px 5px 0px 5px;'>
+                                                    <table width=30 height=10 cellpadding=0 cellspacing=0 style='border: solid 1px black'>
+                                                        <tr>
+                                                            <td bgcolor=#ffdede>&nbsp;</td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                                Available
+                                                <div style='display:inline-block;*display:inline;zoom:1;vertical-align:middle;padding:0px 5px 0px 5px;'>
+                                                    <table width=30 height=10 cellpadding=0 cellspacing=0 style='border: solid 1px black'>
+                                                        <tr>
+                                                            <td bgcolor=#339900>&nbsp;</td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            Click and Drag to Toggle; Saved Immediately
+                                        </div>
+                                    </div>
+                                    <br clear=all>
+                                    <div style='display:inline-block;*display:inline;zoom:1; vertical-align:bottom;text-align:right;'>
+                                        <div style='font-size:0px;vertical-align:top;'>
+                                            <div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;margin-top: 1px;border-right: 1px white solid;'></div>
+                                        </div>
+                                        <div style='font-size:0px;vertical-align:top;'>
+                                            <div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;border-right: 1px white solid;'></div>
+                                        </div>
+                                        <div style='font-size:0px;vertical-align:top;'>
+                                            <div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;margin-top: 1px;border-right: 1px white solid;'></div>
+                                        </div>
+                                        <div style='font-size:0px;vertical-align:top;'>
+                                            <div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;border-right: 1px white solid;'>
+                                                <div style='text-align:right;width:44px;height:9;font-size:10px;margin:4px 4px 0px 0px;'>9:00  AM &nbsp;</div>
+                                            </div>
+                                        </div>
+                                        <div style='font-size:0px;vertical-align:top;'>
+                                            <div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;margin-top: 1px;border-right: 1px white solid;'></div>
+                                        </div>
+                                        <div style='font-size:0px;vertical-align:top;'>
+                                            <div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;border-right: 1px white solid;'></div>
+                                        </div>
+                                        <div style='font-size:0px;vertical-align:top;'>
+                                            <div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;margin-top: 1px;border-right: 1px white solid;'></div>
+                                        </div>
+                                        <div style='font-size:0px;vertical-align:top;'>
+                                            <div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;border-right: 1px white solid;'>
+                                                <div style='text-align:right;width:44px;height:9;font-size:10px;margin:4px 4px 0px 0px;'>10:00  AM &nbsp;</div>
+                                            </div>
+                                        </div>
+                                        <div style='font-size:0px;vertical-align:top;'>
+                                            <div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;margin-top: 1px;border-right: 1px white solid;'></div>
+                                        </div>
+                                        <div style='font-size:0px;vertical-align:top;'>
+                                            <div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;border-right: 1px white solid;'></div>
+                                        </div>
+                                        <div style='font-size:0px;vertical-align:top;'>
+                                            <div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;margin-top: 1px;border-right: 1px white solid;'></div>
+                                        </div>
+                                        <div style='font-size:0px;vertical-align:top;'>
+                                            <div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;border-right: 1px white solid;'>
+                                                <div style='text-align:right;width:44px;height:9;font-size:10px;margin:4px 4px 0px 0px;'>11:00  AM &nbsp;</div>
+                                            </div>
+                                        </div>
+                                        <div style='font-size:0px;vertical-align:top;'>
+                                            <div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;margin-top: 1px;border-right: 1px white solid;'></div>
+                                        </div>
+                                        <div style='font-size:0px;vertical-align:top;'>
+                                            <div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;border-right: 1px white solid;'></div>
+                                        </div>
+                                        <div style='font-size:0px;vertical-align:top;'>
+                                            <div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;margin-top: 1px;border-right: 1px white solid;'></div>
+                                        </div>
+                                        <div style='font-size:0px;vertical-align:top;'>
+                                            <div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;border-right: 1px white solid;'>
+                                                <div style='text-align:right;width:44px;height:9;font-size:10px;margin:4px 4px 0px 0px;'>12:00  PM &nbsp;</div>
+                                            </div>
+                                        </div>
+                                        <div style='font-size:0px;vertical-align:top;'>
+                                            <div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;margin-top: 1px;border-right: 1px white solid;'></div>
+                                        </div>
+                                        <div style='font-size:0px;vertical-align:top;'>
+                                            <div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;border-right: 1px white solid;'></div>
+                                        </div>
+                                        <div style='font-size:0px;vertical-align:top;'>
+                                            <div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;margin-top: 1px;border-right: 1px white solid;'></div>
+                                        </div>
+                                        <div style='font-size:0px;vertical-align:top;'>
+                                            <div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;border-right: 1px white solid;'>
+                                                <div style='text-align:right;width:44px;height:9;font-size:10px;margin:4px 4px 0px 0px;'>1:00  PM &nbsp;</div>
+                                            </div>
+                                        </div>
+                                        <div style='font-size:0px;vertical-align:top;'>
+                                            <div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;margin-top: 1px;border-right: 1px white solid;'></div>
+                                        </div>
+                                        <div style='font-size:0px;vertical-align:top;'>
+                                            <div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;border-right: 1px white solid;'></div>
+                                        </div>
+                                        <div style='font-size:0px;vertical-align:top;'>
+                                            <div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;margin-top: 1px;border-right: 1px white solid;'></div>
+                                        </div>
+                                        <div style='font-size:0px;vertical-align:top;'>
+                                            <div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;border-right: 1px white solid;'>
+                                                <div style='text-align:right;width:44px;height:9;font-size:10px;margin:4px 4px 0px 0px;'>2:00  PM &nbsp;</div>
+                                            </div>
+                                        </div>
+                                        <div style='font-size:0px;vertical-align:top;'>
+                                            <div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;margin-top: 1px;border-right: 1px white solid;'></div>
+                                        </div>
+                                        <div style='font-size:0px;vertical-align:top;'>
+                                            <div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;border-right: 1px white solid;'></div>
+                                        </div>
+                                        <div style='font-size:0px;vertical-align:top;'>
+                                            <div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;margin-top: 1px;border-right: 1px white solid;'></div>
+                                        </div>
+                                        <div style='font-size:0px;vertical-align:top;'>
+                                            <div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;border-right: 1px white solid;'>
+                                                <div style='text-align:right;width:44px;height:9;font-size:10px;margin:4px 4px 0px 0px;'>3:00  PM &nbsp;</div>
+                                            </div>
+                                        </div>
+                                        <div style='font-size:0px;vertical-align:top;'>
+                                            <div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;margin-top: 1px;border-right: 1px white solid;'></div>
+                                        </div>
+                                        <div style='font-size:0px;vertical-align:top;'>
+                                            <div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;border-right: 1px white solid;'></div>
+                                        </div>
+                                        <div style='font-size:0px;vertical-align:top;'>
+                                            <div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;margin-top: 1px;border-right: 1px white solid;'></div>
+                                        </div>
+                                        <div style='font-size:0px;vertical-align:top;'>
+                                            <div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;border-right: 1px white solid;'>
+                                                <div style='text-align:right;width:44px;height:9;font-size:10px;margin:4px 4px 0px 0px;'>4:00  PM &nbsp;</div>
+                                            </div>
+                                        </div>
+                                        <div style='font-size:0px;vertical-align:top;'>
+                                            <div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;margin-top: 1px;border-right: 1px white solid;'></div>
+                                        </div>
+                                        <div style='font-size:0px;vertical-align:top;'>
+                                            <div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;border-right: 1px white solid;'></div>
+                                        </div>
+                                        <div style='font-size:0px;vertical-align:top;'>
+                                            <div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;margin-top: 1px;border-right: 1px white solid;'></div>
+                                        </div>
+                                        <div style='font-size:0px;vertical-align:top;'>
+                                            <div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;margin-bottom:8px;border-right: 1px white solid;'>
+                                                <div style='text-align:right;width:44px;height:9;font-size:10px;margin:4px 4px 0px 0px;'>5:00  PM &nbsp;</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style='display:inline-block;*display:inline;zoom:1;vertical-align:bottom;text-align:right;'">
+  
+  <div style=" display:inline-block;*display:inline;zoom:1;text-align:center;font-size:10px;width:44px;padding-right:1px;">Jun 29<br><div style='display:inline-block;*display:inline;zoom:1;font-size:16px;'>Thu</div></div><div style=" display:inline-block;*display:inline;zoom:1;text-align:center;font-size:10px;width:44px;padding-right:1px;">Jun 30<br><div style='display:inline-block;*display:inline;zoom:1;font-size:16px;'>Fri</div></div><div id='YouGridSlots' class='GroupGrid' style='background-color:white; display:inline'><div style='font-size:0px;vertical-align:top;'><div id='YouTime1687996800' data-col=" 0 " data-row=" 0 " data-time=" 1687996800 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;border-top: 1px black solid;'></div>
+<div id='YouTime1688083200' data-col=" 1 " data-row=" 0 " data-time=" 1688083200 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;border-top: 1px black solid;border-right: 1px black solid;'></div>
+</div><div style='font-size:0px;vertical-align:top;'><div id='YouTime1687997700' data-col=" 0 " data-row=" 1 " data-time=" 1687997700 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;'></div>
+<div id='YouTime1688084100' data-col=" 1 " data-row=" 1 " data-time=" 1688084100 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;border-right: 1px black solid;'></div>
+</div><div style='font-size:0px;vertical-align:top;'><div id='YouTime1687998600' data-col=" 0 " data-row=" 2 " data-time=" 1687998600 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;border-top: 1px black dotted;'></div>
+<div id='YouTime1688085000' data-col=" 1 " data-row=" 2 " data-time=" 1688085000 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;border-top: 1px black dotted;border-right: 1px black solid;'></div>
+</div><div style='font-size:0px;vertical-align:top;'><div id='YouTime1687999500' data-col=" 0 " data-row=" 3 " data-time=" 1687999500 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;'></div>
+<div id='YouTime1688085900' data-col=" 1 " data-row=" 3 " data-time=" 1688085900 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;border-right: 1px black solid;'></div>
+</div><div style='font-size:0px;vertical-align:top;'><div id='YouTime1688000400' data-col=" 0 " data-row=" 4 " data-time=" 1688000400 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;border-top: 1px black solid;'></div>
+<div id='YouTime1688086800' data-col=" 1 " data-row=" 4 " data-time=" 1688086800 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;border-top: 1px black solid;border-right: 1px black solid;'></div>
+</div><div style='font-size:0px;vertical-align:top;'><div id='YouTime1688001300' data-col=" 0 " data-row=" 5 " data-time=" 1688001300 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;'></div>
+<div id='YouTime1688087700' data-col=" 1 " data-row=" 5 " data-time=" 1688087700 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;border-right: 1px black solid;'></div>
+</div><div style='font-size:0px;vertical-align:top;'><div id='YouTime1688002200' data-col=" 0 " data-row=" 6 " data-time=" 1688002200 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;border-top: 1px black dotted;'></div>
+<div id='YouTime1688088600' data-col=" 1 " data-row=" 6 " data-time=" 1688088600 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;border-top: 1px black dotted;border-right: 1px black solid;'></div>
+</div><div style='font-size:0px;vertical-align:top;'><div id='YouTime1688003100' data-col=" 0 " data-row=" 7 " data-time=" 1688003100 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;'></div>
+<div id='YouTime1688089500' data-col=" 1 " data-row=" 7 " data-time=" 1688089500 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;border-right: 1px black solid;'></div>
+</div><div style='font-size:0px;vertical-align:top;'><div id='YouTime1688004000' data-col=" 0 " data-row=" 8 " data-time=" 1688004000 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;border-top: 1px black solid;'></div>
+<div id='YouTime1688090400' data-col=" 1 " data-row=" 8 " data-time=" 1688090400 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;border-top: 1px black solid;border-right: 1px black solid;'></div>
+</div><div style='font-size:0px;vertical-align:top;'><div id='YouTime1688004900' data-col=" 0 " data-row=" 9 " data-time=" 1688004900 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;'></div>
+<div id='YouTime1688091300' data-col=" 1 " data-row=" 9 " data-time=" 1688091300 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;border-right: 1px black solid;'></div>
+</div><div style='font-size:0px;vertical-align:top;'><div id='YouTime1688005800' data-col=" 0 " data-row=" 10 " data-time=" 1688005800 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;border-top: 1px black dotted;'></div>
+<div id='YouTime1688092200' data-col=" 1 " data-row=" 10 " data-time=" 1688092200 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;border-top: 1px black dotted;border-right: 1px black solid;'></div>
+</div><div style='font-size:0px;vertical-align:top;'><div id='YouTime1688006700' data-col=" 0 " data-row=" 11 " data-time=" 1688006700 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;'></div>
+<div id='YouTime1688093100' data-col=" 1 " data-row=" 11 " data-time=" 1688093100 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;border-right: 1px black solid;'></div>
+</div><div style='font-size:0px;vertical-align:top;'><div id='YouTime1688007600' data-col=" 0 " data-row=" 12 " data-time=" 1688007600 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;border-top: 1px black solid;'></div>
+<div id='YouTime1688094000' data-col=" 1 " data-row=" 12 " data-time=" 1688094000 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;border-top: 1px black solid;border-right: 1px black solid;'></div>
+</div><div style='font-size:0px;vertical-align:top;'><div id='YouTime1688008500' data-col=" 0 " data-row=" 13 " data-time=" 1688008500 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;'></div>
+<div id='YouTime1688094900' data-col=" 1 " data-row=" 13 " data-time=" 1688094900 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;border-right: 1px black solid;'></div>
+</div><div style='font-size:0px;vertical-align:top;'><div id='YouTime1688009400' data-col=" 0 " data-row=" 14 " data-time=" 1688009400 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;border-top: 1px black dotted;'></div>
+<div id='YouTime1688095800' data-col=" 1 " data-row=" 14 " data-time=" 1688095800 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;border-top: 1px black dotted;border-right: 1px black solid;'></div>
+</div><div style='font-size:0px;vertical-align:top;'><div id='YouTime1688010300' data-col=" 0 " data-row=" 15 " data-time=" 1688010300 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;'></div>
+<div id='YouTime1688096700' data-col=" 1 " data-row=" 15 " data-time=" 1688096700 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;border-right: 1px black solid;'></div>
+</div><div style='font-size:0px;vertical-align:top;'><div id='YouTime1688011200' data-col=" 0 " data-row=" 16 " data-time=" 1688011200 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;border-top: 1px black solid;'></div>
+<div id='YouTime1688097600' data-col=" 1 " data-row=" 16 " data-time=" 1688097600 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;border-top: 1px black solid;border-right: 1px black solid;'></div>
+</div><div style='font-size:0px;vertical-align:top;'><div id='YouTime1688012100' data-col=" 0 " data-row=" 17 " data-time=" 1688012100 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;'></div>
+<div id='YouTime1688098500' data-col=" 1 " data-row=" 17 " data-time=" 1688098500 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;border-right: 1px black solid;'></div>
+</div><div style='font-size:0px;vertical-align:top;'><div id='YouTime1688013000' data-col=" 0 " data-row=" 18 " data-time=" 1688013000 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;border-top: 1px black dotted;'></div>
+<div id='YouTime1688099400' data-col=" 1 " data-row=" 18 " data-time=" 1688099400 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;border-top: 1px black dotted;border-right: 1px black solid;'></div>
+</div><div style='font-size:0px;vertical-align:top;'><div id='YouTime1688013900' data-col=" 0 " data-row=" 19 " data-time=" 1688013900 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;'></div>
+<div id='YouTime1688100300' data-col=" 1 " data-row=" 19 " data-time=" 1688100300 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;border-right: 1px black solid;'></div>
+</div><div style='font-size:0px;vertical-align:top;'><div id='YouTime1688014800' data-col=" 0 " data-row=" 20 " data-time=" 1688014800 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;border-top: 1px black solid;'></div>
+<div id='YouTime1688101200' data-col=" 1 " data-row=" 20 " data-time=" 1688101200 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;border-top: 1px black solid;border-right: 1px black solid;'></div>
+</div><div style='font-size:0px;vertical-align:top;'><div id='YouTime1688015700' data-col=" 0 " data-row=" 21 " data-time=" 1688015700 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;'></div>
+<div id='YouTime1688102100' data-col=" 1 " data-row=" 21 " data-time=" 1688102100 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;border-right: 1px black solid;'></div>
+</div><div style='font-size:0px;vertical-align:top;'><div id='YouTime1688016600' data-col=" 0 " data-row=" 22 " data-time=" 1688016600 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;border-top: 1px black dotted;'></div>
+<div id='YouTime1688103000' data-col=" 1 " data-row=" 22 " data-time=" 1688103000 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;border-top: 1px black dotted;border-right: 1px black solid;'></div>
+</div><div style='font-size:0px;vertical-align:top;'><div id='YouTime1688017500' data-col=" 0 " data-row=" 23 " data-time=" 1688017500 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;'></div>
+<div id='YouTime1688103900' data-col=" 1 " data-row=" 23 " data-time=" 1688103900 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;border-right: 1px black solid;'></div>
+</div><div style='font-size:0px;vertical-align:top;'><div id='YouTime1688018400' data-col=" 0 " data-row=" 24 " data-time=" 1688018400 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;border-top: 1px black solid;'></div>
+<div id='YouTime1688104800' data-col=" 1 " data-row=" 24 " data-time=" 1688104800 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;border-top: 1px black solid;border-right: 1px black solid;'></div>
+</div><div style='font-size:0px;vertical-align:top;'><div id='YouTime1688019300' data-col=" 0 " data-row=" 25 " data-time=" 1688019300 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;'></div>
+<div id='YouTime1688105700' data-col=" 1 " data-row=" 25 " data-time=" 1688105700 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;border-right: 1px black solid;'></div>
+</div><div style='font-size:0px;vertical-align:top;'><div id='YouTime1688020200' data-col=" 0 " data-row=" 26 " data-time=" 1688020200 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;border-top: 1px black dotted;'></div>
+<div id='YouTime1688106600' data-col=" 1 " data-row=" 26 " data-time=" 1688106600 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;border-top: 1px black dotted;border-right: 1px black solid;'></div>
+</div><div style='font-size:0px;vertical-align:top;'><div id='YouTime1688021100' data-col=" 0 " data-row=" 27 " data-time=" 1688021100 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;'></div>
+<div id='YouTime1688107500' data-col=" 1 " data-row=" 27 " data-time=" 1688107500 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;border-right: 1px black solid;'></div>
+</div><div style='font-size:0px;vertical-align:top;'><div id='YouTime1688022000' data-col=" 0 " data-row=" 28 " data-time=" 1688022000 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;border-top: 1px black solid;'></div>
+<div id='YouTime1688108400' data-col=" 1 " data-row=" 28 " data-time=" 1688108400 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;border-top: 1px black solid;border-right: 1px black solid;'></div>
+</div><div style='font-size:0px;vertical-align:top;'><div id='YouTime1688022900' data-col=" 0 " data-row=" 29 " data-time=" 1688022900 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;'></div>
+<div id='YouTime1688109300' data-col=" 1 " data-row=" 29 " data-time=" 1688109300 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;border-right: 1px black solid;'></div>
+</div><div style='font-size:0px;vertical-align:top;'><div id='YouTime1688023800' data-col=" 0 " data-row=" 30 " data-time=" 1688023800 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;border-top: 1px black dotted;'></div>
+<div id='YouTime1688110200' data-col=" 1 " data-row=" 30 " data-time=" 1688110200 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;border-top: 1px black dotted;border-right: 1px black solid;'></div>
+</div><div style='font-size:0px;vertical-align:top;'><div id='YouTime1688024700' data-col=" 0 " data-row=" 31 " data-time=" 1688024700 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;margin-bottom:7px;border-bottom: 1px black solid;'></div>
+<div id='YouTime1688111100' data-col=" 1 " data-row=" 31 " data-time=" 1688111100 " onmousedown='SelectFromHere(event);'  onmouseover='SelectToHere(event);'  ontouchstart='SelectFromHereByTouch(event);'  ontouchmove='SelectToHereByTouch(event);'  ontouchend='SelectStopByTouch(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffdede;margin-bottom:7px;border-bottom: 1px black solid;border-right: 1px black solid;'></div>
+</div></div></div></div></div></div></div><br><br></div><div onselectstart=" return false;" style=" width:50%;display:inline-block;*display:inline;zoom:1; white-space:nowrap;overflow:auto; vertical-align:top; text-align:center;"><div class='HalfPanel'>
+    <div id='GroupAvailability'>
+    <div id=" GroupGrid ">
+  <div class='GridTitle' style='display:inline-block;*display:inline;zoom:1; margin-left:40px;'>
+  Group's Availability<div class='GridSubtitle'><div style='padding:5px';><div id='MinAvailable' style='display:inline-block;*display:inline;zoom:1;'>0/4</div>&nbsp;Available<div id='GroupKey' style='display:inline-block;*display:inline;zoom:1;vertical-align:middle;padding:0px 5px 0px 5px;'><table width=100 height=10 cellpadding=0 cellspacing=0 style='border: solid 1px black'><tr><td bgcolor=#ffffff>&nbsp;</td><td bgcolor=#bbddaa>&nbsp;</td><td bgcolor=#77bb55>&nbsp;</td><td bgcolor=#339900>&nbsp;</td></tr></table></div><div id='MaxAvailable' style='display:inline-block;*display:inline;zoom:1;'>3/4</div>&nbsp;Available</div>Mouseover the Calendar to See Who Is Available</div>
+  </div><br clear=all>
+  
+  <div style='display:inline-block;*display:inline;zoom:1; vertical-align:bottom;text-align:right;'><div style='font-size:0px;vertical-align:top;'><div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;margin-top: 1px;border-right: 1px white solid;'></div></div><div style='font-size:0px;vertical-align:top;'><div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;border-right: 1px white solid;'></div></div><div style='font-size:0px;vertical-align:top;'><div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;margin-top: 1px;border-right: 1px white solid;'></div></div><div style='font-size:0px;vertical-align:top;'><div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;border-right: 1px white solid;'><div style='text-align:right;width:44px;height:9;font-size:10px;margin:4px 4px 0px 0px;'>9:00  AM&nbsp;</div></div></div><div style='font-size:0px;vertical-align:top;'><div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;margin-top: 1px;border-right: 1px white solid;'></div></div><div style='font-size:0px;vertical-align:top;'><div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;border-right: 1px white solid;'></div></div><div style='font-size:0px;vertical-align:top;'><div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;margin-top: 1px;border-right: 1px white solid;'></div></div><div style='font-size:0px;vertical-align:top;'><div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;border-right: 1px white solid;'><div style='text-align:right;width:44px;height:9;font-size:10px;margin:4px 4px 0px 0px;'>10:00  AM&nbsp;</div></div></div><div style='font-size:0px;vertical-align:top;'><div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;margin-top: 1px;border-right: 1px white solid;'></div></div><div style='font-size:0px;vertical-align:top;'><div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;border-right: 1px white solid;'></div></div><div style='font-size:0px;vertical-align:top;'><div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;margin-top: 1px;border-right: 1px white solid;'></div></div><div style='font-size:0px;vertical-align:top;'><div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;border-right: 1px white solid;'><div style='text-align:right;width:44px;height:9;font-size:10px;margin:4px 4px 0px 0px;'>11:00  AM&nbsp;</div></div></div><div style='font-size:0px;vertical-align:top;'><div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;margin-top: 1px;border-right: 1px white solid;'></div></div><div style='font-size:0px;vertical-align:top;'><div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;border-right: 1px white solid;'></div></div><div style='font-size:0px;vertical-align:top;'><div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;margin-top: 1px;border-right: 1px white solid;'></div></div><div style='font-size:0px;vertical-align:top;'><div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;border-right: 1px white solid;'><div style='text-align:right;width:44px;height:9;font-size:10px;margin:4px 4px 0px 0px;'>12:00  PM&nbsp;</div></div></div><div style='font-size:0px;vertical-align:top;'><div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;margin-top: 1px;border-right: 1px white solid;'></div></div><div style='font-size:0px;vertical-align:top;'><div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;border-right: 1px white solid;'></div></div><div style='font-size:0px;vertical-align:top;'><div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;margin-top: 1px;border-right: 1px white solid;'></div></div><div style='font-size:0px;vertical-align:top;'><div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;border-right: 1px white solid;'><div style='text-align:right;width:44px;height:9;font-size:10px;margin:4px 4px 0px 0px;'>1:00  PM&nbsp;</div></div></div><div style='font-size:0px;vertical-align:top;'><div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;margin-top: 1px;border-right: 1px white solid;'></div></div><div style='font-size:0px;vertical-align:top;'><div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;border-right: 1px white solid;'></div></div><div style='font-size:0px;vertical-align:top;'><div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;margin-top: 1px;border-right: 1px white solid;'></div></div><div style='font-size:0px;vertical-align:top;'><div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;border-right: 1px white solid;'><div style='text-align:right;width:44px;height:9;font-size:10px;margin:4px 4px 0px 0px;'>2:00  PM&nbsp;</div></div></div><div style='font-size:0px;vertical-align:top;'><div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;margin-top: 1px;border-right: 1px white solid;'></div></div><div style='font-size:0px;vertical-align:top;'><div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;border-right: 1px white solid;'></div></div><div style='font-size:0px;vertical-align:top;'><div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;margin-top: 1px;border-right: 1px white solid;'></div></div><div style='font-size:0px;vertical-align:top;'><div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;border-right: 1px white solid;'><div style='text-align:right;width:44px;height:9;font-size:10px;margin:4px 4px 0px 0px;'>3:00  PM&nbsp;</div></div></div><div style='font-size:0px;vertical-align:top;'><div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;margin-top: 1px;border-right: 1px white solid;'></div></div><div style='font-size:0px;vertical-align:top;'><div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;border-right: 1px white solid;'></div></div><div style='font-size:0px;vertical-align:top;'><div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;margin-top: 1px;border-right: 1px white solid;'></div></div><div style='font-size:0px;vertical-align:top;'><div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;border-right: 1px white solid;'><div style='text-align:right;width:44px;height:9;font-size:10px;margin:4px 4px 0px 0px;'>4:00  PM&nbsp;</div></div></div><div style='font-size:0px;vertical-align:top;'><div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;margin-top: 1px;border-right: 1px white solid;'></div></div><div style='font-size:0px;vertical-align:top;'><div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;border-right: 1px white solid;'></div></div><div style='font-size:0px;vertical-align:top;'><div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;margin-top: 1px;border-right: 1px white solid;'></div></div><div style='font-size:0px;vertical-align:top;'><div style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px white solid;margin-bottom:8px;border-right: 1px white solid;'><div style='text-align:right;width:44px;height:9;font-size:10px;margin:4px 4px 0px 0px;'>5:00  PM&nbsp;</div></div></div></div><div style='display:inline-block;*display:inline;zoom:1;vertical-align:bottom;text-align:right;'">
+                                        <div style="display:inline-block;*display:inline;zoom:1;text-align:center;font-size:10px;width:44px;padding-right:1px;">
+                                            Jun 29<br>
+                                            <div style='display:inline-block;*display:inline;zoom:1;font-size:16px;'>Thu</div>
+                                        </div>
+                                        <div style="display:inline-block;*display:inline;zoom:1;text-align:center;font-size:10px;width:44px;padding-right:1px;">
+                                            Jun 30<br>
+                                            <div style='display:inline-block;*display:inline;zoom:1;font-size:16px;'>Fri</div>
+                                        </div>
+                                        <div id='GroupGridSlots' class='GroupGrid' style='background-color:white; display:inline'>
+                                            <div style='font-size:0px;vertical-align:top;'>
+                                                <div id='GroupTime1687996800' data-col="0" data-row="0" data-time="1687996800" onmouseover='ShowSlot(1687996800,"Thu 29 Jun 2023 09:00:00 AM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffffff;border-top: 1px black solid;'></div>
+                                                <div id='GroupTime1688083200' data-col="1" data-row="0" data-time="1688083200" onmouseover='ShowSlot(1688083200,"Fri 30 Jun 2023 09:00:00 AM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffffff;border-top: 1px black solid;border-right: 1px black solid;'></div>
+                                            </div>
+                                            <div style='font-size:0px;vertical-align:top;'>
+                                                <div id='GroupTime1687997700' data-col="0" data-row="1" data-time="1687997700" onmouseover='ShowSlot(1687997700,"Thu 29 Jun 2023 09:15:00 AM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #bbddaa;'></div>
+                                                <div id='GroupTime1688084100' data-col="1" data-row="1" data-time="1688084100" onmouseover='ShowSlot(1688084100,"Fri 30 Jun 2023 09:15:00 AM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #bbddaa;border-right: 1px black solid;'></div>
+                                            </div>
+                                            <div style='font-size:0px;vertical-align:top;'>
+                                                <div id='GroupTime1687998600' data-col="0" data-row="2" data-time="1687998600" onmouseover='ShowSlot(1687998600,"Thu 29 Jun 2023 09:30:00 AM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #bbddaa;border-top: 1px black dotted;'></div>
+                                                <div id='GroupTime1688085000' data-col="1" data-row="2" data-time="1688085000" onmouseover='ShowSlot(1688085000,"Fri 30 Jun 2023 09:30:00 AM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #bbddaa;border-top: 1px black dotted;border-right: 1px black solid;'></div>
+                                            </div>
+                                            <div style='font-size:0px;vertical-align:top;'>
+                                                <div id='GroupTime1687999500' data-col="0" data-row="3" data-time="1687999500" onmouseover='ShowSlot(1687999500,"Thu 29 Jun 2023 09:45:00 AM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #bbddaa;'></div>
+                                                <div id='GroupTime1688085900' data-col="1" data-row="3" data-time="1688085900" onmouseover='ShowSlot(1688085900,"Fri 30 Jun 2023 09:45:00 AM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #bbddaa;border-right: 1px black solid;'></div>
+                                            </div>
+                                            <div style='font-size:0px;vertical-align:top;'>
+                                                <div id='GroupTime1688000400' data-col="0" data-row="4" data-time="1688000400" onmouseover='ShowSlot(1688000400,"Thu 29 Jun 2023 10:00:00 AM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #bbddaa;border-top: 1px black solid;'></div>
+                                                <div id='GroupTime1688086800' data-col="1" data-row="4" data-time="1688086800" onmouseover='ShowSlot(1688086800,"Fri 30 Jun 2023 10:00:00 AM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #bbddaa;border-top: 1px black solid;border-right: 1px black solid;'></div>
+                                            </div>
+                                            <div style='font-size:0px;vertical-align:top;'>
+                                                <div id='GroupTime1688001300' data-col="0" data-row="5" data-time="1688001300" onmouseover='ShowSlot(1688001300,"Thu 29 Jun 2023 10:15:00 AM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #77bb55;'></div>
+                                                <div id='GroupTime1688087700' data-col="1" data-row="5" data-time="1688087700" onmouseover='ShowSlot(1688087700,"Fri 30 Jun 2023 10:15:00 AM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #339900;border-right: 1px black solid;'></div>
+                                            </div>
+                                            <div style='font-size:0px;vertical-align:top;'>
+                                                <div id='GroupTime1688002200' data-col="0" data-row="6" data-time="1688002200" onmouseover='ShowSlot(1688002200,"Thu 29 Jun 2023 10:30:00 AM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #77bb55;border-top: 1px black dotted;'></div>
+                                                <div id='GroupTime1688088600' data-col="1" data-row="6" data-time="1688088600" onmouseover='ShowSlot(1688088600,"Fri 30 Jun 2023 10:30:00 AM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #339900;border-top: 1px black dotted;border-right: 1px black solid;'></div>
+                                            </div>
+                                            <div style='font-size:0px;vertical-align:top;'>
+                                                <div id='GroupTime1688003100' data-col="0" data-row="7" data-time="1688003100" onmouseover='ShowSlot(1688003100,"Thu 29 Jun 2023 10:45:00 AM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #77bb55;'></div>
+                                                <div id='GroupTime1688089500' data-col="1" data-row="7" data-time="1688089500" onmouseover='ShowSlot(1688089500,"Fri 30 Jun 2023 10:45:00 AM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #339900;border-right: 1px black solid;'></div>
+                                            </div>
+                                            <div style='font-size:0px;vertical-align:top;'>
+                                                <div id='GroupTime1688004000' data-col="0" data-row="8" data-time="1688004000" onmouseover='ShowSlot(1688004000,"Thu 29 Jun 2023 11:00:00 AM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #bbddaa;border-top: 1px black solid;'></div>
+                                                <div id='GroupTime1688090400' data-col="1" data-row="8" data-time="1688090400" onmouseover='ShowSlot(1688090400,"Fri 30 Jun 2023 11:00:00 AM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #77bb55;border-top: 1px black solid;border-right: 1px black solid;'></div>
+                                            </div>
+                                            <div style='font-size:0px;vertical-align:top;'>
+                                                <div id='GroupTime1688004900' data-col="0" data-row="9" data-time="1688004900" onmouseover='ShowSlot(1688004900,"Thu 29 Jun 2023 11:15:00 AM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #bbddaa;'></div>
+                                                <div id='GroupTime1688091300' data-col="1" data-row="9" data-time="1688091300" onmouseover='ShowSlot(1688091300,"Fri 30 Jun 2023 11:15:00 AM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #77bb55;border-right: 1px black solid;'></div>
+                                            </div>
+                                            <div style='font-size:0px;vertical-align:top;'>
+                                                <div id='GroupTime1688005800' data-col="0" data-row="10" data-time="1688005800" onmouseover='ShowSlot(1688005800,"Thu 29 Jun 2023 11:30:00 AM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffffff;border-top: 1px black dotted;'></div>
+                                                <div id='GroupTime1688092200' data-col="1" data-row="10" data-time="1688092200" onmouseover='ShowSlot(1688092200,"Fri 30 Jun 2023 11:30:00 AM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #bbddaa;border-top: 1px black dotted;border-right: 1px black solid;'></div>
+                                            </div>
+                                            <div style='font-size:0px;vertical-align:top;'>
+                                                <div id='GroupTime1688006700' data-col="0" data-row="11" data-time="1688006700" onmouseover='ShowSlot(1688006700,"Thu 29 Jun 2023 11:45:00 AM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffffff;'></div>
+                                                <div id='GroupTime1688093100' data-col="1" data-row="11" data-time="1688093100" onmouseover='ShowSlot(1688093100,"Fri 30 Jun 2023 11:45:00 AM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #bbddaa;border-right: 1px black solid;'></div>
+                                            </div>
+                                            <div style='font-size:0px;vertical-align:top;'>
+                                                <div id='GroupTime1688007600' data-col="0" data-row="12" data-time="1688007600" onmouseover='ShowSlot(1688007600,"Thu 29 Jun 2023 12:00:00 PM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffffff;border-top: 1px black solid;'></div>
+                                                <div id='GroupTime1688094000' data-col="1" data-row="12" data-time="1688094000" onmouseover='ShowSlot(1688094000,"Fri 30 Jun 2023 12:00:00 PM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #bbddaa;border-top: 1px black solid;border-right: 1px black solid;'></div>
+                                            </div>
+                                            <div style='font-size:0px;vertical-align:top;'>
+                                                <div id='GroupTime1688008500' data-col="0" data-row="13" data-time="1688008500" onmouseover='ShowSlot(1688008500,"Thu 29 Jun 2023 12:15:00 PM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffffff;'></div>
+                                                <div id='GroupTime1688094900' data-col="1" data-row="13" data-time="1688094900" onmouseover='ShowSlot(1688094900,"Fri 30 Jun 2023 12:15:00 PM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #bbddaa;border-right: 1px black solid;'></div>
+                                            </div>
+                                            <div style='font-size:0px;vertical-align:top;'>
+                                                <div id='GroupTime1688009400' data-col="0" data-row="14" data-time="1688009400" onmouseover='ShowSlot(1688009400,"Thu 29 Jun 2023 12:30:00 PM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffffff;border-top: 1px black dotted;'></div>
+                                                <div id='GroupTime1688095800' data-col="1" data-row="14" data-time="1688095800" onmouseover='ShowSlot(1688095800,"Fri 30 Jun 2023 12:30:00 PM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #bbddaa;border-top: 1px black dotted;border-right: 1px black solid;'></div>
+                                            </div>
+                                            <div style='font-size:0px;vertical-align:top;'>
+                                                <div id='GroupTime1688010300' data-col="0" data-row="15" data-time="1688010300" onmouseover='ShowSlot(1688010300,"Thu 29 Jun 2023 12:45:00 PM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffffff;'></div>
+                                                <div id='GroupTime1688096700' data-col="1" data-row="15" data-time="1688096700" onmouseover='ShowSlot(1688096700,"Fri 30 Jun 2023 12:45:00 PM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #bbddaa;border-right: 1px black solid;'></div>
+                                            </div>
+                                            <div style='font-size:0px;vertical-align:top;'>
+                                                <div id='GroupTime1688011200' data-col="0" data-row="16" data-time="1688011200" onmouseover='ShowSlot(1688011200,"Thu 29 Jun 2023 01:00:00 PM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffffff;border-top: 1px black solid;'></div>
+                                                <div id='GroupTime1688097600' data-col="1" data-row="16" data-time="1688097600" onmouseover='ShowSlot(1688097600,"Fri 30 Jun 2023 01:00:00 PM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #bbddaa;border-top: 1px black solid;border-right: 1px black solid;'></div>
+                                            </div>
+                                            <div style='font-size:0px;vertical-align:top;'>
+                                                <div id='GroupTime1688012100' data-col="0" data-row="17" data-time="1688012100" onmouseover='ShowSlot(1688012100,"Thu 29 Jun 2023 01:15:00 PM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffffff;'></div>
+                                                <div id='GroupTime1688098500' data-col="1" data-row="17" data-time="1688098500" onmouseover='ShowSlot(1688098500,"Fri 30 Jun 2023 01:15:00 PM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #bbddaa;border-right: 1px black solid;'></div>
+                                            </div>
+                                            <div style='font-size:0px;vertical-align:top;'>
+                                                <div id='GroupTime1688013000' data-col="0" data-row="18" data-time="1688013000" onmouseover='ShowSlot(1688013000,"Thu 29 Jun 2023 01:30:00 PM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffffff;border-top: 1px black dotted;'></div>
+                                                <div id='GroupTime1688099400' data-col="1" data-row="18" data-time="1688099400" onmouseover='ShowSlot(1688099400,"Fri 30 Jun 2023 01:30:00 PM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #bbddaa;border-top: 1px black dotted;border-right: 1px black solid;'></div>
+                                            </div>
+                                            <div style='font-size:0px;vertical-align:top;'>
+                                                <div id='GroupTime1688013900' data-col="0" data-row="19" data-time="1688013900" onmouseover='ShowSlot(1688013900,"Thu 29 Jun 2023 01:45:00 PM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffffff;'></div>
+                                                <div id='GroupTime1688100300' data-col="1" data-row="19" data-time="1688100300" onmouseover='ShowSlot(1688100300,"Fri 30 Jun 2023 01:45:00 PM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #bbddaa;border-right: 1px black solid;'></div>
+                                            </div>
+                                            <div style='font-size:0px;vertical-align:top;'>
+                                                <div id='GroupTime1688014800' data-col="0" data-row="20" data-time="1688014800" onmouseover='ShowSlot(1688014800,"Thu 29 Jun 2023 02:00:00 PM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffffff;border-top: 1px black solid;'></div>
+                                                <div id='GroupTime1688101200' data-col="1" data-row="20" data-time="1688101200" onmouseover='ShowSlot(1688101200,"Fri 30 Jun 2023 02:00:00 PM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #bbddaa;border-top: 1px black solid;border-right: 1px black solid;'></div>
+                                            </div>
+                                            <div style='font-size:0px;vertical-align:top;'>
+                                                <div id='GroupTime1688015700' data-col="0" data-row="21" data-time="1688015700" onmouseover='ShowSlot(1688015700,"Thu 29 Jun 2023 02:15:00 PM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffffff;'></div>
+                                                <div id='GroupTime1688102100' data-col="1" data-row="21" data-time="1688102100" onmouseover='ShowSlot(1688102100,"Fri 30 Jun 2023 02:15:00 PM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffffff;border-right: 1px black solid;'></div>
+                                            </div>
+                                            <div style='font-size:0px;vertical-align:top;'>
+                                                <div id='GroupTime1688016600' data-col="0" data-row="22" data-time="1688016600" onmouseover='ShowSlot(1688016600,"Thu 29 Jun 2023 02:30:00 PM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffffff;border-top: 1px black dotted;'></div>
+                                                <div id='GroupTime1688103000' data-col="1" data-row="22" data-time="1688103000" onmouseover='ShowSlot(1688103000,"Fri 30 Jun 2023 02:30:00 PM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffffff;border-top: 1px black dotted;border-right: 1px black solid;'></div>
+                                            </div>
+                                            <div style='font-size:0px;vertical-align:top;'>
+                                                <div id='GroupTime1688017500' data-col="0" data-row="23" data-time="1688017500" onmouseover='ShowSlot(1688017500,"Thu 29 Jun 2023 02:45:00 PM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffffff;'></div>
+                                                <div id='GroupTime1688103900' data-col="1" data-row="23" data-time="1688103900" onmouseover='ShowSlot(1688103900,"Fri 30 Jun 2023 02:45:00 PM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffffff;border-right: 1px black solid;'></div>
+                                            </div>
+                                            <div style='font-size:0px;vertical-align:top;'>
+                                                <div id='GroupTime1688018400' data-col="0" data-row="24" data-time="1688018400" onmouseover='ShowSlot(1688018400,"Thu 29 Jun 2023 03:00:00 PM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffffff;border-top: 1px black solid;'></div>
+                                                <div id='GroupTime1688104800' data-col="1" data-row="24" data-time="1688104800" onmouseover='ShowSlot(1688104800,"Fri 30 Jun 2023 03:00:00 PM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffffff;border-top: 1px black solid;border-right: 1px black solid;'></div>
+                                            </div>
+                                            <div style='font-size:0px;vertical-align:top;'>
+                                                <div id='GroupTime1688019300' data-col="0" data-row="25" data-time="1688019300" onmouseover='ShowSlot(1688019300,"Thu 29 Jun 2023 03:15:00 PM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffffff;'></div>
+                                                <div id='GroupTime1688105700' data-col="1" data-row="25" data-time="1688105700" onmouseover='ShowSlot(1688105700,"Fri 30 Jun 2023 03:15:00 PM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffffff;border-right: 1px black solid;'></div>
+                                            </div>
+                                            <div style='font-size:0px;vertical-align:top;'>
+                                                <div id='GroupTime1688020200' data-col="0" data-row="26" data-time="1688020200" onmouseover='ShowSlot(1688020200,"Thu 29 Jun 2023 03:30:00 PM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #bbddaa;border-top: 1px black dotted;'></div>
+                                                <div id='GroupTime1688106600' data-col="1" data-row="26" data-time="1688106600" onmouseover='ShowSlot(1688106600,"Fri 30 Jun 2023 03:30:00 PM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #bbddaa;border-top: 1px black dotted;border-right: 1px black solid;'></div>
+                                            </div>
+                                            <div style='font-size:0px;vertical-align:top;'>
+                                                <div id='GroupTime1688021100' data-col="0" data-row="27" data-time="1688021100" onmouseover='ShowSlot(1688021100,"Thu 29 Jun 2023 03:45:00 PM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #bbddaa;'></div>
+                                                <div id='GroupTime1688107500' data-col="1" data-row="27" data-time="1688107500" onmouseover='ShowSlot(1688107500,"Fri 30 Jun 2023 03:45:00 PM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #bbddaa;border-right: 1px black solid;'></div>
+                                            </div>
+                                            <div style='font-size:0px;vertical-align:top;'>
+                                                <div id='GroupTime1688022000' data-col="0" data-row="28" data-time="1688022000" onmouseover='ShowSlot(1688022000,"Thu 29 Jun 2023 04:00:00 PM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #bbddaa;border-top: 1px black solid;'></div>
+                                                <div id='GroupTime1688108400' data-col="1" data-row="28" data-time="1688108400" onmouseover='ShowSlot(1688108400,"Fri 30 Jun 2023 04:00:00 PM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #bbddaa;border-top: 1px black solid;border-right: 1px black solid;'></div>
+                                            </div>
+                                            <div style='font-size:0px;vertical-align:top;'>
+                                                <div id='GroupTime1688022900' data-col="0" data-row="29" data-time="1688022900" onmouseover='ShowSlot(1688022900,"Thu 29 Jun 2023 04:15:00 PM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffffff;'></div>
+                                                <div id='GroupTime1688109300' data-col="1" data-row="29" data-time="1688109300" onmouseover='ShowSlot(1688109300,"Fri 30 Jun 2023 04:15:00 PM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffffff;border-right: 1px black solid;'></div>
+                                            </div>
+                                            <div style='font-size:0px;vertical-align:top;'>
+                                                <div id='GroupTime1688023800' data-col="0" data-row="30" data-time="1688023800" onmouseover='ShowSlot(1688023800,"Thu 29 Jun 2023 04:30:00 PM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffffff;border-top: 1px black dotted;'></div>
+                                                <div id='GroupTime1688110200' data-col="1" data-row="30" data-time="1688110200" onmouseover='ShowSlot(1688110200,"Fri 30 Jun 2023 04:30:00 PM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffffff;border-top: 1px black dotted;border-right: 1px black solid;'></div>
+                                            </div>
+                                            <div style='font-size:0px;vertical-align:top;'>
+                                                <div id='GroupTime1688024700' data-col="0" data-row="31" data-time="1688024700" onmouseover='ShowSlot(1688024700,"Thu 29 Jun 2023 04:45:00 PM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffffff;margin-bottom:7px;border-bottom: 1px black solid;'></div>
+                                                <div id='GroupTime1688111100' data-col="1" data-row="31" data-time="1688111100" onmouseover='ShowSlot(1688111100,"Fri 30 Jun 2023 04:45:00 PM KST");' onmouseout='RestoreLeftSide(event);' ontouchstart='ShowSlotByTouch(event);' ontouchmove='ShowSlotByTouchMove(event);' ontouchend='RestoreLeftSide(event);' style='vertical-align:top;display:inline-block;*display:inline;zoom:1;width:44px;height:9px;font-size:0px;border-left: 1px black solid;background: #ffffff;margin-bottom:7px;border-bottom: 1px black solid;border-right: 1px black solid;'></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <br>
+                    </div>
+                </div>
+                </div>
+                </body>
+                </html>
+                

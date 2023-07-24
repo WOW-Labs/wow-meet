@@ -1,14 +1,7 @@
-/** @jsxImportSource @emotion/react */
+import { type NextPage } from "next";
 
-import { Example } from "@wow-lab/common";
-import { api } from "~/utils/api";
+const Home: NextPage = () => {
+  return <div>Hello, T3 App</div>;
+};
 
-export default function Home() {
-
-  return (
-    <>
-    <Example bgColor={"red"}/>
-    </>
-  );
-}
-
+export default Home;
