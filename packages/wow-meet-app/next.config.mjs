@@ -18,5 +18,10 @@ const config = {
     locales: ["en"],
     defaultLocale: "en",
   },
+
+  compiler: {
+    emotion: true,
+  },
 };
+
 export default config;

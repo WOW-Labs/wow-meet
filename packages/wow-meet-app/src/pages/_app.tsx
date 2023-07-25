@@ -1,17 +1,16 @@
-import { type Session } from "next-auth";
-import { SessionProvider } from "next-auth/react";
-import { type AppType } from "next/app";
-import "~/styles/globals.css";
+import reset from "~/styles/reset";
 import { api } from "~/utils/api";
+import { Global } from "@emotion/react";
+import "@fortawesome/fontawesome-svg-core/styles.css";
+import { type AppType } from "next/app";
+import { RecoilRoot } from "recoil";
 
-const MyApp: AppType<{ session: Session | null }> = ({
-  Component,
-  pageProps: { session, ...pageProps },
-}) => {
+const MyApp: AppType = ({ Component, pageProps }) => {
   return (
-    <SessionProvider session={session}>
+    <RecoilRoot>
+      <Global styles={reset} />
       <Component {...pageProps} />
-    </SessionProvider>
+    </RecoilRoot>
   );
 };
 

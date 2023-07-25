@@ -1,7 +1,27 @@
-import { type NextPage } from "next";
+import {
+  Gradient,
+  Title,
+  Line,
+  Logo,
+  Button,
+  Caption,
+} from "~/components/Landing";
+import { useRouter } from "next/router";
 
-const Home: NextPage = () => {
-  return <div>Hello, T3 App</div>;
-};
+export default function Home() {
+  const router = useRouter();
 
-export default Home;
+  const moveToCreator = () => {
+    router.push("/create");
+  };
+
+  return (
+    <Gradient>
+      <Title />
+      <Line />
+      <Logo />
+      <Button onClick={moveToCreator} />
+      <Caption />
+    </Gradient>
+  );
+}
