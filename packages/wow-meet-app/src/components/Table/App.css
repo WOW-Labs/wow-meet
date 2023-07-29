@@ -1,0 +1,89 @@
+html,
+body {
+  max-width: 500px;
+  overflow-x: hidden;
+  margin: 0 auto;
+  background-color: #000;
+}
+
+.main {
+  min-height: 100vh;
+  background-color: #fff;
+}
+
+.top{
+  width: 100%;
+  height: 56px;
+  line-height: 56px;
+  background-color: #2C5BF7 ;
+  color: #fff;
+  text-align: center;
+  position: fixed;
+  top: 0;
+}
+
+.btm{
+  width: 100%;
+  height: 48px;
+  line-height: 48px;
+  background-color: #2C5BF7 ;
+  color: #fff;
+  text-align: center;
+  width: 100%;
+}
+
+.info{
+  width: 90%;
+  border-radius: 10px;
+  background-color: #eee;
+  height: 101px;
+  margin: 0 auto;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  padding: 5px;
+}
+
+.tip{
+  color: #2C5BF7 ;
+  font-size: 12px;
+  text-align: center;
+  width: 90%;
+}
+
+.table{
+  width: 95%;
+  height: 498px;
+  margin: 0 auto;
+  box-shadow: 5px 5px 5px #eee;
+  margin: 10px;
+  overflow: scroll;
+}
+
+.time{
+  height: 100%;
+  width: 600px;
+  margin: 10px 10px 10px 40px;
+  background-color: #eee;
+}
+
+.timeContainer {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 1px;
+  border: 1px dotted #000;
+}
+
+.row {
+  display: flex;
+}
+
+.cell {
+  width: 60px;
+  height: 20px;
+  border: 1px dotted #000;
+}
+
+.selectedCell {
+  background-color: yellow;
+}

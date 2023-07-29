@@ -16,6 +16,7 @@
     "jsx": "preserve",
     "incremental": true,
     "noUncheckedIndexedAccess": true,
+    "types": ["@emotion/react/types/css-prop"],
     "baseUrl": ".",
     "paths": {
       "~/*": ["./src/*"]
