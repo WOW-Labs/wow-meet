@@ -1,15 +1,15 @@
+import styled from "@emotion/styled";
+import { useAtom } from "jotai";
 import { modeState } from "~/store/modeAtom";
 import { COLORS } from "~/styles/colors";
 import { TYPO } from "~/styles/typo";
-import styled from "@emotion/styled";
-import { useRecoilValue } from "recoil";
 
 const Caption = () => {
-  const mode = useRecoilValue(modeState);
-  const tips = [
-    "타임테이블 활성화 영역을 터치해 참여자를 확인해보세요.",
-    "선호시간을 등록하면 내가 원하는 시간에 모일 확률 UP!",
-  ];
+  const [mode] = useAtom(modeState);
+  const tips = {
+    View: "타임테이블 활성화 영역을 터치해 참여자를 확인해보세요.",
+    Check: "선호시간을 등록하면 내가 원하는 시간에 모일 확률 UP!",
+  };
 
   return (
     <Line>
