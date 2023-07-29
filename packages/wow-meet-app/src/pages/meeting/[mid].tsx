@@ -10,6 +10,7 @@ import Frame from "~/components/Frame";
 import { SECTIONS } from "~/components/Meeting";
 import { Toast } from "~/components/Popup";
 import { ToastType } from "~/components/Popup/Toast";
+import { VoteTalk } from "~/components/Vote";
 import { Mode, modeState } from "~/store/modeAtom";
 import { mq } from "~/styles/breakpoints";
 import { COLORS } from "~/styles/colors";
@@ -119,6 +120,7 @@ const Meeting = () => {
           {curComp.button.title}
         </Button>
       </Container>
+      <VoteTalk />
     </Frame>
   );
 };
