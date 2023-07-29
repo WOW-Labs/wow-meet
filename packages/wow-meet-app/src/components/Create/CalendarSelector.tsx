@@ -1,26 +1,12 @@
-import { format } from "date-fns";
-import { DateRange, DayPicker } from "react-day-picker";
-import { useState } from "react";
-import "react-day-picker/dist/style.css";
 import { css } from "@emotion/react";
-import { TYPO } from "~/styles/typo";
 import styled from "@emotion/styled";
+import { useState } from "react";
+import { DateRange, DayPicker } from "react-day-picker";
+import "react-day-picker/dist/style.css";
+import { TYPO } from "~/styles/typo";
 
 const CalendarSelector = () => {
   const [range, setRange] = useState<DateRange | undefined>();
-
-  let footer = <p>Please pick the first day.</p>;
-  if (range?.from) {
-    if (!range.to) {
-      footer = <p>{format(range.from, "PPP")}</p>;
-    } else if (range.to) {
-      footer = (
-        <p>
-          {format(range.from, "PPP")}-{format(range.to, "PPP")}
-        </p>
-      );
-    }
-  }
 
   return (
     <CalendaarWrapper>

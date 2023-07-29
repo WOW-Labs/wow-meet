@@ -1,8 +1,9 @@
+import { css } from "@emotion/react";
+import styled from "@emotion/styled";
+import { useState } from "react";
 import { RankProps, dummydata } from "~/assets/dummydata";
 import { COLORS } from "~/styles/colors";
 import { TYPO } from "~/styles/typo";
-import styled from "@emotion/styled";
-import { useState } from "react";
 
 const SummarizeBox = () => {
   return (
@@ -32,8 +33,12 @@ const RenderItem = (item: RankProps, index: number) => {
 
   return (
     <Line>
-      <Bold color={item.color}>{index + 1}위</Bold>
-      <Bold color={item.color}>{item.date}</Bold>
+      <Bold color={item.color} css={lineChildStyles.rank}>
+        {index + 1}위
+      </Bold>
+      <Bold color={item.color} css={lineChildStyles.date}>
+        {item.date}
+      </Bold>
       <Bold color={item.color}>{item.member.length}명</Bold>
       <MemberList>
         {list.map((mem) => (
@@ -102,5 +107,17 @@ const MoreButton = styled.span`
   ${TYPO.text3.Reg};
   color: ${COLORS.grey400};
 `;
+
+const lineChildStyles = {
+  rank: css`
+    width: 2.3rem;
+  `,
+  date: css`
+    width: 6.3rem;
+  `,
+  list: css`
+    flex: 1;
+  `,
+};
 
 export default SummarizeBox;

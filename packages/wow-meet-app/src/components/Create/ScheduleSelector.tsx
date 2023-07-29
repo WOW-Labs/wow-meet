@@ -1,19 +1,21 @@
 import styled from "@emotion/styled";
+import { useState } from "react";
 import SegmentedControl from "../SegmentedControl";
-import { useCallback, useState } from "react";
-import WeeklySelector from "./WeeklySelector";
 import CalendarSelector from "./CalendarSelector";
+import WeeklySelector from "./WeeklySelector";
 
 const Menus = ["주간 정기모임", "특정 날짜 지정"];
 
 const ScheduleSelector = () => {
   const [item, setItem] = useState(0);
 
+  console.log("리마운트");
+
   const itemSelect = (idx: number) => {
     setItem(idx);
   };
 
-  const SelectBox = useCallback(() => {
+  const SelectBox = () => {
     switch (item) {
       case 0:
         return <WeeklySelector />;
@@ -22,7 +24,7 @@ const ScheduleSelector = () => {
       default:
         return <></>;
     }
-  }, [item]);
+  };
 
   return (
     <Container>

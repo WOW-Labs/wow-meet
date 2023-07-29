@@ -1,19 +1,27 @@
+import { SerializedStyles, css } from "@emotion/react";
+import styled from "@emotion/styled";
+import { useAtom } from "jotai";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import { dummyUrl, dummydata } from "~/assets/dummydata";
 import { Header } from "~/components/Bar";
 import { Button } from "~/components/Create";
 import Frame from "~/components/Frame";
+import { SECTIONS } from "~/components/Meeting";
+import { Toast } from "~/components/Popup";
+import { ToastType } from "~/components/Popup/Toast";
+import { Mode, modeState } from "~/store/modeAtom";
 import { mq } from "~/styles/breakpoints";
 import { COLORS } from "~/styles/colors";
 import { TYPO } from "~/styles/typo";
-import { css } from "@emotion/react";
-import styled from "@emotion/styled";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { SECTIONS } from "~/components/Meeting";
-import { useSetRecoilState } from "recoil";
-import { modeState } from "~/store/modeAtom";
-import { Toast } from "~/components/Popup";
-import { ToastType } from "~/components/Popup/Toast";
+
+type ComponentType = {
+  mode: Mode;
+  button: {
+    title: string;
+    style: SerializedStyles;
+  };
+};
 
 const Meeting = () => {
   /**--- router ---*/
@@ -32,10 +40,10 @@ const Meeting = () => {
   };
 
   /**--- state ---*/
-  const setMode = useSetRecoilState(modeState);
+  const [, setMode] = useAtom(modeState);
   const [mid, setMid] = useState(0);
-  const [curComp, setCurComp] = useState({
-    idx: 0,
+  const [curComp, setCurComp] = useState<ComponentType>({
+    mode: "View",
     button: buttonConfigs.view,
   });
   const [toast, setToast] = useState({
@@ -45,7 +53,7 @@ const Meeting = () => {
   });
 
   /**--- dependecy component ---*/
-  const CurSection = SECTIONS[curComp.idx];
+  const CurSection = SECTIONS[curComp.mode];
 
   /**--- function ---*/
   const settingMid = () => {
@@ -82,14 +90,17 @@ const Meeting = () => {
   };
 
   const changeMode = () => {
-    if (curComp.idx === 0) {
-      setCurComp({ idx: 1, button: buttonConfigs.check });
-      setMode(1);
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    } else {
-      setCurComp({ idx: 0, button: buttonConfigs.view });
-      setMode(0);
-      window.scrollTo({ top: 0, behavior: "smooth" });
+    switch (curComp.mode) {
+      case "View":
+        setCurComp({ mode: "Check", button: buttonConfigs.check });
+        setMode("Check");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        break;
+      case "Check":
+        setCurComp({ mode: "View", button: buttonConfigs.view });
+        setMode("View");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        break;
     }
   };
 

@@ -1,8 +1,8 @@
-import { COLORS } from "~/styles/colors";
-import { TYPO } from "~/styles/typo";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import { useState } from "react";
+import { COLORS } from "~/styles/colors";
+import { TYPO } from "~/styles/typo";
 
 const DAYS = ["월", "화", "수", "목", "금", "토", "일"];
 
@@ -15,7 +15,7 @@ const WeeklySelector = () => {
     else return false;
   };
 
-  const click = (item: string) => {
+  const isClicked = (item: string) => {
     if (check(item)) {
       setSelector((prev) => prev.filter((s) => s !== item));
     } else {
@@ -29,7 +29,7 @@ const WeeklySelector = () => {
       <WeekBox>
         {DAYS.map((day) => (
           <WeekItem
-            onClick={() => click(day)}
+            onClick={() => isClicked(day)}
             css={check(day) ? selectedStyle : nonSelectedStyle}
             key={day}
           >
