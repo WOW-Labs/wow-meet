@@ -105,6 +105,10 @@ const Meeting = () => {
     }
   };
 
+  const voting = () => {
+    router.push(`/meeting/${mid}/vote`);
+  };
+
   /**--- useEffect ---*/
   useEffect(() => {
     settingMid();
@@ -120,7 +124,7 @@ const Meeting = () => {
           {curComp.button.title}
         </Button>
       </Container>
-      <VoteTalk />
+      <VoteTalk onClick={voting} />
     </Frame>
   );
 };
