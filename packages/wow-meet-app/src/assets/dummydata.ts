@@ -25,4 +25,15 @@ export const dummydata = {
   ],
 };
 
+export const dummyVoteData = {
+  title: "여름 휴가 장소 투표",
+  list: [
+    { title: "코타키나발루" },
+    { title: "세부" },
+    { title: "괌" },
+    { title: "태국" },
+    { title: "싱가폴" },
+  ],
+};
+
 export const dummyUrl = "http://localhost:3000";
