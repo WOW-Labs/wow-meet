@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { dummyUrl, dummydata } from "~/assets/dummydata";
 import { Header } from "~/components/Bar";
 import { Button } from "~/components/Create";
-import Frame from "~/components/Frame";
+import Frame, { frameStyle } from "~/components/Frame";
 import { SECTIONS } from "~/components/Meeting";
 import { Toast } from "~/components/Popup";
 import { ToastType } from "~/components/Popup/Toast";
@@ -124,14 +124,6 @@ const Meeting = () => {
     </Frame>
   );
 };
-
-const frameStyle = css`
-  padding: 8rem 0rem;
-
-  ${mq[4]} {
-    padding: 7rem 0rem;
-  }
-`;
 
 const Container = styled.div`
   width: 100%;
