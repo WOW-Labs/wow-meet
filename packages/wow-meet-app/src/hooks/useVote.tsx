@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type VoteItem = {
   item: string;
@@ -7,6 +7,7 @@ type VoteItem = {
 
 export const useVote = (listArray: VoteItem[]) => {
   const [voteList, setVoteList] = useState<VoteItem[]>(listArray);
+  const [total, setTotal] = useState(0);
 
   /** user가 item에 투표했는가? */
   const isVoted = (item: string, user: string) => {
@@ -40,5 +41,17 @@ export const useVote = (listArray: VoteItem[]) => {
     });
   };
 
-  return { voteList, isVoted, vote };
+  const getTotalVoters = () => {
+    const allVoters = new Set();
+    voteList.forEach((voteItem) => {
+      voteItem.users.forEach((user) => {
+        allVoters.add(user);
+      });
+    });
+    setTotal(allVoters.size);
+  };
+
+  useEffect(getTotalVoters, [voteList]);
+
+  return { voteList, isVoted, vote, total };
 };

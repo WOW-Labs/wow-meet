@@ -7,13 +7,14 @@ import { useVote } from "~/hooks/useVote";
 const MY_NAME = "중규리";
 
 const VoteList = () => {
-  const { voteList, vote, isVoted } = useVote(dummyVoteData.list);
+  const { voteList, total, vote, isVoted } = useVote(dummyVoteData.list);
 
   return (
     <ListWrapper>
-      {dummyVoteData.list.map((listItem) => (
+      {voteList.map((listItem) => (
         <VoteItem
           {...listItem}
+          total={total}
           checked={isVoted(listItem.item, MY_NAME)}
           onChange={() => vote(listItem.item, MY_NAME)}
         />
