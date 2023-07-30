@@ -28,11 +28,14 @@ export const dummydata = {
 export const dummyVoteData = {
   title: "여름 휴가 장소 투표",
   list: [
-    { title: "코타키나발루" },
-    { title: "세부" },
-    { title: "괌" },
-    { title: "태국" },
-    { title: "싱가폴" },
+    { item: "코타키나발루", users: ["홍길동", "이준규", "로봇토끼"] },
+    { item: "세부", users: ["홍길동", "이준규", "로봇토끼", "최다현"] },
+    { item: "괌", users: ["홍길동"] },
+    { item: "태국", users: [] },
+    {
+      item: "싱가폴",
+      users: ["홍길동", "이준규", "로봇토끼", "봉승우", "권시경"],
+    },
   ],
 };
 
