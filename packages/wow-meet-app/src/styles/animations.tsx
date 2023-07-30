@@ -14,6 +14,17 @@ const fadeInTopDown = keyframes`
     }
 `;
 
+const fadeInBottomUp = keyframes`
+    from{
+        opacity: 0;
+        bottom: -1rem;
+    }
+    to{
+        opacity: 1;
+        bottom: 0rem;
+    }
+`;
+
 const lineDrawing = keyframes`
     from{
         opacity: 0;
@@ -58,6 +69,7 @@ const toastClose = keyframes`
 
 const animations = {
   fadeInTopDown,
+  fadeInBottomUp,
   lineDrawing,
   fadeIn,
   toastOpen,
@@ -72,7 +84,7 @@ export const injectAnimation = (
 ): SerializedStyles => {
   const newAnimation = css`
     position: relative;
-    animation: ${animations[animation]} ${delay} ${type};
+    animation: ${animations[animation]} ${delay} ${type} forwards;
     ${afterStyle}
   `;
 
