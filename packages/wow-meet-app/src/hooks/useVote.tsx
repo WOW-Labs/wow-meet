@@ -1,4 +1,6 @@
+import { useAtom } from "jotai";
 import { useEffect, useState } from "react";
+import { voteChangeState } from "~/store/voteChangeAtom";
 
 type VoteItem = {
   item: string;
@@ -8,6 +10,7 @@ type VoteItem = {
 export const useVote = (listArray: VoteItem[]) => {
   const [voteList, setVoteList] = useState<VoteItem[]>(listArray);
   const [total, setTotal] = useState(0);
+  const [isChanged, setIsChanged] = useAtom(voteChangeState);
 
   /** user가 item에 투표했는가? */
   const isVoted = (item: string, user: string) => {
@@ -31,6 +34,7 @@ export const useVote = (listArray: VoteItem[]) => {
             };
           } else {
             // user가 아직 투표하지 않았다면 투표를 추가
+            setIsChanged(true);
             return { ...voteItem, users: [...voteItem.users, user] };
           }
         }
@@ -51,7 +55,12 @@ export const useVote = (listArray: VoteItem[]) => {
     setTotal(allVoters.size);
   };
 
-  useEffect(getTotalVoters, [voteList]);
+  useEffect(() => {
+    getTotalVoters();
+    if (JSON.stringify(listArray) === JSON.stringify(voteList)) {
+      setIsChanged(false);
+    }
+  }, [voteList]);
 
-  return { voteList, isVoted, vote, total };
+  return { voteList, isVoted, vote, total, isChanged };
 };
