@@ -1,14 +1,16 @@
 import styled from "@emotion/styled";
-import { dummyVoteData } from "~/assets/dummydata";
 import VoteItem from "~/components/Vote/VoteItem";
-import { useVote } from "~/hooks/useVote";
+import { VoteConfigType } from "~/hooks/useVote";
 
 //TODO 내 정보 가져오기
 const MY_NAME = "중규리";
 
-const VoteList = () => {
-  const { voteList, total, vote, isVoted } = useVote(dummyVoteData.list);
-
+const VoteList = ({
+  voteList,
+  total,
+  isVoted,
+  vote,
+}: Omit<VoteConfigType, "isChanged" | "innevitable" | "innevitableCheck">) => {
   return (
     <ListWrapper>
       {voteList.map((listItem) => (

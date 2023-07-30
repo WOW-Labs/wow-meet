@@ -1,13 +1,20 @@
 import { css, keyframes } from "@emotion/react";
 import { ComponentProps } from "react";
 import { COLORS } from "~/styles/colors";
+import { TYPO } from "~/styles/typo";
 
 interface Props extends ComponentProps<"label"> {
   item: string;
   checked: boolean;
+  theme?: string;
 }
 
-const Checkbox = ({ item, checked, ...props }: Props) => {
+const Checkbox = ({ item, checked, theme = "#06b1c5", ...props }: Props) => {
+  const colorStyle = css`
+    background-color: ${theme};
+    border-color: ${theme};
+  `;
+
   return (
     <div css={checkboxAnimateStyle}>
       <label css={labelStyle} {...props}>
@@ -17,7 +24,9 @@ const Checkbox = ({ item, checked, ...props }: Props) => {
           css={inputStyle}
           checked={checked}
         />
-        <span css={checked ? checkedInputCheckStyle : inputCheckStyle}>
+        <span
+          css={checked ? [checkedInputCheckStyle, colorStyle] : inputCheckStyle}
+        >
           {checked && <div css={checkMarkStyle} />}
         </span>
         <span css={checked ? itemTitleStyles.checked : itemTitleStyles.non}>
@@ -65,7 +74,7 @@ const checkboxAnimateStyle = css`
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 1.5rem;
+  ${TYPO.text2.Reg};
 `;
 
 const labelStyle = css`
@@ -95,8 +104,6 @@ const inputCheckStyle = css`
 
 const checkedInputCheckStyle = css`
   ${inputCheckStyle};
-  background-color: #06b1c5;
-  border-color: #06b1c5;
   animation-name: ${inputAnimate};
   animation-duration: 0.7s;
 `;
@@ -117,7 +124,7 @@ const checkMarkStyle = css`
 
 const itemTitleStyles = {
   non: css`
-    color: #444444;
+    color: #5a5a5a;
   `,
   checked: css`
     color: ${COLORS.black};

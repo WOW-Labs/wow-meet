@@ -1,19 +1,28 @@
-import { useAtom } from "jotai";
 import { useEffect, useState } from "react";
-import { voteChangeState } from "~/store/voteChangeAtom";
 
 type VoteItem = {
   item: string;
   users: string[];
 };
 
-export const useVote = (listArray: VoteItem[]) => {
+export type VoteConfigType = {
+  voteList: VoteItem[];
+  isVoted: (item: string, user: string) => boolean;
+  vote: (item: string, user: string) => void;
+  total: number;
+  isChanged: boolean;
+  innevitable: boolean;
+  innevitableCheck: () => void;
+};
+
+export const useVote = (listArray: VoteItem[]): VoteConfigType => {
   const [voteList, setVoteList] = useState<VoteItem[]>(listArray);
   const [total, setTotal] = useState(0);
-  const [isChanged, setIsChanged] = useAtom(voteChangeState);
+  const [isChanged, setIsChanged] = useState(false);
+  const [innevitable, setInnevitable] = useState(false);
 
   /** user가 item에 투표했는가? */
-  const isVoted = (item: string, user: string) => {
+  const isVoted = (item: string, user: string): boolean => {
     const foundItem = voteList.find((voteItem) => voteItem.item === item);
     if (foundItem) {
       return foundItem.users.includes(user);
@@ -45,6 +54,7 @@ export const useVote = (listArray: VoteItem[]) => {
     });
   };
 
+  /** 전체 투표자 수 구하는 함수 */
   const getTotalVoters = () => {
     const allVoters = new Set();
     voteList.forEach((voteItem) => {
@@ -55,6 +65,10 @@ export const useVote = (listArray: VoteItem[]) => {
     setTotal(allVoters.size);
   };
 
+  const innevitableCheck = () => {
+    setInnevitable((prev) => !prev);
+  };
+
   useEffect(() => {
     getTotalVoters();
     if (JSON.stringify(listArray) === JSON.stringify(voteList)) {
@@ -62,5 +76,13 @@ export const useVote = (listArray: VoteItem[]) => {
     }
   }, [voteList]);
 
-  return { voteList, isVoted, vote, total, isChanged };
+  return {
+    voteList,
+    isVoted,
+    vote,
+    total,
+    isChanged,
+    innevitable,
+    innevitableCheck,
+  };
 };
