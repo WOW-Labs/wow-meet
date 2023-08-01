@@ -1,17 +1,17 @@
-import { SerializedStyles, css } from "@emotion/react";
+import { css, type SerializedStyles } from "@emotion/react";
 import styled from "@emotion/styled";
 import { useAtom } from "jotai";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { dummyUrl, dummydata } from "~/assets/dummydata";
+import { dummydata, dummyUrl } from "~/assets/dummydata";
 import { Header } from "~/components/Bar";
 import { Button } from "~/components/Create";
 import Frame, { frameStyle } from "~/components/Frame";
-import { SECTIONS } from "~/components/Meeting";
+import { View } from "~/components/Meeting";
 import { Toast } from "~/components/Popup";
 import { ToastType } from "~/components/Popup/Toast";
 import { VoteTalk } from "~/components/Vote";
-import { Mode, modeState } from "~/store/modeAtom";
+import { modeState, type Mode } from "~/store/modeAtom";
 import { mq } from "~/styles/breakpoints";
 import { COLORS } from "~/styles/colors";
 import { TYPO } from "~/styles/typo";
@@ -52,9 +52,6 @@ const Meeting = () => {
     content: "",
     type: ToastType.Postive,
   });
-
-  /**--- dependecy component ---*/
-  const CurSection = SECTIONS[curComp.mode];
 
   /**--- function ---*/
   const settingMid = () => {
@@ -119,7 +116,7 @@ const Meeting = () => {
       <Header title={dummydata.title} sharing={clipboard} prev={changeMode} />
       {toast.open && <Toast {...toast} close={close} />}
       <Container>
-        {CurSection ? <CurSection /> : <></>}
+        <View />
         <Button css={curComp.button.style} onClick={changeMode}>
           {curComp.button.title}
         </Button>
