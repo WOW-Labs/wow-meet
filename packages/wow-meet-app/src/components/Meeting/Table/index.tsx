@@ -1,7 +1,10 @@
 import styled from "@emotion/styled";
 import Spacing from "~/components/Common/Spacing";
 import DateCell from "~/components/Meeting/Table/Cell";
-import { type ParticipantSchedule } from "~/components/Meeting/Table/MOCK";
+import {
+  type ParticipantSchedule,
+  type ScheduleElement,
+} from "~/components/Meeting/Table/MOCK";
 import { CELL_WIDTH, TIMELIST } from "~/components/Meeting/Table/const";
 import useCell from "~/components/Meeting/Table/hooks/useCell";
 import { COLORS } from "~/styles/colors";
@@ -10,11 +13,14 @@ import { TYPO } from "~/styles/typo";
 interface Props {
   dayList: string[];
   selectedList: ParticipantSchedule[];
-  onSelect: () => void;
+  mySelected: ScheduleElement[];
+  onSelect: (id: string) => void;
 }
 
 const TimeTable = (props: Props) => {
-  const { getCellWeightByDate } = useCell(props.selectedList);
+  const { getCellWeightByDate, getParticipantsInfoByDate } = useCell(
+    props.selectedList
+  );
 
   return (
     <Container>
@@ -36,7 +42,15 @@ const TimeTable = (props: Props) => {
             {props.dayList.map((day) => (
               <DateCell
                 key={day}
+                id={`${day}-${time}`}
                 weight={getCellWeightByDate(`${day}-${time}`)}
+                onSelect={props.onSelect}
+                onClick={props.onSelect}
+                isMySeleted={
+                  props.mySelected.findIndex(
+                    (e) => e.date === `${day}-${time}`
+                  ) !== -1
+                }
               />
             ))}
           </BodyRow>
