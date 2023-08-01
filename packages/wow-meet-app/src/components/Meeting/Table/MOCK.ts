@@ -1,6 +1,11 @@
+export interface ScheduleElement {
+  date: string;
+  weight: number;
+}
+
 export interface ParticipantSchedule {
   name: string;
-  scheduleList: { date: string; weight: number }[];
+  scheduleList: ScheduleElement[];
 }
 
 export const MOCK_UP_SELECTED_LIST = [
