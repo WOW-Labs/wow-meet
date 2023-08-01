@@ -20,7 +20,9 @@ const useCell = (participantsSchedules: ParticipantSchedule[]) => {
   const getCellWeightByDate = (date: string) =>
     TIMECELL_INFO[date]?.reduce((acc, cur) => acc + cur.weight, 0) || 0;
 
-  return { TIMECELL_INFO, getCellWeightByDate };
+  const getParticipantsInfoByDate = (date: string) => TIMECELL_INFO[date];
+
+  return { getCellWeightByDate, getParticipantsInfoByDate };
 };
 
 export default useCell;
