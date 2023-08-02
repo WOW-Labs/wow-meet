@@ -1,5 +1,6 @@
 import { css, type SerializedStyles } from "@emotion/react";
 import styled from "@emotion/styled";
+import { produce } from "immer";
 import { useAtom } from "jotai";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -7,7 +8,14 @@ import { dummydata, dummyUrl } from "~/assets/dummydata";
 import { Header } from "~/components/Bar";
 import { Button } from "~/components/Create";
 import Frame, { frameStyle } from "~/components/Frame";
-import { View } from "~/components/Meeting";
+import Caption from "~/components/Meeting/Caption";
+import SummarizeBox from "~/components/Meeting/SummarizeBox";
+import TimeTable from "~/components/Meeting/Table";
+import {
+  MOCK_UP_DAY_LIST,
+  MOCK_UP_SELECTED_LIST,
+  type ScheduleElement,
+} from "~/components/Meeting/Table/MOCK";
 import { Toast } from "~/components/Popup";
 import { ToastType } from "~/components/Popup/Toast";
 import { VoteTalk } from "~/components/Vote";
@@ -41,8 +49,9 @@ const Meeting = () => {
   };
 
   /**--- state ---*/
-  const [, setMode] = useAtom(modeState);
+  const [mode, setMode] = useAtom(modeState);
   const [mid, setMid] = useState(0);
+  const [mySelectedDate, setMySelectedDate] = useState<ScheduleElement[]>([]);
   const [curComp, setCurComp] = useState<ComponentType>({
     mode: "View",
     button: buttonConfigs.view,
@@ -63,7 +72,7 @@ const Meeting = () => {
 
   const clipboard = () => {
     try {
-      navigator.clipboard.writeText(`${dummyUrl}/meeting/${mid}`);
+      void navigator.clipboard.writeText(`${dummyUrl}/meeting/${mid}`);
       setToast({
         open: true,
         content: "미팅 주소가 클립보드에 복사되었습니다!",
@@ -97,13 +106,27 @@ const Meeting = () => {
       case "Check":
         setCurComp({ mode: "View", button: buttonConfigs.view });
         setMode("View");
+        setMySelectedDate([]);
         window.scrollTo({ top: 0, behavior: "smooth" });
         break;
     }
   };
 
   const voting = () => {
-    router.push(`/meeting/${mid}/vote`);
+    void router.push(`/meeting/${mid}/vote`);
+  };
+
+  const handlerTouchTimeSlot = (id: string) => {
+    setMySelectedDate(
+      produce((draft) => {
+        const targetIdx = draft.findIndex((data) => data.date === id);
+        if (targetIdx === -1) {
+          draft.push({ date: id, weight: 1 });
+        } else {
+          draft.splice(targetIdx, 1);
+        }
+      })
+    );
   };
 
   /**--- useEffect ---*/
@@ -116,7 +139,15 @@ const Meeting = () => {
       <Header title={dummydata.title} sharing={clipboard} prev={changeMode} />
       {toast.open && <Toast {...toast} close={close} />}
       <Container>
-        <View />
+        <SummarizeBox />
+        <Caption />
+        <TimeTable
+          mode={mode}
+          dayList={MOCK_UP_DAY_LIST}
+          selectedList={MOCK_UP_SELECTED_LIST}
+          mySelected={mySelectedDate}
+          onSelect={handlerTouchTimeSlot}
+        />
         <Button css={curComp.button.style} onClick={changeMode}>
           {curComp.button.title}
         </Button>
