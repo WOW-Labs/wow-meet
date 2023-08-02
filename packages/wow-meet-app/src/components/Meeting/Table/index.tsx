@@ -6,7 +6,9 @@ import {
   type ScheduleElement,
 } from "~/components/Meeting/Table/MOCK";
 import { CELL_WIDTH, TIMELIST } from "~/components/Meeting/Table/const";
-import useCell from "~/components/Meeting/Table/hooks/useCell";
+import useEventHandler from "~/components/Meeting/Table/hooks/useEventHandler";
+import useToast from "~/components/Popup/useToast";
+import { type Mode } from "~/store/modeAtom";
 import { COLORS } from "~/styles/colors";
 import { TYPO } from "~/styles/typo";
 
@@ -15,15 +17,22 @@ interface Props {
   selectedList: ParticipantSchedule[];
   mySelected: ScheduleElement[];
   onSelect: (id: string) => void;
+  mode: Mode;
 }
 
 const TimeTable = (props: Props) => {
-  const { getCellWeightByDate, getParticipantsInfoByDate } = useCell(
-    props.selectedList
-  );
+  const { Toast, open } = useToast();
+  const { registerHandler } = useEventHandler({
+    mySelected: props.mySelected,
+    onSelect: props.onSelect,
+    selectedList: props.selectedList,
+    open: open,
+    mode: props.mode,
+  });
 
   return (
     <Container>
+      <Toast />
       <Table columnCount={props.dayList.length}>
         <HeadRow>
           {props.dayList.map((day) => (
@@ -41,16 +50,8 @@ const TimeTable = (props: Props) => {
 
             {props.dayList.map((day) => (
               <DateCell
-                key={day}
-                id={`${day}-${time}`}
-                weight={getCellWeightByDate(`${day}-${time}`)}
-                onSelect={props.onSelect}
-                onClick={props.onSelect}
-                isMySeleted={
-                  props.mySelected.findIndex(
-                    (e) => e.date === `${day}-${time}`
-                  ) !== -1
-                }
+                key={`${day}-${time}`}
+                {...registerHandler({ day: day, time: time })}
               />
             ))}
           </BodyRow>
