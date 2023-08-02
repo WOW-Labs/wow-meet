@@ -1,13 +1,13 @@
-import ReactPortal from "./Portal";
-import positive_emoji from "~/assets/icons/positive.png";
-import negative_emoji from "~/assets/icons/negative.png";
-import styled from "@emotion/styled";
 import { css } from "@emotion/react";
-import { COLORS } from "~/styles/colors";
+import styled from "@emotion/styled";
 import Image from "next/image";
-import { TYPO } from "~/styles/typo";
-import { injectAnimation } from "~/styles/animations";
 import { useEffect } from "react";
+import negative_emoji from "~/assets/icons/negative.png";
+import positive_emoji from "~/assets/icons/positive.png";
+import { injectAnimation } from "~/styles/animations";
+import { COLORS } from "~/styles/colors";
+import { TYPO } from "~/styles/typo";
+import ReactPortal from "./Portal";
 
 export enum ToastType {
   Postive = "positive",
@@ -40,12 +40,16 @@ const Toast = ({ content, type, open, close }: ToastProps) => {
   };
 
   useEffect(() => {
+    let closeTimeout: ReturnType<typeof setTimeout>;
     if (open) {
-      setTimeout(() => {
+      closeTimeout = setTimeout(() => {
         close();
       }, 2000);
     }
-  }, [open]);
+    return () => {
+      clearTimeout(closeTimeout);
+    };
+  }, [close, open]);
 
   return (
     <ReactPortal wrapperId="toast">
