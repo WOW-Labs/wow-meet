@@ -105,7 +105,7 @@ const Meeting = () => {
     }
   };
 
-  const voting = () => {
+  const handlerVote = () => {
     router.push(`/meeting/${mid}/vote`);
   };
 
@@ -124,7 +124,7 @@ const Meeting = () => {
           {curComp.button.title}
         </Button>
       </Container>
-      <VoteTalk onClick={voting} />
+      <VoteTalk onClick={handlerVote} />
     </Frame>
   );
 };
