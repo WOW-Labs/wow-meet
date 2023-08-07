@@ -12,21 +12,21 @@ const GET_COLOR_BY_WEIGHT = (weight: number) => {
 interface DateCellProps {
   id: string;
   weight: number;
-  onSelect: (id: string) => void;
-  onClick: (id: string) => void;
+  onSelect?: (id: string) => void;
+  onClick?: (id: string) => void;
   isMySeleted: boolean;
 }
 
 const DateCell = (props: DateCellProps) => {
   const dragEnter = (id: string) => {
-    props.onSelect(id);
+    props.onSelect?.(id);
   };
 
   return (
     <CellContainer
       weight={props.weight}
       mySelected={props.isMySeleted}
-      onClick={() => props.onClick(props.id)}
+      onClick={() => props.onClick?.(props.id)}
       onDragOver={(e) => e.preventDefault()}
       onDragEnter={() => dragEnter(props.id)}
       draggable
@@ -37,7 +37,7 @@ const DateCell = (props: DateCellProps) => {
 export default DateCell;
 
 const CellContainer = styled.div`
-  width: ${CELL_WIDTH} !important;
+  width: ${CELL_WIDTH};
   height: ${CELL_HEIGHT};
   border: 1px dotted gray;
   background-color: ${({

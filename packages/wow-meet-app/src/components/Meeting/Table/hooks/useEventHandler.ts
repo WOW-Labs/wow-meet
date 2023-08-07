@@ -14,8 +14,8 @@ interface CellEventHandler {
   id: string;
   weight: number;
   isMySeleted: boolean;
-  onClick: (id: string) => void;
-  onSelect: (id: string) => void;
+  onClick?: (id: string) => void;
+  onSelect?: (id: string) => void;
 }
 interface Props {
   selectedList: ParticipantSchedule[];
@@ -44,8 +44,6 @@ const useEventHandler = (props: Props) => {
         props.mySelected.findIndex(
           (e) => e.date === `${args.day}-${args.time}`
         ) !== -1,
-      onClick: console.log,
-      onSelect: console.log,
     };
     switch (props.mode) {
       case "View":
