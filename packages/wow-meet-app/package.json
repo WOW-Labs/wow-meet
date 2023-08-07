@@ -25,6 +25,7 @@
     "@trpc/server": "^10.26.0",
     "date-fns": "^2.30.0",
     "framer-motion": "^10.13.0",
+    "immer": "^10.0.2",
     "jotai": "^2.2.2",
     "next": "^13.4.2",
     "next-auth": "^4.22.1",

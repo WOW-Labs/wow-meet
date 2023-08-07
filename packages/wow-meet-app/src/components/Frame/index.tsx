@@ -1,7 +1,7 @@
-import { ComponentProps } from "react";
 import { css } from "@emotion/react";
-import { mq } from "~/styles/breakpoints";
+import { ComponentProps } from "react";
 import { useVh } from "~/hooks/useVh";
+import { mq } from "~/styles/breakpoints";
 
 interface FrameProps extends ComponentProps<"div"> {
   children: React.ReactNode;
@@ -33,5 +33,13 @@ const Frame = ({ children, ...props }: FrameProps) => {
     </div>
   );
 };
+
+export const frameStyle = css`
+  padding: 8rem 0rem;
+
+  ${mq[4]} {
+    padding: 7rem 0rem;
+  }
+`;
 
 export default Frame;
