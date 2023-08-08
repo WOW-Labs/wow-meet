@@ -15,7 +15,6 @@ interface CellEventHandler {
   weight: number;
   isMySeleted: boolean;
   onClick?: (id: string) => void;
-  onSelect?: (id: string) => void;
 }
 interface Props {
   selectedList: ParticipantSchedule[];
@@ -40,28 +39,18 @@ const useEventHandler = (props: Props) => {
     const register: CellEventHandler = {
       id: `${args.day}-${args.time}`,
       weight: getCellWeightByDate(`${args.day}-${args.time}`),
+      onClick: props.onSelect,
       isMySeleted:
         props.mySelected.findIndex(
           (e) => e.date === `${args.day}-${args.time}`
         ) !== -1,
     };
-    switch (props.mode) {
-      case "View":
-        register.onClick = (id: string) =>
-          props.open(generateToastContents(id));
-        register.onSelect = (id: string) =>
-          props.open(generateToastContents(id));
-        return register;
-      case "Check":
-        register.onClick = props.onSelect;
-        register.onSelect = props.onSelect;
-        return register;
-      default:
-        return register;
-    }
+    return register;
   };
+
   return {
     registerHandler,
+    generateToastContents,
   };
 };
 
