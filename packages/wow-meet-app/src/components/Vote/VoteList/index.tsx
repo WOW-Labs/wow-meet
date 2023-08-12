@@ -1,16 +1,18 @@
 import styled from "@emotion/styled";
 import VoteItem from "~/components/Vote/VoteItem";
-import { VoteConfigType } from "~/hooks/useVote";
+import { VoteItemType } from "~/hooks/useVote";
 
 //TODO 내 정보 가져오기
 const MY_NAME = "중규리";
 
-const VoteList = ({
-  voteList,
-  total,
-  isVoted,
-  vote,
-}: Omit<VoteConfigType, "isChanged" | "innevitable" | "innevitableCheck">) => {
+interface Props {
+  voteList: VoteItemType[];
+  isVoted: (item: string, user: string) => boolean;
+  vote: (item: string, user: string) => void;
+  total: number;
+}
+
+const VoteList = ({ voteList, total, isVoted, vote }: Props) => {
   return (
     <ListWrapper>
       {voteList.map((listItem) => (

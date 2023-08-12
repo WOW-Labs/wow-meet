@@ -112,8 +112,8 @@ const Meeting = () => {
     }
   };
 
-  const voting = () => {
-    void router.push(`/meeting/${mid}/vote`);
+  const handlerVote = () => {
+    router.push(`/meeting/${mid}/vote`);
   };
 
   const handlerTouchTimeSlot = (id: string) => {
@@ -127,7 +127,6 @@ const Meeting = () => {
         }
       })
     );
-  };
 
   /**--- useEffect ---*/
   useEffect(() => {
@@ -152,7 +151,7 @@ const Meeting = () => {
           {curComp.button.title}
         </Button>
       </Container>
-      <VoteTalk onClick={voting} />
+      <VoteTalk onClick={handlerVote} />
     </Frame>
   );
 };
