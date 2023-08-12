@@ -8,9 +8,11 @@ import {
   Logo,
   Title,
 } from "~/components/Landing";
+import { useDevice } from "~/hooks/useDevice";
 
 export default function Home() {
   const router = useRouter();
+  const device = useDevice();
 
   const moveToCreator = () => {
     void router.push("/create");
@@ -18,7 +20,7 @@ export default function Home() {
 
   return (
     <Gradient>
-      <EmojiContainer />
+      {device !== "MOBILE" && <EmojiContainer />}
       <Title />
       <Line />
       <Logo />
