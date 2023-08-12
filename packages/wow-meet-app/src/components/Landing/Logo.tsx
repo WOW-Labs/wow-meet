@@ -1,12 +1,30 @@
-import styled from "@emotion/styled";
-import Logo from "~/assets/images/Logo.png";
-import Image from "next/image";
 import { css } from "@emotion/react";
-import { injectAnimation } from "~/styles/animations";
+import styled from "@emotion/styled";
+import Image from "next/image";
 import { useEffect, useState } from "react";
+import DesktopLogo from "~/assets/images/dektop_logo.svg";
+import MobileLogo from "~/assets/images/mobile_logo.svg";
+import { useDevice } from "~/hooks/useDevice";
+import { injectAnimation } from "~/styles/animations";
 
 const LandingLogo = () => {
+  const device = useDevice();
   const [anim, setAnim] = useState(false);
+
+  const logoStyleConfig = {
+    MOBILE: {
+      width: "14rem",
+      height: "auto",
+    },
+    TABLET: {
+      width: "24rem",
+      height: "auto",
+    },
+    PC: {
+      width: "28rem",
+      height: "auto",
+    },
+  };
 
   useEffect(() => {
     setTimeout(() => {
@@ -18,7 +36,11 @@ const LandingLogo = () => {
     <ButtonsWrapper
       css={anim ? [injectAnimation("fadeIn", "1s", "linear", afterStyle)] : []}
     >
-      <Image src={Logo} alt="logo" style={{ width: "28rem", height: "auto" }} />
+      <Image
+        src={device === "MOBILE" ? MobileLogo : DesktopLogo}
+        alt="logo"
+        style={logoStyleConfig[device]}
+      />
     </ButtonsWrapper>
   );
 };
