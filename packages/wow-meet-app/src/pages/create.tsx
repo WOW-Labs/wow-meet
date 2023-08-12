@@ -1,14 +1,14 @@
-import { Header } from "~/components/Bar";
-import { SECTIONS, Button } from "~/components/Create";
-import Frame from "~/components/Frame";
-import styled from "@emotion/styled";
 import { css } from "@emotion/react";
-import { useState } from "react";
-import { COLORS } from "~/styles/colors";
-import { TYPO } from "~/styles/typo";
+import styled from "@emotion/styled";
 import { useRouter } from "next/router";
+import { useState } from "react";
+import { Header } from "~/components/Bar";
+import { Button, SECTIONS } from "~/components/Create";
+import Frame from "~/components/Frame";
 import { injectAnimation } from "~/styles/animations";
 import { mq } from "~/styles/breakpoints";
+import { COLORS } from "~/styles/colors";
+import { TYPO } from "~/styles/typo";
 
 const Create = () => {
   const router = useRouter();
@@ -24,7 +24,7 @@ const Create = () => {
   };
 
   const create = () => {
-    router.replace(`/meeting/${tmpMid}`);
+    void router.replace(`/meeting/${tmpMid}`);
   };
 
   return (

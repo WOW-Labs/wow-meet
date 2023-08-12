@@ -89,7 +89,7 @@ export const meetingRouter = createTRPCRouter({
         });
 
         if (meeting?.id && meeting.isSchedule) {
-          schedule = await ctx.prisma.schedule.findMany({
+          schedule = await ctx.prisma.schedule.findUnique({
             where: { meetingId: meeting.id },
           });
         }
