@@ -1,4 +1,6 @@
+import { DndContext, MouseSensor, TouchSensor, useSensor } from "@dnd-kit/core";
 import styled from "@emotion/styled";
+import { useRef } from "react";
 import Spacing from "~/components/Common/Spacing";
 import DateCell from "~/components/Meeting/Table/Cell";
 import {
@@ -22,13 +24,36 @@ interface Props {
 
 const TimeTable = (props: Props) => {
   const { Toast, open } = useToast();
-  const { registerHandler } = useEventHandler({
+  const exSelectedCell = useRef<string>("");
+  const { registerHandler, generateToastContents } = useEventHandler({
     mySelected: props.mySelected,
     onSelect: props.onSelect,
     selectedList: props.selectedList,
     open: open,
     mode: props.mode,
   });
+
+  const mouseSensor = useSensor(MouseSensor);
+  const touchSensor = useSensor(TouchSensor, {
+    // Press delay of 250ms, with tolerance of 5px of movement
+    activationConstraint: {
+      delay: 50,
+      tolerance: 5,
+    },
+  });
+
+  const handelCellDragOver = (id?: string) => {
+    if (!id) return;
+    // 동일한 셀 내에서 발생하는 중복 이벤트를 방지하기 위해서
+    if (id === exSelectedCell.current) return;
+    if (props.mode === "Check") {
+      props.onSelect(id);
+    } else if (props.mode === "View") {
+      open(generateToastContents(id));
+      open(generateToastContents(id));
+    }
+    exSelectedCell.current = id;
+  };
 
   return (
     <Container>
@@ -41,21 +66,33 @@ const TimeTable = (props: Props) => {
         </HeadRow>
 
         <Spacing size={16} />
+        <DndContext
+          onDragMove={(e) => handelCellDragOver(String(e.over?.id))}
+          onDragStart={(e) => handelCellDragOver(String(e.active?.id))}
+          sensors={[touchSensor, mouseSensor]}
+          autoScroll={{
+            threshold: {
+              x: 0.5,
+              y: 0.5,
+            },
+            enabled: true,
+          }}
+        >
+          {TIMELIST.map((time, idx) => (
+            <BodyRow key={time}>
+              <TimeLabel key={time} visibility={idx % 2 === 0}>
+                {time}
+              </TimeLabel>
 
-        {TIMELIST.map((time, idx) => (
-          <BodyRow key={time}>
-            <TimeLabel key={time} visibility={idx % 2 === 0}>
-              {time}
-            </TimeLabel>
-
-            {props.dayList.map((day) => (
-              <DateCell
-                key={`${day}-${time}`}
-                {...registerHandler({ day: day, time: time })}
-              />
-            ))}
-          </BodyRow>
-        ))}
+              {props.dayList.map((day) => (
+                <DateCell
+                  key={`${day}-${time}`}
+                  {...registerHandler({ day: day, time: time })}
+                />
+              ))}
+            </BodyRow>
+          ))}
+        </DndContext>
       </Table>
     </Container>
   );

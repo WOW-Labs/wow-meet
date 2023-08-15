@@ -1,3 +1,4 @@
+import { useDraggable, useDroppable } from "@dnd-kit/core";
 import styled from "@emotion/styled";
 import { CELL_HEIGHT, CELL_WIDTH } from "~/components/Meeting/Table/const";
 import { COLORS } from "~/styles/colors";
@@ -18,19 +19,39 @@ interface DateCellProps {
 }
 
 const DateCell = (props: DateCellProps) => {
-  const dragEnter = (id: string) => {
-    props.onSelect?.(id);
-  };
+  const { setNodeRef: ref, isOver } = useDroppable({
+    id: props.id,
+    data: {
+      type: props.id,
+    },
+  });
+  const { setNodeRef, listeners, attributes, transform } = useDraggable({
+    id: props.id,
+    data: {
+      index: props.id,
+    },
+  });
 
   return (
     <CellContainer
+      ref={ref}
+      style={{ backgroundColor: isOver ? "gray" : undefined }}
       weight={props.weight}
       mySelected={props.isMySeleted}
-      onClick={() => props.onClick?.(props.id)}
-      onDragOver={(e) => e.preventDefault()}
-      onDragEnter={() => dragEnter(props.id)}
-      draggable
-    />
+    >
+      <div
+        ref={setNodeRef}
+        style={{
+          width: "100%",
+          height: "100%",
+          transform: transform
+            ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
+            : undefined,
+        }}
+        {...listeners}
+        {...attributes}
+      ></div>
+    </CellContainer>
   );
 };
 
