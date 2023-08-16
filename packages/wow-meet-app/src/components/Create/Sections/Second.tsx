@@ -1,0 +1,81 @@
+import styled from "@emotion/styled";
+import DestVoteBox from "~/components/Create/DestVoteBox";
+import PlusVoteBox from "~/components/Create/PlusVoteBox";
+import TimeSelector from "~/components/Create/TimeSelector";
+import { injectAnimation } from "~/styles/animations";
+import { mq } from "~/styles/breakpoints";
+import { TYPO } from "~/styles/typo";
+import DefaultSelector from "../DefaultSelector";
+import DetailLabel from "../DetailLabel";
+import TextArea from "../TextArea";
+
+const SecondSection = () => {
+  const SecondConfigs = [
+    {
+      title: "모임 안내문구 작성",
+      description:
+        "모임 설명, 진행 시 일정안내, 공지사항, 웹사이트 링크 등을 적어보아요.",
+      inner: (
+        <TextArea
+          rows={5}
+          placeholder="여기를 눌러 모임 안내문구를 입력해주세요."
+        />
+      ),
+    },
+    {
+      title: "후보 시간 범위설정",
+      inner: <TimeSelector />,
+    },
+    {
+      title: "선호일정 선택 제도",
+      description:
+        "스케줄 체크 시에 선호일정을 설정해 가중치를 부여할 수 있어요.",
+      inner: <DefaultSelector />,
+    },
+    {
+      title: "장소 투표",
+      inner: <DefaultSelector AdditionalComponent={<DestVoteBox />} />,
+    },
+    {
+      title: "기타 투표",
+      inner: <DefaultSelector AdditionalComponent={<PlusVoteBox />} />,
+    },
+  ];
+
+  return (
+    <Container css={injectAnimation("fadeIn")}>
+      <Title>
+        우리모임을 더 다채롭게! <br /> 추가정보를 입력해주세요😜
+      </Title>
+      {SecondConfigs.map(DetailLabel)}
+    </Container>
+  );
+};
+
+const Container = styled.div`
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 5rem;
+
+  padding: 0rem 3rem 5rem 3rem;
+  ${mq[4]} {
+    padding: 0rem 1rem 3rem 1rem;
+  }
+`;
+
+const Title = styled.span`
+  ${TYPO.title1.Bd};
+  white-space: pre-line;
+  position: relative;
+  text-align: center;
+  width: 100%;
+
+  animation: ${injectAnimation("fadeInTopDown")};
+`;
+
+export default SecondSection;
