@@ -1,9 +1,10 @@
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import { useAtom } from "jotai";
+import { useRouter } from "next/router";
 import { useState } from "react";
 import { Header } from "~/components/Bar";
-import { Modal } from "~/components/common/Modal";
+import Modal from "~/components/common/Modal";
 import { SECTIONS } from "~/components/Create";
 import FlexButton from "~/components/Create/FlexButton";
 import Popup from "~/components/Create/Popup";
@@ -17,6 +18,7 @@ import { TYPO } from "~/styles/typo";
 import { api } from "~/utils/api";
 
 const Create = () => {
+  const router = useRouter();
   const createInfo = api.meeting.create.useMutation();
   const [curIdx, setCurIdx] = useState<number>(0);
   const [modalIdx, setModalIdx] = useState<number>(0);
@@ -49,8 +51,7 @@ const Create = () => {
   const nextSection = () => {
     setCurIdx((prev) => prev + 1);
   };
-  //TODO: 모달 관련 함수 개선 필요
-
+  //TODO: 아래 함수 개선 필요
   const prevSection = () => {
     setModalIdx(0);
     toggle();
@@ -58,6 +59,11 @@ const Create = () => {
   const ModalHandler = () => {
     setModalIdx(1);
     toggle();
+  };
+  const goToMeeting = () => {
+    toggle();
+    createMeeting();
+    nextSection();
   };
 
   console.log(curIdx);
@@ -79,7 +85,6 @@ const Create = () => {
             flexValue={3}
             onClick={() => {
               ModalHandler();
-              createMeeting();
             }}
             css={buttonStyles.creating}
           >
@@ -90,7 +95,7 @@ const Create = () => {
       <Modal
         isShowing={isShowing}
         hide={toggle}
-        content={<Popup num={modalIdx} />}
+        content={<Popup num={modalIdx} onConfirm={goToMeeting} />}
       />
     </>
   );
