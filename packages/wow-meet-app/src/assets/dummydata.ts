@@ -25,6 +25,40 @@ export const dummydata = {
   ],
 };
 
+export const dummyRanking = [
+  {
+    caption: "11. 11(수) 16시 30분",
+    ableMember: [
+      "이준규",
+      "최다현",
+      "봉승우",
+      "권시경",
+      "홍길동",
+      "로봇토끼",
+      "이준규",
+      "최다현",
+      "봉승우",
+      "권시경",
+      "홍길동",
+      "로봇토끼",
+      "이준규",
+      "최다현",
+      "봉승우",
+      "권시경",
+      "홍길동",
+      "로봇토끼",
+    ],
+  },
+  {
+    caption: "11. 11(수) 16시 30분",
+    ableMember: ["이준규", "최다현", "봉승우"],
+  },
+  {
+    caption: "11. 11(수) 16시 30분",
+    ableMember: ["이준규", "최다현"],
+  },
+];
+
 export const dummyVoteData = {
   title: "여름 휴가 장소 투표",
   list: [
