@@ -1,13 +1,14 @@
+import { css } from "@emotion/react";
+import { type ComponentProps } from "react";
 import { COLORS } from "~/styles/colors";
 import { TYPO } from "~/styles/typo";
-import { css } from "@emotion/react";
-import { ComponentProps } from "react";
 
 /**
  * 포커싱시, border가 강조되는 input 컴포넌트
  */
+
 const Input = (props: ComponentProps<"input">) => {
-  return <input css={inputStyle} type="text" {...props} />;
+  return <input css={inputStyle} type="text" {...props} value={props.value} />;
 };
 
 const inputStyle = css`

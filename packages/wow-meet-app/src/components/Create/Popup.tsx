@@ -3,8 +3,9 @@ import styled from "@emotion/styled";
 import { COLORS } from "~/styles/colors";
 import { TYPO } from "~/styles/typo";
 
-type PopupNumProps = {
+type PopupProps = {
   num: number;
+  onConfirm: () => void;
 };
 
 type PopupConfig = {
@@ -35,7 +36,7 @@ const PopupConfigs: PopupConfig[] = [
   },
 ];
 
-function Popup({ num }: PopupNumProps) {
+function Popup({ num, onConfirm }: PopupProps) {
   return (
     <PopupWrapper>
       <StyledPopupTitle>{PopupConfigs[num]?.title}</StyledPopupTitle>
@@ -48,7 +49,7 @@ function Popup({ num }: PopupNumProps) {
         <StyledPopupButton css={buttonStyles.disabled}>
           {PopupConfigs[num]?.button1}
         </StyledPopupButton>
-        <StyledPopupButton css={buttonStyles.creating}>
+        <StyledPopupButton css={buttonStyles.creating} onClick={onConfirm}>
           {PopupConfigs[num]?.button2}
         </StyledPopupButton>
       </ButtonWrapper>

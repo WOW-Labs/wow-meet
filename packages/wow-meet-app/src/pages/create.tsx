@@ -1,5 +1,7 @@
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
+import { useAtom } from "jotai";
+import { useRouter } from "next/router";
 import { useState } from "react";
 import { Header } from "~/components/Bar";
 import Modal from "~/components/common/Modal";
@@ -8,15 +10,30 @@ import FlexButton from "~/components/Create/FlexButton";
 import Popup from "~/components/Create/Popup";
 import Frame from "~/components/Frame";
 import useModal from "~/hooks/useModal";
+import { createAtom } from "~/store/createAtom";
 import { injectAnimation } from "~/styles/animations";
 import { mq } from "~/styles/breakpoints";
 import { COLORS } from "~/styles/colors";
 import { TYPO } from "~/styles/typo";
+import { api } from "~/utils/api";
 
 const Create = () => {
+  const router = useRouter();
+  const createInfo = api.meeting.create.useMutation();
   const [curIdx, setCurIdx] = useState<number>(0);
   const [modalIdx, setModalIdx] = useState<number>(0);
   const { isShowing, toggle } = useModal();
+
+  const [body, setBody] = useAtom(createAtom);
+
+  const createMeeting = () => {
+    const meetingData = {
+      title: body?.title || "",
+      description: body?.description || "",
+    };
+
+    createInfo.mutate(meetingData);
+  };
 
   const ButtonConfigs = [
     {
@@ -34,7 +51,7 @@ const Create = () => {
   const nextSection = () => {
     setCurIdx((prev) => prev + 1);
   };
-
+  //TODO: 아래 함수 개선 필요
   const prevSection = () => {
     setModalIdx(0);
     toggle();
@@ -42,7 +59,11 @@ const Create = () => {
   const ModalHandler = () => {
     setModalIdx(1);
     toggle();
-
+  };
+  const goToMeeting = () => {
+    toggle();
+    createMeeting();
+    nextSection();
   };
 
   console.log(curIdx);
@@ -62,7 +83,9 @@ const Create = () => {
           </FlexButton>
           <FlexButton
             flexValue={3}
-            onClick={ModalHandler}
+            onClick={() => {
+              ModalHandler();
+            }}
             css={buttonStyles.creating}
           >
             {ButtonConfigs[curIdx]?.text2}
@@ -72,7 +95,7 @@ const Create = () => {
       <Modal
         isShowing={isShowing}
         hide={toggle}
-        content={<Popup num={modalIdx} />}
+        content={<Popup num={modalIdx} onConfirm={goToMeeting} />}
       />
     </>
   );
