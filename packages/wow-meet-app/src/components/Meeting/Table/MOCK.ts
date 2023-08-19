@@ -21,6 +21,15 @@ export const MOCK_UP_SELECTED_LIST = [
     scheduleList: [
       { date: "월-09:00", weight: 1 },
       { date: "월-12:00", weight: 2 },
+      { date: "월-19:00", weight: 1 },
+    ],
+  },
+  {
+    name: "권사장",
+    scheduleList: [
+      { date: "월-19:00", weight: 1 },
+      { date: "월-19:00", weight: 1 },
+      { date: "월-19:00", weight: 1 },
     ],
   },
 ];
