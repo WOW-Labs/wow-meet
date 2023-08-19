@@ -1,7 +1,9 @@
 import styled from "@emotion/styled";
+import { useAtom } from "jotai";
 import DestVoteBox from "~/components/Create/DestVoteBox";
 import PlusVoteBox from "~/components/Create/PlusVoteBox";
 import TimeSelector from "~/components/Create/TimeSelector";
+import { createAtom } from "~/store/createAtom";
 import { injectAnimation } from "~/styles/animations";
 import { mq } from "~/styles/breakpoints";
 import { TYPO } from "~/styles/typo";
@@ -10,6 +12,22 @@ import DetailLabel from "../DetailLabel";
 import TextArea from "../TextArea";
 
 const SecondSection = () => {
+  const [body, setBody] = useAtom(createAtom);
+
+  function handleChange(
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) {
+    const { name, value } = e.currentTarget;
+    setBody((prev) => {
+      return {
+        ...prev,
+        [name]: value,
+      };
+    });
+  }
+
+  console.log(body);
+
   const SecondConfigs = [
     {
       title: "모임 안내문구 작성",
@@ -19,6 +37,9 @@ const SecondSection = () => {
         <TextArea
           rows={5}
           placeholder="여기를 눌러 모임 안내문구를 입력해주세요."
+          name="description"
+          value={body?.description || ""}
+          onChange={handleChange}
         />
       ),
     },

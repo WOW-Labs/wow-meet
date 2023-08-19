@@ -1,12 +1,12 @@
+import { useRouter } from "next/router";
 import {
-  Gradient,
-  Title,
-  Line,
-  Logo,
   Button,
   Caption,
+  Gradient,
+  Line,
+  Logo,
+  Title,
 } from "~/components/Landing";
-import { useRouter } from "next/router";
 
 export default function Home() {
   const router = useRouter();
