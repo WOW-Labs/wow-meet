@@ -2,7 +2,7 @@ import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import { useState } from "react";
 import { Header } from "~/components/Bar";
-import Modal from "~/components/common/Modal";
+import Modal from "~/components/Common/Modal";
 import { SECTIONS } from "~/components/Create";
 import FlexButton from "~/components/Create/FlexButton";
 import Popup from "~/components/Create/Popup";
