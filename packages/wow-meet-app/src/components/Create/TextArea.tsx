@@ -8,7 +8,7 @@ import { TYPO } from "~/styles/typo";
  */
 
 const TextArea = (props: ComponentProps<"textarea">) => {
-  return <textarea css={TextAreaStyle} {...props} />;
+  return <textarea css={TextAreaStyle} {...props} value={props.value} />;
 };
 
 const TextAreaStyle = css`
