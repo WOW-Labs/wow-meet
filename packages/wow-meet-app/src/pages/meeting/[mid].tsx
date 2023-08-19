@@ -3,19 +3,18 @@ import styled from "@emotion/styled";
 import { produce } from "immer";
 import { useAtom } from "jotai";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { dummydata, dummyUrl } from "~/assets/dummydata";
-import { Header } from "~/components/Bar";
+import { useMemo, useState } from "react";
+import { dummyUrl } from "~/assets/dummydata";
 import { Button } from "~/components/Create";
 import Frame, { frameStyle } from "~/components/Frame";
 import Caption from "~/components/Meeting/Caption";
-import SummarizeBox from "~/components/Meeting/SummarizeBox";
 import TimeTable from "~/components/Meeting/Table";
 import {
   MOCK_UP_DAY_LIST,
   MOCK_UP_SELECTED_LIST,
   type ScheduleElement,
 } from "~/components/Meeting/Table/MOCK";
+import useCell from "~/components/Meeting/Table/hooks/useCell";
 import { Toast } from "~/components/Popup";
 import { ToastType } from "~/components/Popup/Toast";
 import { VoteTalk } from "~/components/Vote";
@@ -50,7 +49,6 @@ const Meeting = () => {
 
   /**--- state ---*/
   const [mode, setMode] = useAtom(modeState);
-  const [mid, setMid] = useState(0);
   const [mySelectedDate, setMySelectedDate] = useState<ScheduleElement[]>([]);
   const [curComp, setCurComp] = useState<ComponentType>({
     mode: "View",
@@ -62,13 +60,14 @@ const Meeting = () => {
     type: ToastType.Postive,
   });
 
-  /**--- function ---*/
-  const settingMid = () => {
-    if (router.query.mid) {
-      const newMid = router.query.mid[0];
-      setMid(Number(newMid));
-    }
-  };
+  const { getCellWeightByDate, getParticipantsInfoByDate } = useCell(
+    MOCK_UP_SELECTED_LIST
+  );
+
+  const mid = useMemo(
+    () => (router.query.mid ? Number(router.query.mid[0]) : 0),
+    [router.query.mid]
+  );
 
   const clipboard = () => {
     try {
@@ -113,10 +112,15 @@ const Meeting = () => {
   };
 
   const handlerVote = () => {
-    router.push(`/meeting/${mid}/vote`);
+    void router.push(`/meeting/${mid}/vote`);
   };
 
-  const handlerTouchTimeSlot = (id: string) => {
+  const handleViewCellInfo = (id: string) => {
+    // 해당 위치에서
+    console.log(getParticipantsInfoByDate(id));
+  };
+
+  const handleMutateMySchedule = (id: string) => {
     setMySelectedDate(
       produce((draft) => {
         const targetIdx = draft.findIndex((data) => data.date === id);
@@ -127,25 +131,28 @@ const Meeting = () => {
         }
       })
     );
+  };
 
-  /**--- useEffect ---*/
-  useEffect(() => {
-    settingMid();
-  }, [router.query.mid]);
+  const handleTouchCell = (id: string) => {
+    if (mode === "Check") {
+      handleMutateMySchedule(id);
+    } else if (mode === "View") {
+      handleViewCellInfo(id);
+    }
+  };
 
   return (
     <Frame css={frameStyle}>
-      <Header title={dummydata.title} sharing={clipboard} prev={changeMode} />
       {toast.open && <Toast {...toast} close={close} />}
       <Container>
-        <SummarizeBox />
         <Caption />
         <TimeTable
           mode={mode}
           dayList={MOCK_UP_DAY_LIST}
           selectedList={MOCK_UP_SELECTED_LIST}
           mySelected={mySelectedDate}
-          onSelect={handlerTouchTimeSlot}
+          getCellWeightByDate={getCellWeightByDate}
+          onTouchCell={handleTouchCell}
         />
         <Button css={curComp.button.style} onClick={changeMode}>
           {curComp.button.title}
