@@ -34,6 +34,7 @@ const Create = () => {
   const nextSection = () => {
     setCurIdx((prev) => prev + 1);
   };
+
   const prevSection = () => {
     setModalIdx(0);
     toggle();
@@ -41,6 +42,7 @@ const Create = () => {
   const ModalHandler = () => {
     setModalIdx(1);
     toggle();
+
   };
 
   console.log(curIdx);

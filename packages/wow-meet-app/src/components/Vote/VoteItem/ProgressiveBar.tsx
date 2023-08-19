@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 
 interface Props {
   total: number;
@@ -7,14 +7,10 @@ interface Props {
 }
 
 const ProgressiveBar = ({ total, users }: Props) => {
-  const [width, setWidth] = useState("0%");
-
-  const settingWidth = () => {
+  const width = useMemo(() => {
     const curRatio = (users.length / total) * 100;
-    setWidth(`${curRatio}%`);
-  };
-
-  useEffect(settingWidth, [total, users.length]);
+    return `${curRatio}%`;
+  }, [total, users.length]);
 
   return (
     <Container>

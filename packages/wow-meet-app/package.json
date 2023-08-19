@@ -10,6 +10,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@dnd-kit/core": "^6.0.8",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@fortawesome/fontawesome-svg-core": "^6.4.0",
@@ -25,6 +26,7 @@
     "@trpc/server": "^10.26.0",
     "date-fns": "^2.30.0",
     "framer-motion": "^10.13.0",
+    "immer": "^10.0.2",
     "jotai": "^2.2.2",
     "next": "^13.4.2",
     "next-auth": "^4.22.1",

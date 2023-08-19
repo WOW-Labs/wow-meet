@@ -13,16 +13,24 @@ import { COLORS } from "~/styles/colors";
 import { TYPO } from "~/styles/typo";
 
 const Vote = () => {
-  const { isChanged, innevitable, innevitableCheck, ...voteConfigs } = useVote(
-    dummyVoteData.list
-  );
+  const {
+    isChanged,
+    innevitable,
+    innevitableCheck,
+    getTotalVoters,
+    ...voteConfigs
+  } = useVote(dummyVoteData.list);
 
   return (
     <Frame css={frameStyle}>
       <Header title={dummyVoteData.title} />
       <VoteBanner content={"지금 와우밋 투표에 참여해보세요!"} />
       <ContentWrapper>
-        <VoteList {...voteConfigs} />
+        <VoteList
+          voteList={dummyVoteData.list}
+          total={getTotalVoters()}
+          {...voteConfigs}
+        />
         <BottomWrapper>
           <Innevitable
             innevitable={innevitable}
@@ -31,7 +39,7 @@ const Vote = () => {
           <Button
             css={[
               buttonStyles.deafult,
-              isChanged ? buttonStyles.success : buttonStyles.failed,
+              isChanged() ? buttonStyles.success : buttonStyles.failed,
             ]}
           >
             <span>투표완료</span>
