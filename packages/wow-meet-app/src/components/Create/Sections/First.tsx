@@ -23,8 +23,6 @@ const FirstSection = () => {
     });
   }
 
-  console.log(body);
-
   const title = `반가워요!\n모임 정보를 작성해주세요 :)`;
   const firstConfigs = [
     {

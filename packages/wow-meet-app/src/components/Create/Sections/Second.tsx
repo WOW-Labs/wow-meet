@@ -26,8 +26,6 @@ const SecondSection = () => {
     });
   }
 
-  console.log(body);
-
   const SecondConfigs = [
     {
       title: "모임 안내문구 작성",
