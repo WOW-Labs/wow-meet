@@ -50,7 +50,7 @@ const Meeting = () => {
 
   /**--- state ---*/
   const [mode, setMode] = useAtom(modeState);
-  const [mid, setMid] = useState(0);
+  const [mid, setMid] = useState("");
   const [mySelectedDate, setMySelectedDate] = useState<ScheduleElement[]>([]);
   const [curComp, setCurComp] = useState<ComponentType>({
     mode: "View",
@@ -64,9 +64,9 @@ const Meeting = () => {
 
   /**--- function ---*/
   const settingMid = () => {
-    if (router.query.mid) {
-      const newMid = router.query.mid[0];
-      setMid(Number(newMid));
+    if (router.query.mid && typeof router.query.mid === "string") {
+      const newMid = router.query.mid;
+      setMid(newMid!);
     }
   };
 
@@ -127,6 +127,7 @@ const Meeting = () => {
         }
       })
     );
+  };
 
   /**--- useEffect ---*/
   useEffect(() => {

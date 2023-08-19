@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { api } from "~/utils/api";
 
 export type VoteItemType = {
   item: string;
@@ -6,17 +7,25 @@ export type VoteItemType = {
 };
 
 export type VoteConfigType = {
+  voteList: VoteItemType[];
+  userVote: string[];
   isVoted: (item: string, user: string) => boolean;
   vote: (item: string, user: string) => void;
   getTotalVoters: () => number;
   isChanged: () => boolean;
   innevitable: boolean;
   innevitableCheck: () => void;
+  handleUpdateVoteList: (mid: string, userVote: string[]) => void;
 };
 
 export const useVote = (listArray: VoteItemType[]): VoteConfigType => {
   const [voteList, setVoteList] = useState<VoteItemType[]>(listArray);
   const [innevitable, setInnevitable] = useState(false);
+  const [userVote, setUserVote] = useState<string[]>([]);
+
+  const { data } = api.meeting.read.useQuery({
+    meetingId: "clk2i27t80000ajufx0hsc633",
+  });
 
   /** user가 item에 투표했는가? */
   const isVoted = (item: string, user: string): boolean => {
@@ -27,8 +36,8 @@ export const useVote = (listArray: VoteItemType[]): VoteConfigType => {
     return false;
   };
 
-  /** user가 item에 투표하기 */
-  const vote = (item: string, user: string): void => {
+  /** 화면에 보여지는 투표 후보들 관리하는 함수 */
+  const manageAllVoteList = (item: string, user: string): void => {
     setVoteList((prevVoteList) => {
       const newVoteList = prevVoteList.map((voteItem) => {
         if (voteItem.item === item) {
@@ -48,6 +57,20 @@ export const useVote = (listArray: VoteItemType[]): VoteConfigType => {
 
       return newVoteList;
     });
+  };
+
+  /** 사용자 한명의 투표 관리하는 함수 */
+  const manageUserVoteList = (item: string): void => {
+    setUserVote((prev) => {
+      if (prev.includes(item)) return prev.filter((obj) => obj !== item);
+      return [...prev, item];
+    });
+  };
+
+  /** user가 item에 투표하기 */
+  const vote = (item: string, user: string): void => {
+    manageAllVoteList(item, user);
+    manageUserVoteList(item);
   };
 
   /** 전체 투표자 수 구하는 함수 */
@@ -74,16 +97,37 @@ export const useVote = (listArray: VoteItemType[]): VoteConfigType => {
     }
   };
 
+  /** vote db 연동 */
+  const updateVoteList = api.meeting.addVoteItem.useMutation({
+    onSuccess(data) {
+      console.log(data);
+    },
+    onError(err) {
+      console.log(err);
+    },
+  });
+
+  /** vote db 업데이트 함수 */
+  const handleUpdateVoteList = (mid: string, userVote: string[]) => {
+    updateVoteList.mutate({
+      meetingId: mid,
+      toBeAddedlist: userVote,
+    });
+  };
+
   useEffect(() => {
     getTotalVoters();
   }, [voteList]);
 
   return {
+    voteList,
+    userVote,
     isVoted,
     vote,
     getTotalVoters,
     isChanged,
     innevitable,
     innevitableCheck,
+    handleUpdateVoteList,
   };
 };

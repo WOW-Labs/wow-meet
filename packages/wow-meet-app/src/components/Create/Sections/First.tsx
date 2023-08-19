@@ -1,10 +1,10 @@
 import styled from "@emotion/styled";
-import Label from "../Label";
-import Input from "../Input";
-import { mq } from "~/styles/breakpoints";
-import ScheduleSelector from "../ScheduleSelector";
-import { TYPO } from "~/styles/typo";
 import { injectAnimation } from "~/styles/animations";
+import { mq } from "~/styles/breakpoints";
+import { TYPO } from "~/styles/typo";
+import Input from "../Input";
+import Label from "../Label";
+import ScheduleSelector from "../ScheduleSelector";
 
 const FirstSection = () => {
   const title = `반가워요!\n모임 정보를 작성해주세요 :)`;
@@ -50,7 +50,7 @@ const Title = styled.span`
   white-space: pre-line;
   position: relative;
 
-  animation: ${injectAnimation("fadeInTopDown")};
+  animation: ${injectAnimation("fadeInTopDown", "1s")};
 `;
 
 export default FirstSection;

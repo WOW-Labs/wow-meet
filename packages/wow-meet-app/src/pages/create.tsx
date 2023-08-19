@@ -30,10 +30,10 @@ const Create = () => {
   return (
     <Frame css={frameStyle}>
       <Header title={"모임 생성"} />
-      {CurSection ? <CurSection /> : <></>}
+      {CurSection && <CurSection />}
       <ButtonWrapper css={injectAnimation("fadeIn", "1s")}>
         <Button onClick={nextSection} css={buttonStyles.disabled}>
-          상세 정보 추가
+          추가 설정
         </Button>
         <Button onClick={create} css={buttonStyles.creating}>
           생성 완료
@@ -46,9 +46,9 @@ const Create = () => {
 const ButtonWrapper = styled.div`
   width: 100%;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   gap: 1rem;
 
   padding: 0rem 3rem;
@@ -59,13 +59,13 @@ const ButtonWrapper = styled.div`
 
 const buttonStyles = {
   disabled: css`
-    width: 100%;
+    flex: 1;
     ${TYPO.text2.Bd};
-    background-color: ${COLORS.grey200};
-    color: ${COLORS.grey500};
+    background-color: ${COLORS.grey900};
+    color: ${COLORS.grey100};
   `,
   creating: css`
-    width: 100%;
+    flex: 2;
     ${TYPO.text2.Bd};
     background-color: ${COLORS.blue3};
     color: white;
