@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import {
   Button,
   Caption,
+  EmojiContainer,
   Gradient,
   Line,
   Logo,
