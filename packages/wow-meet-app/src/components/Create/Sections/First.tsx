@@ -15,7 +15,7 @@ const FirstSection = () => {
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.currentTarget;
-    setBody((prev) => {
+    setBody((prev: any) => {
       return {
         ...prev,
         [name]: value,
@@ -38,14 +38,14 @@ const FirstSection = () => {
       ),
     },
     {
-      highlight: "일정 범위",
+      highlight: "스케줄 조정 범위",
       rest: "를 선택해주세요.",
       inner: <ScheduleSelector />,
     },
   ];
 
   return (
-    <Container css={injectAnimation("fadeIn")}>
+    <Container css={injectAnimation("fadeIn", "500ms")}>
       <Title>{title}</Title>
       {firstConfigs.map((config, index) => (
         <Label key={index} {...config} />

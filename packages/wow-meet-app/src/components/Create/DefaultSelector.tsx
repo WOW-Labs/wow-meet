@@ -6,6 +6,15 @@ type SelectableBoxProps = {
   onClick: () => void;
 };
 
+const SelectorWrapper = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+`;
+
 const SelectableBox = styled.div<SelectableBoxProps>`
   padding: 1rem;
   width: 50%;
@@ -18,7 +27,6 @@ const SelectableBox = styled.div<SelectableBoxProps>`
   border-radius: 10px;
   font-size: 1.6rem;
   font-weight: 600;
-}
 `;
 
 const StyledContainer = styled.div`
@@ -34,7 +42,8 @@ const StyledContainer = styled.div`
 
 const AdditionalContainer = styled.div`
   width: 100%;
-  box-shadow: 0px 2px 8px 0px #00000021;
+  box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px,
+    rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
   border-radius: 10px;
 `;
 
@@ -50,7 +59,7 @@ function DefaultSelector({ AdditionalComponent }: DefaultSelectorProps) {
   };
 
   return (
-    <>
+    <SelectorWrapper>
       <StyledContainer>
         <SelectableBox
           isSelected={selected === 0}
@@ -69,7 +78,7 @@ function DefaultSelector({ AdditionalComponent }: DefaultSelectorProps) {
       {selected === 1 && (
         <AdditionalContainer>{AdditionalComponent}</AdditionalContainer>
       )}
-    </>
+    </SelectorWrapper>
   );
 }
 

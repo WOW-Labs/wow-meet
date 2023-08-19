@@ -1,5 +1,7 @@
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
+import { faLink } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useAtom } from "jotai";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -38,11 +40,11 @@ const Create = () => {
   const ButtonConfigs = [
     {
       text1: "추가설정",
-      text2: "완료하고 링크공유 🔗️",
+      text2: "완료하고 링크공유",
     },
     {
       text1: "이전화면",
-      text2: "완료하고 링크공유 🔗️",
+      text2: "완료하고 링크공유",
     },
   ];
 
@@ -66,8 +68,6 @@ const Create = () => {
     nextSection();
   };
 
-  console.log(curIdx);
-
   return (
     <>
       <Frame css={frameStyle}>
@@ -88,14 +88,17 @@ const Create = () => {
             }}
             css={buttonStyles.creating}
           >
-            {ButtonConfigs[curIdx]?.text2}
+            <span>{ButtonConfigs[curIdx]?.text2}</span>
+            <FontAwesomeIcon icon={faLink} />
           </FlexButton>
         </ButtonWrapper>
       </Frame>
       <Modal
         isShowing={isShowing}
         hide={toggle}
-        content={<Popup num={modalIdx} onConfirm={goToMeeting} />}
+        content={
+          <Popup num={modalIdx} onConfirm={goToMeeting} onHide={toggle} />
+        }
       />
     </>
   );

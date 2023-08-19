@@ -1,4 +1,6 @@
 import styled from "@emotion/styled";
+import { faCirclePlus } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 import { COLORS } from "~/styles/colors";
 import { TYPO } from "~/styles/typo";
@@ -24,11 +26,13 @@ const DestVoteBox = () => {
           onClick={handleAddInput}
           disabled={inputCount >= maxInputCount}
         >
-          추가하기
+          <span>추가하기</span>
+          <FontAwesomeIcon icon={faCirclePlus} />
         </AddButton>
       </InputContainer>
 
-      <CheckboxContainer>
+      {/* <CheckboxContainer>
+        
         <CheckboxSubContainer>
           <Checkbox type="checkbox" id="multiple" />
           <label htmlFor="multiple">복수 선택</label>
@@ -41,7 +45,7 @@ const DestVoteBox = () => {
           <Checkbox type="checkbox" id="additional" />
           <label htmlFor="additional">장소 선택항목 추가 허용</label>
         </CheckboxSubContainer>
-      </CheckboxContainer>
+      </CheckboxContainer> */}
     </Container>
   );
 };
@@ -56,9 +60,9 @@ const Container = styled.div`
 `;
 
 const StyledTitle = styled.div`
-  ${TYPO.title3.Bd};
-  ${COLORS.black};
-  margin-bottom: 0.5rem;
+  ${TYPO.text1.Bd};
+  ${COLORS.grey900};
+  margin-bottom: 1rem;
 `;
 
 const Input = styled.input`
@@ -66,6 +70,7 @@ const Input = styled.input`
   margin-bottom: 0.5rem;
   padding: 0.9rem 1rem;
   border: none;
+  outline: none;
   border-radius: 8px;
   background-color: #f2f2f2;
   ${TYPO.text2.Reg};
@@ -78,25 +83,32 @@ const AddButton = styled.button`
   padding: 0.8rem 1rem;
   border: 0.5px solid ${COLORS.grey200};
   border-radius: 5px;
-  ${TYPO.text1.Reg};
+  ${TYPO.text2.Bd};
   cursor: pointer;
   opacity: ${(props) => (props.disabled ? 0.5 : 1)};
   pointer-events: ${(props) => (props.disabled ? "none" : "auto")};
-`;
 
-const CheckboxContainer = styled.div``;
-
-const CheckboxSubContainer = styled.div`
   display: flex;
+  flex-direction: row;
   align-items: center;
-  font-size: 12px;
+  justify-content: center;
+  gap: 0.6rem;
 `;
+
 const InputContainer = styled.div``;
 
-const Checkbox = styled.input`
-  width: 15px;
-  height: 15px;
-  margin-right: 1rem;
-`;
+// const CheckboxContainer = styled.div``;
+
+// const CheckboxSubContainer = styled.div`
+//   display: flex;
+//   align-items: center;
+//   font-size: 12px;
+// `;
+
+// const Checkbox = styled.input`
+//   width: 15px;
+//   height: 15px;
+//   margin-right: 1rem;
+// `;
 
 export default DestVoteBox;
