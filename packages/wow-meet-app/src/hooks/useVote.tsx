@@ -1,24 +1,21 @@
 import { useEffect, useState } from "react";
 
-type VoteItem = {
+export type VoteItemType = {
   item: string;
   users: string[];
 };
 
 export type VoteConfigType = {
-  voteList: VoteItem[];
   isVoted: (item: string, user: string) => boolean;
   vote: (item: string, user: string) => void;
-  total: number;
-  isChanged: boolean;
+  getTotalVoters: () => number;
+  isChanged: () => boolean;
   innevitable: boolean;
   innevitableCheck: () => void;
 };
 
-export const useVote = (listArray: VoteItem[]): VoteConfigType => {
-  const [voteList, setVoteList] = useState<VoteItem[]>(listArray);
-  const [total, setTotal] = useState(0);
-  const [isChanged, setIsChanged] = useState(false);
+export const useVote = (listArray: VoteItemType[]): VoteConfigType => {
+  const [voteList, setVoteList] = useState<VoteItemType[]>(listArray);
   const [innevitable, setInnevitable] = useState(false);
 
   /** user가 item에 투표했는가? */
@@ -43,7 +40,6 @@ export const useVote = (listArray: VoteItem[]): VoteConfigType => {
             };
           } else {
             // user가 아직 투표하지 않았다면 투표를 추가
-            setIsChanged(true);
             return { ...voteItem, users: [...voteItem.users, user] };
           }
         }
@@ -55,32 +51,37 @@ export const useVote = (listArray: VoteItem[]): VoteConfigType => {
   };
 
   /** 전체 투표자 수 구하는 함수 */
-  const getTotalVoters = () => {
+  const getTotalVoters = (): number => {
     const allVoters = new Set();
     voteList.forEach((voteItem) => {
       voteItem.users.forEach((user) => {
         allVoters.add(user);
       });
     });
-    setTotal(allVoters.size);
+
+    return allVoters.size;
   };
 
   const innevitableCheck = () => {
     setInnevitable((prev) => !prev);
   };
 
+  const isChanged = () => {
+    if (JSON.stringify(listArray) === JSON.stringify(voteList)) {
+      return false;
+    } else {
+      return true;
+    }
+  };
+
   useEffect(() => {
     getTotalVoters();
-    if (JSON.stringify(listArray) === JSON.stringify(voteList)) {
-      setIsChanged(false);
-    }
   }, [voteList]);
 
   return {
-    voteList,
     isVoted,
     vote,
-    total,
+    getTotalVoters,
     isChanged,
     innevitable,
     innevitableCheck,
