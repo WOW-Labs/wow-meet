@@ -73,25 +73,27 @@ const Create = () => {
       <Frame css={frameStyle}>
         <Header title={"모임 생성"} />
         {CurSection ? <CurSection /> : <></>}
-        <ButtonWrapper css={injectAnimation("fadeIn", "1s")}>
-          <FlexButton
-            flexValue={1}
-            onClick={curIdx == 0 ? nextSection : prevSection}
-            css={buttonStyles.disabled}
-          >
-            {ButtonConfigs[curIdx]?.text1}
-          </FlexButton>
-          <FlexButton
-            flexValue={3}
-            onClick={() => {
-              ModalHandler();
-            }}
-            css={buttonStyles.creating}
-          >
-            <span>{ButtonConfigs[curIdx]?.text2}</span>
-            <FontAwesomeIcon icon={faLink} />
-          </FlexButton>
-        </ButtonWrapper>
+        {curIdx !== 2 && (
+          <ButtonWrapper css={injectAnimation("fadeIn", "1s")}>
+            <FlexButton
+              flexValue={1}
+              onClick={curIdx == 0 ? nextSection : prevSection}
+              css={buttonStyles.disabled}
+            >
+              {ButtonConfigs[curIdx]?.text1}
+            </FlexButton>
+            <FlexButton
+              flexValue={3}
+              onClick={() => {
+                ModalHandler();
+              }}
+              css={buttonStyles.creating}
+            >
+              <span>{ButtonConfigs[curIdx]?.text2}</span>
+              <FontAwesomeIcon icon={faLink} />
+            </FlexButton>
+          </ButtonWrapper>
+        )}
       </Frame>
       <Modal
         isShowing={isShowing}
