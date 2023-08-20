@@ -1,7 +1,8 @@
 // FirstSection.js
 import styled from "@emotion/styled";
 import { useAtom } from "jotai";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { type DateRange } from "react-day-picker";
 import { createAtom } from "~/store/createAtom";
 import { injectAnimation } from "~/styles/animations";
 import { mq } from "~/styles/breakpoints";
@@ -11,18 +12,31 @@ import Label from "../Label";
 import ScheduleSelector from "../ScheduleSelector";
 
 const FirstSection = () => {
+  // createAtom
   const [body, setBody] = useAtom(createAtom);
+  // 상태
+  const [selectedScheduleType, setSelectedScheduleType] = useState<number>(0);
+  const [selectedScheduleList, setSelectedScheduleList] = useState<string[]>(
+    []
+  );
+  const [selectedScheduleRange, setSelectedScheduleRange] =
+    useState<DateRange>();
 
+  // createAtom 업데이트
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.currentTarget;
-    setBody((prev: any) => {
-      return {
-        ...prev,
-        [name]: value,
-      };
-    });
+    setBody({ ...body, [name]: value });
   }
 
+  useEffect(() => {
+    setBody({
+      ...body,
+      dayList: selectedScheduleList,
+      dayRange: selectedScheduleRange,
+    });
+  }, [selectedScheduleList, selectedScheduleRange]);
+
+  // 렌더링 텍스트
   const title = `반가워요!\n모임 정보를 작성해주세요 :)`;
   const firstConfigs = [
     {
@@ -32,7 +46,7 @@ const FirstSection = () => {
         <Input
           placeholder="ex. 2023년 와우랩 여름 휴가"
           name="title"
-          value={body?.title || ""} // 이 부분 수정
+          value={body?.title || ""}
           onChange={handleChange}
         />
       ),
@@ -40,7 +54,13 @@ const FirstSection = () => {
     {
       highlight: "스케줄 조정 범위",
       rest: "를 선택해주세요.",
-      inner: <ScheduleSelector />,
+      inner: (
+        <ScheduleSelector
+          onItemSelectedType={setSelectedScheduleType}
+          onItemSelectedList={setSelectedScheduleList}
+          onItemSelectedDate={setSelectedScheduleRange}
+        />
+      ),
     },
   ];
 
