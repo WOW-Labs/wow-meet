@@ -1,8 +1,8 @@
-import { LayoutGroup } from "framer-motion";
-import SegmentItem from "./Item";
 import styled from "@emotion/styled";
+import { LayoutGroup } from "framer-motion";
 import { COLORS } from "~/styles/colors";
 import { controllerStyle } from "./constant";
+import SegmentItem from "./Item";
 
 interface Props {
   /**
@@ -28,6 +28,7 @@ const SegmentedControl = ({
       <ListWrapper itemCnt={items.length} css={controllerStyle.outer}>
         {items.map((item, i) => (
           <SegmentItem
+            key={i}
             isActive={i === curItem}
             item={item}
             radius={controllerStyle.radius}
