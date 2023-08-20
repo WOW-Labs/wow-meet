@@ -1,5 +1,6 @@
 import styled from "@emotion/styled";
 import { useAtom } from "jotai";
+import { useEffect, useState } from "react";
 import DestVoteBox from "~/components/Create/DestVoteBox";
 import { createAtom } from "~/store/createAtom";
 import { injectAnimation } from "~/styles/animations";
@@ -12,19 +13,21 @@ import TextArea from "../TextArea";
 
 const SecondSection = () => {
   const [body, setBody] = useAtom(createAtom);
+  const [voteOpt, setVoteOpt] = useState<string[]>([]);
 
-  function handleChange(
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) {
+  // createAtom 업데이트
+  function handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
     const { name, value } = e.currentTarget;
-    setBody((prev: any) => {
-      return {
-        ...prev,
-        [name]: value,
-      };
-    });
+    setBody({ ...body, [name]: value });
   }
+  useEffect(() => {
+    setBody({
+      ...body,
+      votesOpt: voteOpt,
+    });
+  }, [voteOpt]);
 
+  // 렌더링 텍스트
   const SecondConfigs = [
     {
       title: "모임 안내문구 작성",
@@ -40,24 +43,16 @@ const SecondSection = () => {
         />
       ),
     },
-    // {
-    //   title: "후보 시간 범위설정",
-    //   inner: <TimeSelector />,
-    // },
-    // {
-    //   title: "선호일정 선택 제도",
-    //   description:
-    //     "스케줄 체크 시에 선호일정을 설정해 가중치를 부여할 수 있어요.",
-    //   inner: <DefaultSelector />,
-    // },
     {
       title: "장소 투표",
-      inner: <DefaultSelector AdditionalComponent={<DestVoteBox />} />,
+      inner: (
+        <DefaultSelector
+          AdditionalComponent={
+            <DestVoteBox setSelector={setVoteOpt} setCurItem={voteOpt} />
+          }
+        />
+      ),
     },
-    // {
-    //   title: "기타 투표",
-    //   inner: <DefaultSelector AdditionalComponent={<PlusVoteBox />} />,
-    // },
   ];
 
   return (
