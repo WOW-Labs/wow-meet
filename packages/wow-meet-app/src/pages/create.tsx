@@ -32,8 +32,21 @@ const Create = () => {
     const meetingData = {
       title: body?.title || "",
       description: body?.description || "",
+      schedule: {
+        type: "day", //고정
+        TimeRanges: "", //고정
+        isPriorityOption: false, //고정
+        dayList: body?.dayList || "",
+        dateRange: body?.dayRange || [],
+      },
+      votes: [
+        {
+          title: "장소 투표",
+          type: "default",
+          options: body?.votesOpt || [],
+        },
+      ],
     };
-
     createInfo.mutate(meetingData);
   };
 
