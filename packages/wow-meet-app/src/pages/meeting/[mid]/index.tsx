@@ -3,10 +3,12 @@ import styled from "@emotion/styled";
 import { produce } from "immer";
 import { useAtom } from "jotai";
 import { useRouter } from "next/router";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Button } from "~/components/Create";
 import Frame, { frameStyle } from "~/components/Frame";
 import Caption from "~/components/Meeting/Caption";
+import CellInfo from "~/components/Meeting/CellInfo";
+import Header from "~/components/Meeting/Header";
 import TimeTable from "~/components/Meeting/Table";
 import {
   MOCK_UP_DAY_LIST,
@@ -27,6 +29,7 @@ type ComponentType = {
   button: {
     title: string;
     style: SerializedStyles;
+    navi: string;
   };
 };
 
@@ -37,17 +40,24 @@ const Meeting = () => {
   /**--- config ---*/
   const buttonConfigs = {
     view: {
-      title: "내 스케줄 입력하기",
-      style: buttonStyles.view,
+      title: "내 스케줄도 반영하기 ⏱️",
+      style: buttonStyles.mode,
+      navi: "리포트 보기",
     },
     check: {
-      title: "완료하고 스케줄보기",
-      style: buttonStyles.check,
+      title: "내 스케줄 반영완료 ⏱️",
+      style: buttonStyles.mode,
+      navi: "투표하기",
     },
   };
 
   /**--- state ---*/
+  const timeOutId = useRef<NodeJS.Timeout>();
   const [mode, setMode] = useAtom(modeState);
+  const [cellInfo, setCellInfo] = useState<{
+    date: string;
+    participants?: Array<{ name: string; weight: number }>;
+  } | null>(null);
   const [mySelectedDate, setMySelectedDate] = useState<ScheduleElement[]>([]);
   const [curComp, setCurComp] = useState<ComponentType>({
     mode: "View",
@@ -98,8 +108,11 @@ const Meeting = () => {
   };
 
   const handleViewCellInfo = (id: string) => {
-    // 해당 위치에서
-    console.log(getParticipantsInfoByDate(id));
+    if (timeOutId.current) clearTimeout(timeOutId.current);
+    setCellInfo({ date: id, participants: getParticipantsInfoByDate(id) });
+    timeOutId.current = setTimeout(() => {
+      setCellInfo(null);
+    }, 1000);
   };
 
   const handleMutateMySchedule = (id: string) => {
@@ -127,6 +140,22 @@ const Meeting = () => {
     <Frame css={frameStyle}>
       {toast.open && <Toast {...toast} close={close} />}
       <Container>
+        <div
+          css={css`
+            height: 8rem;
+            width: 100%;
+          `}
+        >
+          {cellInfo ? (
+            <CellInfo
+              date={cellInfo?.date}
+              participants={cellInfo?.participants}
+            />
+          ) : (
+            <Header title="GDSC 7월 정기모임" mode={mode} />
+          )}
+        </div>
+
         <Caption />
         <TimeTable
           mode={mode}
@@ -136,9 +165,18 @@ const Meeting = () => {
           getCellWeightByDate={getCellWeightByDate}
           onTouchCell={handleTouchCell}
         />
-        <Button css={curComp.button.style} onClick={changeMode}>
-          {curComp.button.title}
-        </Button>
+        <div
+          css={css`
+            display: flex;
+            gap: 1rem;
+            width: 100%;
+          `}
+        >
+          <Button css={buttonStyles.navi}>{curComp.button.navi}</Button>
+          <Button css={curComp.button.style} onClick={changeMode}>
+            {curComp.button.title}
+          </Button>
+        </div>
       </Container>
       <VoteTalk onClick={handlerVote} />
     </Frame>
@@ -161,17 +199,17 @@ const Container = styled.div`
 `;
 
 const buttonStyles = {
-  view: css`
-    width: 100%;
-    ${TYPO.text2.Bd};
-    background-color: ${COLORS.grey600};
-    color: white;
-  `,
-  check: css`
-    width: 100%;
+  mode: css`
     ${TYPO.text2.Bd};
     background-color: ${COLORS.blue3};
     color: white;
+    flex: 2;
+  `,
+  navi: css`
+    ${TYPO.text2.Bd};
+    background-color: ${COLORS.black};
+    color: white;
+    flex: 1;
   `,
 };
 
