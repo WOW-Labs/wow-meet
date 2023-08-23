@@ -22,6 +22,12 @@ const ButtonComponent = styled.button<FlexButtonProps>`
   border-radius: 1.2rem;
 
   ${({ flexValue }) => (flexValue !== undefined ? `flex: ${flexValue};` : "")}
+
+  display:flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 `;
 
 const FlexButton: ForwardRefRenderFunction<

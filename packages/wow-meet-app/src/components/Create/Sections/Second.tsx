@@ -1,11 +1,10 @@
 import styled from "@emotion/styled";
 import { useAtom } from "jotai";
 import DestVoteBox from "~/components/Create/DestVoteBox";
-import PlusVoteBox from "~/components/Create/PlusVoteBox";
-import TimeSelector from "~/components/Create/TimeSelector";
 import { createAtom } from "~/store/createAtom";
 import { injectAnimation } from "~/styles/animations";
 import { mq } from "~/styles/breakpoints";
+import { COLORS } from "~/styles/colors";
 import { TYPO } from "~/styles/typo";
 import DefaultSelector from "../DefaultSelector";
 import DetailLabel from "../DetailLabel";
@@ -18,7 +17,7 @@ const SecondSection = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) {
     const { name, value } = e.currentTarget;
-    setBody((prev) => {
+    setBody((prev: any) => {
       return {
         ...prev,
         [name]: value,
@@ -41,31 +40,29 @@ const SecondSection = () => {
         />
       ),
     },
-    {
-      title: "후보 시간 범위설정",
-      inner: <TimeSelector />,
-    },
-    {
-      title: "선호일정 선택 제도",
-      description:
-        "스케줄 체크 시에 선호일정을 설정해 가중치를 부여할 수 있어요.",
-      inner: <DefaultSelector />,
-    },
+    // {
+    //   title: "후보 시간 범위설정",
+    //   inner: <TimeSelector />,
+    // },
+    // {
+    //   title: "선호일정 선택 제도",
+    //   description:
+    //     "스케줄 체크 시에 선호일정을 설정해 가중치를 부여할 수 있어요.",
+    //   inner: <DefaultSelector />,
+    // },
     {
       title: "장소 투표",
       inner: <DefaultSelector AdditionalComponent={<DestVoteBox />} />,
     },
-    {
-      title: "기타 투표",
-      inner: <DefaultSelector AdditionalComponent={<PlusVoteBox />} />,
-    },
+    // {
+    //   title: "기타 투표",
+    //   inner: <DefaultSelector AdditionalComponent={<PlusVoteBox />} />,
+    // },
   ];
 
   return (
     <Container css={injectAnimation("fadeIn")}>
-      <Title>
-        우리모임을 더 다채롭게! <br /> 추가정보를 입력해주세요😜
-      </Title>
+      <Title>{`우리모임을 더 다채롭게!\n추가정보를 입력해주세요 :)`}</Title>
       {SecondConfigs.map(DetailLabel)}
     </Container>
   );
@@ -88,13 +85,14 @@ const Container = styled.div`
 `;
 
 const Title = styled.span`
-  ${TYPO.title1.Bd};
+  ${TYPO.title2.Bd};
   white-space: pre-line;
   position: relative;
   text-align: center;
   width: 100%;
+  color: ${COLORS.grey900};
 
-  animation: ${injectAnimation("fadeInTopDown")};
+  animation: ${injectAnimation("fadeInTopDown", "1s")};
 `;
 
 export default SecondSection;

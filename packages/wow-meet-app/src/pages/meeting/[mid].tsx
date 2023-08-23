@@ -4,12 +4,11 @@ import { produce } from "immer";
 import { useAtom } from "jotai";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { dummydata, dummyUrl } from "~/assets/dummydata";
+import { dummydata, dummyRanking, dummyUrl } from "~/assets/dummydata";
 import { Header } from "~/components/Bar";
 import { Button } from "~/components/Create";
 import Frame, { frameStyle } from "~/components/Frame";
 import Caption from "~/components/Meeting/Caption";
-import SummarizeBox from "~/components/Meeting/SummarizeBox";
 import TimeTable from "~/components/Meeting/Table";
 import {
   MOCK_UP_DAY_LIST,
@@ -18,6 +17,7 @@ import {
 } from "~/components/Meeting/Table/MOCK";
 import { Toast } from "~/components/Popup";
 import { ToastType } from "~/components/Popup/Toast";
+import Ranking from "~/components/Ranking";
 import { VoteTalk } from "~/components/Vote";
 import { modeState, type Mode } from "~/store/modeAtom";
 import { mq } from "~/styles/breakpoints";
@@ -50,7 +50,7 @@ const Meeting = () => {
 
   /**--- state ---*/
   const [mode, setMode] = useAtom(modeState);
-  const [mid, setMid] = useState(0);
+  const [mid, setMid] = useState("");
   const [mySelectedDate, setMySelectedDate] = useState<ScheduleElement[]>([]);
   const [curComp, setCurComp] = useState<ComponentType>({
     mode: "View",
@@ -64,9 +64,9 @@ const Meeting = () => {
 
   /**--- function ---*/
   const settingMid = () => {
-    if (router.query.mid) {
-      const newMid = router.query.mid[0];
-      setMid(Number(newMid));
+    if (router.query.mid && typeof router.query.mid === "string") {
+      const newMid = router.query.mid;
+      setMid(newMid!);
     }
   };
 
@@ -127,6 +127,7 @@ const Meeting = () => {
         }
       })
     );
+  };
 
   /**--- useEffect ---*/
   useEffect(() => {
@@ -138,7 +139,8 @@ const Meeting = () => {
       <Header title={dummydata.title} sharing={clipboard} prev={changeMode} />
       {toast.open && <Toast {...toast} close={close} />}
       <Container>
-        <SummarizeBox />
+        {/* <SummarizeBox /> */}
+        <Ranking ranking={dummyRanking} type={"date"} />
         <Caption />
         <TimeTable
           mode={mode}
