@@ -1,12 +1,33 @@
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import { useState } from "react";
-import { DateRange, DayPicker } from "react-day-picker";
+import {
+  DayPicker,
+  type DateRange,
+  type SelectRangeEventHandler,
+} from "react-day-picker";
 import "react-day-picker/dist/style.css";
 import { TYPO } from "~/styles/typo";
 
-const CalendarSelector = () => {
-  const [range, setRange] = useState<DateRange | undefined>();
+type CalenderSelectorProps = {
+  setCurItem: DateRange | undefined;
+  setSelector: (item: DateRange) => void;
+};
+
+const CalendarSelector = ({
+  setSelector,
+  setCurItem,
+}: CalenderSelectorProps) => {
+  const [localRange, setLocalRange] = useState<DateRange | undefined>(
+    setCurItem
+  );
+
+  const handleSelect: SelectRangeEventHandler = (newRange) => {
+    if (newRange) {
+      setLocalRange(newRange);
+      setSelector(newRange);
+    }
+  };
 
   return (
     <CalendaarWrapper>
@@ -15,8 +36,8 @@ const CalendarSelector = () => {
         mode="range"
         min={2}
         max={7}
-        selected={range}
-        onSelect={setRange}
+        selected={localRange}
+        onSelect={handleSelect}
         modifiersClassNames={{
           selected: "my-selected",
         }}

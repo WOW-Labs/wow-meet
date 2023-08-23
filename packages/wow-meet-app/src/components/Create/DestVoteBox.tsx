@@ -5,9 +5,15 @@ import { useState } from "react";
 import { COLORS } from "~/styles/colors";
 import { TYPO } from "~/styles/typo";
 
-const DestVoteBox = () => {
+type VoteOptProps = {
+  setSelector: (item: string[]) => void;
+  setCurItem: string[] | undefined;
+};
+
+const DestVoteBox = ({ setSelector, setCurItem }: VoteOptProps) => {
   const maxInputCount = 10; // 최대 인풋창 개수
   const [inputCount, setInputCount] = useState(3);
+  const [voteOpt, setVoteOpt] = useState<string[]>([]);
 
   const handleAddInput = () => {
     if (inputCount < maxInputCount) {
@@ -15,12 +21,24 @@ const DestVoteBox = () => {
     }
   };
 
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>, index: number) {
+    const { value } = e.currentTarget;
+    const updatedVoteOpt = [...voteOpt];
+    updatedVoteOpt[index] = value;
+    setVoteOpt(updatedVoteOpt);
+    setSelector(updatedVoteOpt);
+  }
+
   return (
     <Container>
       <InputContainer>
         <StyledTitle>모임장소 선택항목 설정</StyledTitle>
         {Array.from({ length: inputCount }, (_, index) => (
-          <Input key={index} placeholder={`장소를 입력해주세요.`} />
+          <Input
+            key={index}
+            placeholder={`장소를 입력해주세요.`}
+            onChange={(e) => handleChange(e, index)}
+          />
         ))}
         <AddButton
           onClick={handleAddInput}
@@ -30,22 +48,6 @@ const DestVoteBox = () => {
           <FontAwesomeIcon icon={faCirclePlus} />
         </AddButton>
       </InputContainer>
-
-      {/* <CheckboxContainer>
-        
-        <CheckboxSubContainer>
-          <Checkbox type="checkbox" id="multiple" />
-          <label htmlFor="multiple">복수 선택</label>
-        </CheckboxSubContainer>
-        <CheckboxSubContainer>
-          <Checkbox type="checkbox" id="anonymous" />
-          <label htmlFor="anonymous">익명 투표</label>
-        </CheckboxSubContainer>
-        <CheckboxSubContainer>
-          <Checkbox type="checkbox" id="additional" />
-          <label htmlFor="additional">장소 선택항목 추가 허용</label>
-        </CheckboxSubContainer>
-      </CheckboxContainer> */}
     </Container>
   );
 };
@@ -96,19 +98,5 @@ const AddButton = styled.button`
 `;
 
 const InputContainer = styled.div``;
-
-// const CheckboxContainer = styled.div``;
-
-// const CheckboxSubContainer = styled.div`
-//   display: flex;
-//   align-items: center;
-//   font-size: 12px;
-// `;
-
-// const Checkbox = styled.input`
-//   width: 15px;
-//   height: 15px;
-//   margin-right: 1rem;
-// `;
 
 export default DestVoteBox;
