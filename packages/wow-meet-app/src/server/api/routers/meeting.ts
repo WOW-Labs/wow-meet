@@ -109,9 +109,9 @@ export const meetingRouter = createTRPCRouter({
         return {
           data: {
             ...meeting,
-            schedule: schedule || {},
-            votes: votes || [],
-            participants: participants || [],
+            schedule: schedule,
+            votes: votes,
+            participants: participants,
           },
         };
       } catch (err) {}
