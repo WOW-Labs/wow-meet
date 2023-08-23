@@ -23,6 +23,7 @@ interface Props {
 }
 
 const TimeTable = (props: Props) => {
+  const timeOut = useRef<NodeJS.Timeout>();
   const exSelectedCell = useRef<string>("");
   const { registerHandler } = useEventHandler({
     mySelected: props.mySelected,
@@ -40,11 +41,15 @@ const TimeTable = (props: Props) => {
   });
 
   const handelCellDragOver = (id?: string) => {
+    if (timeOut.current) clearTimeout(timeOut.current);
     if (!id) return;
     // 동일한 셀 내에서 발생하는 중복 이벤트를 방지하기 위해서
     if (id === exSelectedCell.current) return;
     props.onTouchCell(id);
     exSelectedCell.current = id;
+    timeOut.current = setTimeout(() => {
+      exSelectedCell.current = "";
+    }, 1000);
   };
 
   return (
@@ -138,8 +143,8 @@ const Container = styled.div`
   height: 60rem;
   width: 100%;
   background-color: white;
-  border: 1px solid black;
   border-radius: 1rem;
+  box-shadow: 0px 2px 12px 0px rgba(0, 0, 0, 0.12);
   ::-webkit-scrollbar {
     display: none;
   }
