@@ -10,11 +10,7 @@ import Caption from "~/components/Meeting/Caption";
 import CellInfo from "~/components/Meeting/CellInfo";
 import Header from "~/components/Meeting/Header";
 import TimeTable from "~/components/Meeting/Table";
-import {
-  MOCK_UP_DAY_LIST,
-  MOCK_UP_SELECTED_LIST,
-  type ScheduleElement,
-} from "~/components/Meeting/Table/MOCK";
+import { type ScheduleElement } from "~/components/Meeting/Table/MOCK";
 import useCell from "~/components/Meeting/Table/hooks/useCell";
 import { Toast } from "~/components/Popup";
 import { ToastType } from "~/components/Popup/Toast";
@@ -35,9 +31,35 @@ type ComponentType = {
 };
 
 const Meeting = () => {
-  const updateTable = api.paticipants.create.useMutation();
+  const trpc = api.useContext();
   /**--- router ---*/
   const router = useRouter();
+  const meetingId = useMemo(
+    () => router.query.mid,
+    [router.query.mid]
+  ) as string;
+
+  const updateTable = api.paticipants.create.useMutation({
+    onSuccess: () => {
+      void trpc.meeting.invalidate();
+    },
+  });
+  const { data } = api.meeting.read.useQuery(
+    {
+      meetingId: meetingId,
+    },
+    { enabled: !!meetingId, cacheTime: 0, staleTime: 0 }
+  );
+
+  const 참여자_스케줄_정보 = useMemo(
+    () =>
+      data?.data.participants?.map((p) => ({
+        name: p.name,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        scheduleList: JSON.parse(p.schelduleList || ""),
+      })),
+    [data]
+  );
 
   /**--- config ---*/
   const buttonConfigs = {
@@ -72,12 +94,7 @@ const Meeting = () => {
   });
 
   const { getCellWeightByDate, getParticipantsInfoByDate } = useCell(
-    MOCK_UP_SELECTED_LIST
-  );
-
-  const mid = useMemo(
-    () => (router.query.mid ? Number(router.query.mid[0]) : 0),
-    [router.query.mid]
+    참여자_스케줄_정보 || []
   );
 
   const close = () => {
@@ -106,7 +123,7 @@ const Meeting = () => {
   };
 
   const handlerVote = () => {
-    void router.push(`/meeting/${mid}/vote`);
+    void router.push(`/meeting/${meetingId}/vote`);
   };
 
   const handleViewCellInfo = (id: string) => {
@@ -141,12 +158,12 @@ const Meeting = () => {
   const handleCTAButton = () => {
     if (curComp.mode === "Check") {
       // fetchData()
-      // updateTable.mutate({
-      //   meetingId: "",
-      //   isPriority: false,
-      //   name: "",
-      //   schelduleList: mySelectedDate,
-      // });
+      updateTable.mutate({
+        meetingId: meetingId,
+        isPriority: false,
+        name: "0823 테스트",
+        schelduleList: mySelectedDate,
+      });
     }
     changeMode();
   };
@@ -172,14 +189,16 @@ const Meeting = () => {
         </div>
 
         <Caption />
-        <TimeTable
-          mode={mode}
-          dayList={MOCK_UP_DAY_LIST}
-          selectedList={MOCK_UP_SELECTED_LIST}
-          mySelected={mySelectedDate}
-          getCellWeightByDate={getCellWeightByDate}
-          onTouchCell={handleTouchCell}
-        />
+        {data?.data && (
+          <TimeTable
+            mode={mode}
+            dayList={data.data.schedule?.dayList || []}
+            selectedList={참여자_스케줄_정보 || []}
+            mySelected={mySelectedDate}
+            getCellWeightByDate={getCellWeightByDate}
+            onTouchCell={handleTouchCell}
+          />
+        )}
         <div
           css={css`
             display: flex;
