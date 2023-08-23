@@ -29,24 +29,35 @@ const Create = () => {
   const [body, setBody] = useAtom(createAtom);
 
   const createMeeting = () => {
-    const meetingData = {
+    const meetingData: {
+      title: string;
+      description: string;
+      schedule?: any;
+      votes?: any;
+    } = {
       title: body?.title || "",
       description: body?.description || "",
-      schedule: {
+    };
+
+    if (body?.dayList) {
+      meetingData.schedule = {
         type: "day", //고정
-        TimeRanges: "", //고정
         isPriorityOption: false, //고정
-        dayList: body?.dayList || "",
-        dateRange: body?.dayRange || [],
-      },
-      votes: [
+        dayList: body?.dayList || [],
+      };
+    }
+
+    console.log(body?.votesOpt);
+    if (body?.votesOpt) {
+      meetingData.votes = [
         {
           title: "장소 투표",
           type: "default",
           options: body?.votesOpt || [],
         },
-      ],
-    };
+      ];
+    }
+
     createInfo.mutate(meetingData);
   };
 

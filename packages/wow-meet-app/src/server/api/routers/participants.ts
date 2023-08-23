@@ -12,7 +12,7 @@ export const paticipantsRouter = createTRPCRouter({
         isPriority: z.boolean(),
 
         schelduleList: z
-          .array(z.object({ weight: z.number(), date: z.date() }))
+          .array(z.object({ weight: z.number(), date: z.string() }))
           .optional(),
         voteList: z
           .array(z.object({ voteId: z.string(), option: z.string() }))
