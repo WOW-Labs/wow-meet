@@ -1,5 +1,5 @@
 import { css } from "@emotion/react";
-import { ComponentProps } from "react";
+import { type ComponentProps } from "react";
 import { useVh } from "~/hooks/useVh";
 import { mq } from "~/styles/breakpoints";
 
@@ -35,7 +35,7 @@ const Frame = ({ children, ...props }: FrameProps) => {
 };
 
 export const frameStyle = css`
-  padding: 8rem 0rem;
+  padding: 4rem 0rem;
 
   ${mq[4]} {
     padding: 7rem 0rem;
