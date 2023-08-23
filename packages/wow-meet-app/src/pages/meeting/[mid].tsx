@@ -4,7 +4,6 @@ import { produce } from "immer";
 import { useAtom } from "jotai";
 import { useRouter } from "next/router";
 import { useMemo, useState } from "react";
-import { dummyUrl } from "~/assets/dummydata";
 import { Button } from "~/components/Create";
 import Frame, { frameStyle } from "~/components/Frame";
 import Caption from "~/components/Meeting/Caption";
@@ -68,23 +67,6 @@ const Meeting = () => {
     () => (router.query.mid ? Number(router.query.mid[0]) : 0),
     [router.query.mid]
   );
-
-  const clipboard = () => {
-    try {
-      void navigator.clipboard.writeText(`${dummyUrl}/meeting/${mid}`);
-      setToast({
-        open: true,
-        content: "미팅 주소가 클립보드에 복사되었습니다!",
-        type: ToastType.Postive,
-      });
-    } catch (error) {
-      setToast({
-        open: true,
-        content: "미팅 주소 복사에 실패하였습니다.",
-        type: ToastType.Negative,
-      });
-    }
-  };
 
   const close = () => {
     setToast((prev) => {

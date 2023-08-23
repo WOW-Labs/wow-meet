@@ -1,5 +1,11 @@
 import styled from "@emotion/styled";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useRef } from "react";
 import ReactDOM from "react-dom";
+import { useOutsideClose } from "~/hooks/useOutsideClose";
+import { fadeIn, injectAnimation } from "~/styles/animations";
+import { COLORS } from "~/styles/colors";
 
 type ModalProps = {
   isShowing: boolean;
@@ -7,18 +13,28 @@ type ModalProps = {
   content: React.ReactNode;
 };
 
-const Modal = ({ isShowing, hide, content }: ModalProps) =>
-  isShowing
+const Modal = ({ isShowing, hide, content }: ModalProps) => {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useOutsideClose(ref, hide);
+
+  return isShowing
     ? ReactDOM.createPortal(
         <OutSide>
-          <ModalLayOut>
-            <div onClick={hide}>&times;</div>
+          <ModalLayOut
+            css={injectAnimation("fadeInTopDown", "300ms", "ease-in-out")}
+            ref={ref}
+          >
             {content}
+            <Xmark onClick={hide}>
+              <FontAwesomeIcon icon={faXmark} />
+            </Xmark>
           </ModalLayOut>
         </OutSide>,
         document.body
       )
     : null;
+};
 
 export default Modal;
 
@@ -32,6 +48,7 @@ const OutSide = styled.div`
   bottom: 0;
   overflow-y: auto;
   background-color: rgba(0, 41, 177, 0.3);
+  animation: ${fadeIn} 200ms ease-in-out;
 `;
 
 const ModalLayOut = styled.div`
@@ -45,4 +62,18 @@ const ModalLayOut = styled.div`
   justify-content: space-between;
   border-radius: 8px;
   box-shadow: 0 2px 30px 0 rgba(0, 0, 0, 0.2);
+
+  position: relative;
+`;
+
+const Xmark = styled.button`
+  border: none;
+  background: none;
+  color: ${COLORS.grey600};
+  outline: none;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+
+  cursor: pointer;
 `;

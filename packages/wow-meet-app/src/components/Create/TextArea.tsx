@@ -8,7 +8,7 @@ import { TYPO } from "~/styles/typo";
  */
 
 const TextArea = (props: ComponentProps<"textarea">) => {
-  return <textarea css={TextAreaStyle} {...props} />;
+  return <textarea css={TextAreaStyle} {...props} value={props.value} />;
 };
 
 const TextAreaStyle = css`
@@ -19,13 +19,14 @@ const TextAreaStyle = css`
   width: 100%;
   background: none;
 
-  ${TYPO.text1.Reg};
+  ${TYPO.text2.Reg};
   color: ${COLORS.black};
 
   margin-top: 0.5rem;
   padding-bottom: 0.4rem;
-  border-radius: 16px;
-  box-shadow: 0px 2px 8px 0px #00000021;
+  border-radius: 1rem;
+  box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px,
+    rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
   padding: 2rem;
 
   &::placeholder {

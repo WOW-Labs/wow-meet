@@ -36,7 +36,7 @@ const lineDrawing = keyframes`
     }
 `;
 
-const fadeIn = keyframes`
+export const fadeIn = keyframes`
     from{
         opacity: 0;
     }
@@ -67,6 +67,18 @@ const toastClose = keyframes`
     }
 `;
 
+const popUp = keyframes`
+    0%{
+        transform: scale(0.4) translateY(8rem);
+    }
+    90%{
+        transform: scale(1.1) translateY(-0.5rem);
+    }
+    100%{
+        transform: scale(1) translateY(0rem);
+    }
+`;
+
 const animations = {
   fadeInTopDown,
   fadeInBottomUp,
@@ -74,6 +86,7 @@ const animations = {
   fadeIn,
   toastOpen,
   toastClose,
+  popUp,
 };
 
 export const injectAnimation = (

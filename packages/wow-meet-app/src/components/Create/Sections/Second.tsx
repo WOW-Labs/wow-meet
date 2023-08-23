@@ -1,15 +1,33 @@
 import styled from "@emotion/styled";
+import { useAtom } from "jotai";
+import { useEffect, useState } from "react";
 import DestVoteBox from "~/components/Create/DestVoteBox";
-import PlusVoteBox from "~/components/Create/PlusVoteBox";
-import TimeSelector from "~/components/Create/TimeSelector";
+import { createAtom } from "~/store/createAtom";
 import { injectAnimation } from "~/styles/animations";
 import { mq } from "~/styles/breakpoints";
+import { COLORS } from "~/styles/colors";
 import { TYPO } from "~/styles/typo";
 import DefaultSelector from "../DefaultSelector";
 import DetailLabel from "../DetailLabel";
 import TextArea from "../TextArea";
 
 const SecondSection = () => {
+  const [body, setBody] = useAtom(createAtom);
+  const [voteOpt, setVoteOpt] = useState<string[]>([]);
+
+  // createAtom 업데이트
+  function handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
+    const { name, value } = e.currentTarget;
+    setBody({ ...body, [name]: value });
+  }
+  useEffect(() => {
+    setBody({
+      ...body,
+      votesOpt: voteOpt,
+    });
+  }, [voteOpt]);
+
+  // 렌더링 텍스트
   const SecondConfigs = [
     {
       title: "모임 안내문구 작성",
@@ -19,34 +37,27 @@ const SecondSection = () => {
         <TextArea
           rows={5}
           placeholder="여기를 눌러 모임 안내문구를 입력해주세요."
+          name="description"
+          value={body?.description || ""}
+          onChange={handleChange}
         />
       ),
     },
     {
-      title: "후보 시간 범위설정",
-      inner: <TimeSelector />,
-    },
-    {
-      title: "선호일정 선택 제도",
-      description:
-        "스케줄 체크 시에 선호일정을 설정해 가중치를 부여할 수 있어요.",
-      inner: <DefaultSelector />,
-    },
-    {
       title: "장소 투표",
-      inner: <DefaultSelector AdditionalComponent={<DestVoteBox />} />,
-    },
-    {
-      title: "기타 투표",
-      inner: <DefaultSelector AdditionalComponent={<PlusVoteBox />} />,
+      inner: (
+        <DefaultSelector
+          AdditionalComponent={
+            <DestVoteBox setSelector={setVoteOpt} setCurItem={voteOpt} />
+          }
+        />
+      ),
     },
   ];
 
   return (
     <Container css={injectAnimation("fadeIn")}>
-      <Title>
-        우리모임을 더 다채롭게! <br /> 추가정보를 입력해주세요😜
-      </Title>
+      <Title>{`우리모임을 더 다채롭게!\n추가정보를 입력해주세요 :)`}</Title>
       {SecondConfigs.map(DetailLabel)}
     </Container>
   );
@@ -69,13 +80,14 @@ const Container = styled.div`
 `;
 
 const Title = styled.span`
-  ${TYPO.title1.Bd};
+  ${TYPO.title2.Bd};
   white-space: pre-line;
   position: relative;
   text-align: center;
   width: 100%;
+  color: ${COLORS.grey900};
 
-  animation: ${injectAnimation("fadeInTopDown")};
+  animation: ${injectAnimation("fadeInTopDown", "1s")};
 `;
 
 export default SecondSection;

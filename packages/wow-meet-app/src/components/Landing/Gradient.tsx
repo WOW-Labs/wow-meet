@@ -1,8 +1,10 @@
-import { useVh } from "~/hooks/useVh";
-import { mq } from "~/styles/breakpoints";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
+import Image from "next/image";
 import { ComponentProps } from "react";
+import texture from "~/assets/images/texture.png";
+import { useVh } from "~/hooks/useVh";
+import { mq } from "~/styles/breakpoints";
 
 interface Props extends ComponentProps<"div"> {
   children: React.ReactNode;
@@ -19,6 +21,7 @@ const Gradient = ({ children, ...props }: Props) => {
   return (
     <div css={containerStyle} {...props}>
       <GradientBack />
+      <Image alt="texture" src={texture} css={textureStyle} />
       <Content>{children}</Content>
     </div>
   );
@@ -56,6 +59,16 @@ const Content = styled.div`
   ${mq[4]} {
     top: -7rem;
   }
+`;
+
+const textureStyle = css`
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+  object-position: center;
+  position: absolute;
+  left: 0px;
+  bottom: 0px;
 `;
 
 export default Gradient;

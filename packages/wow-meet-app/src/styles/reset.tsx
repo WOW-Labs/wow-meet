@@ -10,7 +10,7 @@ const reset = css`
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    background-color: #fff;
+    background-color: #f9f9f9;
     font-size: 9px;
 
     ${mq[2]} {

@@ -1,11 +1,19 @@
 import styled from "@emotion/styled";
+import { faCirclePlus } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 import { COLORS } from "~/styles/colors";
 import { TYPO } from "~/styles/typo";
 
-const DestVoteBox = () => {
+type VoteOptProps = {
+  setSelector: (item: string[]) => void;
+  setCurItem: string[] | undefined;
+};
+
+const DestVoteBox = ({ setSelector, setCurItem }: VoteOptProps) => {
   const maxInputCount = 10; // 최대 인풋창 개수
   const [inputCount, setInputCount] = useState(3);
+  const [voteOpt, setVoteOpt] = useState<string[]>([]);
 
   const handleAddInput = () => {
     if (inputCount < maxInputCount) {
@@ -13,35 +21,33 @@ const DestVoteBox = () => {
     }
   };
 
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>, index: number) {
+    const { value } = e.currentTarget;
+    const updatedVoteOpt = [...voteOpt];
+    updatedVoteOpt[index] = value;
+    setVoteOpt(updatedVoteOpt);
+    setSelector(updatedVoteOpt);
+  }
+
   return (
     <Container>
       <InputContainer>
         <StyledTitle>모임장소 선택항목 설정</StyledTitle>
         {Array.from({ length: inputCount }, (_, index) => (
-          <Input key={index} placeholder={`장소를 입력해주세요.`} />
+          <Input
+            key={index}
+            placeholder={`장소를 입력해주세요.`}
+            onChange={(e) => handleChange(e, index)}
+          />
         ))}
         <AddButton
           onClick={handleAddInput}
           disabled={inputCount >= maxInputCount}
         >
-          추가하기
+          <span>추가하기</span>
+          <FontAwesomeIcon icon={faCirclePlus} />
         </AddButton>
       </InputContainer>
-
-      <CheckboxContainer>
-        <CheckboxSubContainer>
-          <Checkbox type="checkbox" id="multiple" />
-          <label htmlFor="multiple">복수 선택</label>
-        </CheckboxSubContainer>
-        <CheckboxSubContainer>
-          <Checkbox type="checkbox" id="anonymous" />
-          <label htmlFor="anonymous">익명 투표</label>
-        </CheckboxSubContainer>
-        <CheckboxSubContainer>
-          <Checkbox type="checkbox" id="additional" />
-          <label htmlFor="additional">장소 선택항목 추가 허용</label>
-        </CheckboxSubContainer>
-      </CheckboxContainer>
     </Container>
   );
 };
@@ -56,9 +62,9 @@ const Container = styled.div`
 `;
 
 const StyledTitle = styled.div`
-  ${TYPO.title3.Bd};
-  ${COLORS.black};
-  margin-bottom: 0.5rem;
+  ${TYPO.text1.Bd};
+  ${COLORS.grey900};
+  margin-bottom: 1rem;
 `;
 
 const Input = styled.input`
@@ -66,6 +72,7 @@ const Input = styled.input`
   margin-bottom: 0.5rem;
   padding: 0.9rem 1rem;
   border: none;
+  outline: none;
   border-radius: 8px;
   background-color: #f2f2f2;
   ${TYPO.text2.Reg};
@@ -78,25 +85,18 @@ const AddButton = styled.button`
   padding: 0.8rem 1rem;
   border: 0.5px solid ${COLORS.grey200};
   border-radius: 5px;
-  ${TYPO.text1.Reg};
+  ${TYPO.text2.Bd};
   cursor: pointer;
   opacity: ${(props) => (props.disabled ? 0.5 : 1)};
   pointer-events: ${(props) => (props.disabled ? "none" : "auto")};
-`;
 
-const CheckboxContainer = styled.div``;
-
-const CheckboxSubContainer = styled.div`
   display: flex;
+  flex-direction: row;
   align-items: center;
-  font-size: 12px;
+  justify-content: center;
+  gap: 0.6rem;
 `;
-const InputContainer = styled.div``;
 
-const Checkbox = styled.input`
-  width: 15px;
-  height: 15px;
-  margin-right: 1rem;
-`;
+const InputContainer = styled.div``;
 
 export default DestVoteBox;

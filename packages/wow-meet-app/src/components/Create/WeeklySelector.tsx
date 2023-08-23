@@ -1,17 +1,21 @@
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
-import { useState } from "react";
 import { COLORS } from "~/styles/colors";
 import { TYPO } from "~/styles/typo";
 
 const DAYS = ["월", "화", "수", "목", "금", "토", "일"];
 
-const WeeklySelector = () => {
-  const [selector, setSelector] = useState<string[]>([]);
+type WeeklySelectorProps = {
+  setCurItem: string[];
+  setSelector: (item: string[]) => void;
+};
+
+const WeeklySelector = ({ setCurItem, setSelector }: WeeklySelectorProps) => {
+  // const [selector, setSelector] = useState<string[]>([]);
 
   /** 선택했으면 true, 아니면 false */
   const check = (item: string) => {
-    if (selector.includes(item)) return true;
+    if (setCurItem.includes(item)) return true;
     else return false;
   };
 

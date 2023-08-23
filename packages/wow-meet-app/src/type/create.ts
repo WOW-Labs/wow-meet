@@ -1,20 +1,10 @@
+import { type DateRange } from "react-day-picker";
+
 export type Create = {
-    title: string;
-    description: string;
-    schedule?: {
-      type: string;
-      dateRange?: Date[];
-      dayList?: string[];
-      timeRange: Date[];
-      isPriorityOption: boolean;
-    };
-    votes?: {
-      title: string;
-      type: string;
-      options: string[];
-    }[];
+    title?: string;
+    description?: string;
+    dayList?: string[];
+    dayRange?: DateRange;
+    votesOpt?:string[];
   }
 
-
-//   const createInfo = api.meeting.create.useMutation();
-//   createInfo.mutate({ title: titleInput, description: "" });

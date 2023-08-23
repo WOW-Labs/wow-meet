@@ -14,12 +14,17 @@ import { TYPO } from "~/styles/typo";
 
 const Vote = () => {
   const {
+    voteList,
+    userVote,
     isChanged,
     innevitable,
     innevitableCheck,
     getTotalVoters,
+    handleUpdateVoteList,
     ...voteConfigs
   } = useVote(dummyVoteData.list);
+
+  const tmpMeeting = "clk2i27t80000ajufx0hsc633";
 
   return (
     <Frame css={frameStyle}>
@@ -27,7 +32,7 @@ const Vote = () => {
       <VoteBanner content={"지금 와우밋 투표에 참여해보세요!"} />
       <ContentWrapper>
         <VoteList
-          voteList={dummyVoteData.list}
+          voteList={voteList}
           total={getTotalVoters()}
           {...voteConfigs}
         />
@@ -37,6 +42,7 @@ const Vote = () => {
             innevitableCheck={innevitableCheck}
           />
           <Button
+            onClick={() => handleUpdateVoteList(tmpMeeting, userVote)}
             css={[
               buttonStyles.deafult,
               isChanged() ? buttonStyles.success : buttonStyles.failed,

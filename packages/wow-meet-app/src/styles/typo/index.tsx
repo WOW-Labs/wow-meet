@@ -1,5 +1,6 @@
 import { css } from "@emotion/react";
-import { pretendardSemibold, pretendardRegular } from "./Pretendard";
+import { moduMedium } from "~/styles/typo/Modu";
+import { pretendardRegular, pretendardSemibold } from "./Pretendard";
 
 export const TEXT_STYLE_SIZE = {
   title1: "title1",
@@ -115,3 +116,9 @@ export const TYPO = {
     `,
   },
 };
+
+export const Modu = css`
+  font-family: ${moduMedium.style.fontFamily};
+  font-size: 1.3rem;
+  font-weight: 500;
+`;

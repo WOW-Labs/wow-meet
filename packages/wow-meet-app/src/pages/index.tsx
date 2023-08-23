@@ -1,15 +1,18 @@
+import { useRouter } from "next/router";
 import {
-  Gradient,
-  Title,
-  Line,
-  Logo,
   Button,
   Caption,
+  EmojiContainer,
+  Gradient,
+  Line,
+  Logo,
+  Title,
 } from "~/components/Landing";
-import { useRouter } from "next/router";
+import { useDevice } from "~/hooks/useDevice";
 
 export default function Home() {
   const router = useRouter();
+  const device = useDevice();
 
   const moveToCreator = () => {
     void router.push("/create");
@@ -17,6 +20,7 @@ export default function Home() {
 
   return (
     <Gradient>
+      {device !== "MOBILE" && <EmojiContainer />}
       <Title />
       <Line />
       <Logo />

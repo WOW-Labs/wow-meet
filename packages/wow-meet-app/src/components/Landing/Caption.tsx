@@ -1,5 +1,5 @@
-import { TYPO } from "~/styles/typo";
 import { css } from "@emotion/react";
+import { TYPO } from "~/styles/typo";
 
 const Caption = () => {
   return <span css={captionStyle}>WOW Labs FROM Google Developers</span>;
@@ -11,6 +11,8 @@ const captionStyle = css`
 
   position: absolute;
   bottom: -3rem;
+
+  white-space: nowrap;
 `;
 
 export default Caption;
