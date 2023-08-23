@@ -23,6 +23,7 @@ import { modeState, type Mode } from "~/store/modeAtom";
 import { mq } from "~/styles/breakpoints";
 import { COLORS } from "~/styles/colors";
 import { TYPO } from "~/styles/typo";
+import { api } from "~/utils/api";
 
 type ComponentType = {
   mode: Mode;
@@ -34,6 +35,7 @@ type ComponentType = {
 };
 
 const Meeting = () => {
+  const updateTable = api.paticipants.create.useMutation();
   /**--- router ---*/
   const router = useRouter();
 
@@ -136,6 +138,19 @@ const Meeting = () => {
     }
   };
 
+  const handleCTAButton = () => {
+    if (curComp.mode === "Check") {
+      // fetchData()
+      // updateTable.mutate({
+      //   meetingId: "",
+      //   isPriority: false,
+      //   name: "",
+      //   schelduleList: mySelectedDate,
+      // });
+    }
+    changeMode();
+  };
+
   return (
     <Frame css={frameStyle}>
       {toast.open && <Toast {...toast} close={close} />}
@@ -173,7 +188,7 @@ const Meeting = () => {
           `}
         >
           <Button css={buttonStyles.navi}>{curComp.button.navi}</Button>
-          <Button css={curComp.button.style} onClick={changeMode}>
+          <Button css={curComp.button.style} onClick={handleCTAButton}>
             {curComp.button.title}
           </Button>
         </div>
