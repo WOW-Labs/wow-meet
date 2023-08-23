@@ -2,7 +2,6 @@
 import styled from "@emotion/styled";
 import { useAtom } from "jotai";
 import React, { useEffect, useState } from "react";
-import { type DateRange } from "react-day-picker";
 import { createAtom } from "~/store/createAtom";
 import { injectAnimation } from "~/styles/animations";
 import { mq } from "~/styles/breakpoints";
@@ -19,8 +18,6 @@ const FirstSection = () => {
   const [selectedScheduleList, setSelectedScheduleList] = useState<string[]>(
     []
   );
-  const [selectedScheduleRange, setSelectedScheduleRange] =
-    useState<DateRange>();
 
   // createAtom 업데이트
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -32,9 +29,8 @@ const FirstSection = () => {
     setBody({
       ...body,
       dayList: selectedScheduleList,
-      dayRange: selectedScheduleRange,
     });
-  }, [selectedScheduleList, selectedScheduleRange]);
+  }, [selectedScheduleList]);
 
   // 렌더링 텍스트
   const title = `반가워요!\n모임 정보를 작성해주세요 :)`;
@@ -58,7 +54,6 @@ const FirstSection = () => {
         <ScheduleSelector
           onItemSelectedType={setSelectedScheduleType}
           onItemSelectedList={setSelectedScheduleList}
-          onItemSelectedDate={setSelectedScheduleRange}
         />
       ),
     },

@@ -8,12 +8,12 @@ export const meetingRouter = createTRPCRouter({
         title: z.string(),
         description: z.string(),
 
-        scheldule: z
+        schedule: z
           .object({
             type: z.string(),
             dateRange: z.array(z.date()).optional(),
             dayList: z.array(z.string()).optional(),
-            timeRange: z.array(z.date()),
+            timeRange: z.array(z.date()).optional(),
 
             isPriorityOption: z.boolean(),
           })
@@ -36,20 +36,20 @@ export const meetingRouter = createTRPCRouter({
           data: {
             title: input.title,
             description: input.description,
-            isSchedule: input?.scheldule ? true : false,
-            isVote: input?.votes ? true : false,
+            isSchedule: input.schedule ? true : false,
+            isVote: input.votes ? true : false,
           },
         });
 
-        if (input?.scheldule) {
+        if (input?.schedule) {
           await ctx.prisma.schedule.create({
             data: {
               meetingId: meetingResult.id,
-              type: input.scheldule.type,
-              dateRange: input.scheldule.dateRange || [],
-              dayList: input.scheldule.dayList || [],
-              timeRange: input.scheldule.timeRange,
-              isPriorityOption: input.scheldule.isPriorityOption,
+              type: input.schedule.type,
+              dateRange: input.schedule.dateRange || [],
+              dayList: input.schedule.dayList || [],
+              timeRange: input.schedule.timeRange,
+              isPriorityOption: input.schedule.isPriorityOption,
             },
           });
         }

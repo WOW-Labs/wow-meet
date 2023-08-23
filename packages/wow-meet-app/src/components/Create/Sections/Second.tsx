@@ -21,11 +21,12 @@ const SecondSection = () => {
     setBody({ ...body, [name]: value });
   }
   useEffect(() => {
-    setBody({
-      ...body,
+    if (voteOpt.length === 0) return;
+    setBody((prev) => ({
+      ...prev,
       votesOpt: voteOpt,
-    });
-  }, [voteOpt]);
+    }));
+  }, [voteOpt, setBody]);
 
   // 렌더링 텍스트
   const SecondConfigs = [
