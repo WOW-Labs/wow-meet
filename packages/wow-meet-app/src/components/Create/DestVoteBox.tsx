@@ -5,16 +5,19 @@ import { useState } from "react";
 import { COLORS } from "~/styles/colors";
 import { TYPO } from "~/styles/typo";
 
+/**--- type ---*/
 type VoteOptProps = {
   setSelector: (item: string[]) => void;
   setCurItem: string[] | undefined;
 };
 
 const DestVoteBox = ({ setSelector, setCurItem }: VoteOptProps) => {
+  /**--- state ---*/
   const maxInputCount = 10; // 최대 인풋창 개수
   const [inputCount, setInputCount] = useState(3);
   const [voteOpt, setVoteOpt] = useState<string[]>([]);
 
+  /**--- function ---*/
   const handleAddInput = () => {
     if (inputCount < maxInputCount) {
       setInputCount(inputCount + 1);
@@ -29,6 +32,7 @@ const DestVoteBox = ({ setSelector, setCurItem }: VoteOptProps) => {
     setSelector(updatedVoteOpt);
   }
 
+  /**--- render ---*/
   return (
     <Container>
       <InputContainer>

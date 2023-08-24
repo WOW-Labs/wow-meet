@@ -5,7 +5,9 @@ import SegmentedControl from "../SegmentedControl";
 import CalendarSelector from "./CalendarSelector";
 import WeeklySelector from "./WeeklySelector";
 
+/**--- const ---*/
 const Menus = ["주간 정기모임", "후보 기간 중 하루"];
+/**--- type ---*/
 interface ScheduleSelectorProps {
   onItemSelectedType: (idx: number) => void;
   onItemSelectedList: (item: string[]) => void;
@@ -17,12 +19,12 @@ const ScheduleSelector = ({
   onItemSelectedList,
   onItemSelectedDate,
 }: ScheduleSelectorProps) => {
-  //상태
+  /**--- state ---*/
   const [item, setItem] = useState(0);
   const [dayList, setDayList] = useState<string[]>([]);
   const [dayRange, setDayRange] = useState<DateRange>();
 
-  //select
+  /**--- function ---*/
   const itemSelectType = (idx: number) => {
     setItem(idx);
     onItemSelectedType(idx);
@@ -56,6 +58,7 @@ const ScheduleSelector = ({
     }
   };
 
+  /**--- render ---*/
   return (
     <Container>
       <SegmentedControl

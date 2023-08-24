@@ -1,17 +1,48 @@
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import { useAtom } from "jotai";
-import Lottie from "lottie-react";
-import sprinkle from "~/assets/lotties/sprinkle.json";
+import { useRouter } from "next/router";
+import { ToastType } from "~/components/Popup/Toast";
+import useToast from "~/components/Popup/useToast";
 import { createAtom } from "~/store/createAtom";
 import { COLORS } from "~/styles/colors";
 import { TYPO } from "~/styles/typo";
 
 const ThirdSection = () => {
+  /**--- router ---*/
+  const router = useRouter();
+  const dummyUrl = "http://localhost:3000";
+
+  /**--- state ---*/
+  const { Toast, open } = useToast();
   const [body, setBody] = useAtom(createAtom);
 
+  /**--- function ---*/
+  const clipboard = () => {
+    if (typeof body?.mid === "string") {
+      void navigator.clipboard.writeText(`${dummyUrl}/meeting/${body?.mid}`);
+      open("미팅 주소가 클립보드에 복사되었습니다!", ToastType.Postive);
+    } else {
+      open("미팅 주소가 없습니다.", ToastType.Negative);
+    }
+  };
+
+  const goToVote = () => {
+    if (typeof body?.mid === "string") {
+      void router.push(`/meeting/${body?.mid}`);
+    } else {
+      open("다시 시도해주세요.", ToastType.Negative);
+    }
+  };
+
+  const goToCreate = () => {
+    void router.push("/");
+  };
+
+  /**--- render ---*/
   return (
     <Container>
+      <Toast />
       <TitleWrapper>
         <Title>
           {body?.title ? `${body.title} 모임 생성 완료!` : "모임 생성 실패!"}
@@ -19,10 +50,16 @@ const ThirdSection = () => {
         <Subtitle>지금 생성된 링크를 공유하고 모임 일자를 정해보세요.</Subtitle>
       </TitleWrapper>
       <ButtonWrapper>
-        <Button css={buttonStyles.move}>생성된 모임으로 이동</Button>
-        <Button css={buttonStyles.copy}>모임 주소 복사</Button>
-        <Button css={buttonStyles.create}>다른 모임 생성하기</Button>
-        <Lottie animationData={sprinkle} loop={false} css={sprinkleStyle} />
+        <Button css={buttonStyles.move} onClick={goToVote}>
+          생성된 모임으로 이동
+        </Button>
+        <Button css={buttonStyles.copy} onClick={clipboard}>
+          모임 주소 복사
+        </Button>
+        <Button css={buttonStyles.create} onClick={goToCreate}>
+          다른 모임 생성하기
+        </Button>
+        {/* <Lottie animationData={sprinkle} loop={false} css={sprinkleStyle} /> */}
       </ButtonWrapper>
     </Container>
   );
