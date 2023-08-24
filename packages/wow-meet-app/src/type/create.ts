@@ -4,7 +4,7 @@ export type Create = {
     title?: string;
     description?: string;
     dayList?: string[];
-    dayRange?: DateRange;
+    dateRange?: DateRange;
     votesOpt?:string[];
   }
 
