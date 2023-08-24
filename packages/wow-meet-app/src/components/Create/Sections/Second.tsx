@@ -17,6 +17,7 @@ const SecondSection = () => {
   const [voteOpt, setVoteOpt] = useState<string[]>([]);
 
   /**--- config ---*/
+
   const SecondConfigs = [
     {
       title: "모임 안내문구 작성",

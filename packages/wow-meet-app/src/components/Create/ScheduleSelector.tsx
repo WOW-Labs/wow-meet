@@ -13,13 +13,11 @@ const Menus = ["주간 정기모임", "후보 기간 중 하루"];
 interface ScheduleSelectorProps {
   onItemSelectedType: (idx: number) => void;
   onItemSelectedList: (item: string[]) => void;
-  onItemSelectedDate: (item: DateRange) => void;
 }
 
 const ScheduleSelector = ({
   onItemSelectedType,
   onItemSelectedList,
-  onItemSelectedDate,
 }: ScheduleSelectorProps) => {
   /**--- state ---*/
   const [item, setItem] = useState(0);
@@ -38,9 +36,10 @@ const ScheduleSelector = ({
     onItemSelectedList(item);
   };
 
-  const itemSelectRange = (item: DateRange) => {
-    setDayRange(item);
-    onItemSelectedDate(item);
+  const itemSelectRange = (item?: string[], range?: DateRange) => {
+    if (!item || !range) return;
+    onItemSelectedList(item);
+    setDayRange(range);
   };
 
   /**--- useEffect ---*/

@@ -20,4 +20,18 @@ export const COLORS = {
   grey800: "#333d4b",
   grey900: "#191f28",
   greyOpacity100: "rgba(2, 32, 71, 0.05)",
+  tableCell: {
+    selected: "#FFE895",
+    state0: "#f2f4f6",
+    state1: "#D7DEF5",
+    state2: "#C3CEF5",
+    state3: "#A5B7F6",
+    state4: "#7C99F6",
+    state5: "#547AF7",
+    state6: "#2C5BF7",
+    state7: "#1644DE",
+    state8: "#052FBC",
+    state9: "#001F85",
+    state10: "#000C34",
+  },
 };

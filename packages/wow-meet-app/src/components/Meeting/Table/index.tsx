@@ -9,7 +9,6 @@ import {
 } from "~/components/Meeting/Table/MOCK";
 import { CELL_WIDTH, TIMELIST } from "~/components/Meeting/Table/const";
 import useEventHandler from "~/components/Meeting/Table/hooks/useEventHandler";
-import useToast from "~/components/Popup/useToast";
 import { type Mode } from "~/store/modeAtom";
 import { COLORS } from "~/styles/colors";
 import { TYPO } from "~/styles/typo";
@@ -18,19 +17,18 @@ interface Props {
   dayList: string[];
   selectedList: ParticipantSchedule[];
   mySelected: ScheduleElement[];
-  onSelect: (id: string) => void;
   mode: Mode;
+  getCellWeightByDate: (id: string) => number;
+  onTouchCell: (id: string) => void;
 }
 
 const TimeTable = (props: Props) => {
-  const { Toast, open } = useToast();
+  const timeOut = useRef<NodeJS.Timeout>();
   const exSelectedCell = useRef<string>("");
-  const { registerHandler, generateToastContents } = useEventHandler({
+  const { registerHandler } = useEventHandler({
     mySelected: props.mySelected,
-    onSelect: props.onSelect,
-    selectedList: props.selectedList,
-    open: open,
-    mode: props.mode,
+    onSelect: props.onTouchCell,
+    getCellWeightByDate: props.getCellWeightByDate,
   });
 
   const mouseSensor = useSensor(MouseSensor);
@@ -43,21 +41,19 @@ const TimeTable = (props: Props) => {
   });
 
   const handelCellDragOver = (id?: string) => {
+    if (timeOut.current) clearTimeout(timeOut.current);
     if (!id) return;
     // 동일한 셀 내에서 발생하는 중복 이벤트를 방지하기 위해서
     if (id === exSelectedCell.current) return;
-    if (props.mode === "Check") {
-      props.onSelect(id);
-    } else if (props.mode === "View") {
-      open(generateToastContents(id));
-      open(generateToastContents(id));
-    }
+    props.onTouchCell(id);
     exSelectedCell.current = id;
+    timeOut.current = setTimeout(() => {
+      exSelectedCell.current = "";
+    }, 1000);
   };
 
   return (
     <Container>
-      <Toast />
       <Table columnCount={props.dayList.length}>
         <HeadRow>
           {props.dayList.map((day) => (
@@ -146,6 +142,9 @@ const Container = styled.div`
   overflow: scroll;
   height: 60rem;
   width: 100%;
+  background-color: white;
+  border-radius: 1rem;
+  box-shadow: 0px 2px 12px 0px rgba(0, 0, 0, 0.12);
   ::-webkit-scrollbar {
     display: none;
   }

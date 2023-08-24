@@ -11,7 +11,7 @@ import { TYPO } from "~/styles/typo";
 
 type CalenderSelectorProps = {
   setCurItem: DateRange | undefined;
-  setSelector: (item: DateRange) => void;
+  setSelector: (item?: string[], range?: DateRange) => void;
 };
 
 const CalendarSelector = ({
@@ -22,10 +22,40 @@ const CalendarSelector = ({
     setCurItem
   );
 
+  const rangeToList = (from?: Date, to?: Date) => {
+    if (!from || !to) return;
+    const currentDate = new Date(from.getTime());
+    const dates = [];
+    while (currentDate <= to) {
+      dates.push(new Date(currentDate));
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+    return dates;
+  };
+
+  const formatDates = (dates?: Date[]) => {
+    if (!dates) return;
+    const formattedDates: string[] = [];
+
+    const dayNames = ["일", "월", "화", "수", "목", "금", "토"];
+
+    dates.forEach((date) => {
+      const month = date.getMonth() + 1;
+      const day = date.getDate();
+      const dayOfWeek = dayNames[date.getDay()];
+
+      const formattedDate = `${month}/${day} ${dayOfWeek || ""}`;
+      formattedDates.push(formattedDate);
+    });
+
+    return formattedDates;
+  };
+
   const handleSelect: SelectRangeEventHandler = (newRange) => {
     if (newRange) {
+      const list = formatDates(rangeToList(newRange.from, newRange.to));
       setLocalRange(newRange);
-      setSelector(newRange);
+      setSelector(list, newRange);
     }
   };
 
