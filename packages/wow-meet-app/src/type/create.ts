@@ -6,5 +6,6 @@ export type Create = {
     dayList?: string[];
     dateRange?: DateRange;
     votesOpt?:string[];
+    mid?: string;
   }
 
