@@ -1,6 +1,8 @@
 import styled from "@emotion/styled";
-import { useState } from "react";
+import { useAtom } from "jotai";
+import { useEffect, useState } from "react";
 import { type DateRange } from "react-day-picker";
+import { createAtom } from "~/store/createAtom";
 import SegmentedControl from "../SegmentedControl";
 import CalendarSelector from "./CalendarSelector";
 import WeeklySelector from "./WeeklySelector";
@@ -21,6 +23,7 @@ const ScheduleSelector = ({
 }: ScheduleSelectorProps) => {
   /**--- state ---*/
   const [item, setItem] = useState(0);
+  const [body, setBody] = useAtom(createAtom);
   const [dayList, setDayList] = useState<string[]>([]);
   const [dayRange, setDayRange] = useState<DateRange>();
 
@@ -39,6 +42,18 @@ const ScheduleSelector = ({
     setDayRange(item);
     onItemSelectedDate(item);
   };
+
+  /**--- useEffect ---*/
+  useEffect(() => {
+    setItem(item);
+    if (item === 0) {
+      onItemSelectedType(0);
+      setBody({ ...body, stype: "day" });
+    } else {
+      onItemSelectedType(1);
+      setBody({ ...body, stype: "dayRange" });
+    }
+  }, [item]);
 
   const SelectBox = () => {
     switch (item) {

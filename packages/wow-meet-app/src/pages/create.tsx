@@ -49,7 +49,7 @@ const Create = () => {
       title: body?.title || "",
       description: body?.description || "",
       schedule: {
-        type: "day", //고정
+        type: body?.type,
         TimeRanges: "", //고정
         isPriorityOption: false, //고정
         dayList: body?.dayList,
@@ -93,10 +93,10 @@ const Create = () => {
       open("스케줄 조정 범위를 선택해주세요!", ToastType.NegativeBlack);
       return false;
     }
-    if (body?.dayList && body?.dateRange) {
-      open("스케줄 조정 범위는 하나만 선택해주세요!", ToastType.NegativeBlack);
-      return false;
-    }
+    // if (body?.dayList && body?.dateRange) {
+    //   open("스케줄 조정 범위는 하나만 선택해주세요!", ToastType.NegativeBlack);
+    //   return false;
+    // }
     toggle();
   };
 
