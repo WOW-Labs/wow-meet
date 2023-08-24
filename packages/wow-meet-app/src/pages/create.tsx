@@ -3,7 +3,6 @@ import styled from "@emotion/styled";
 import { faLink } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useAtom } from "jotai";
-import { useRouter } from "next/router";
 import { useState } from "react";
 import { Header } from "~/components/Bar";
 import Modal from "~/components/Common/Modal";
@@ -19,13 +18,23 @@ import { COLORS } from "~/styles/colors";
 import { TYPO } from "~/styles/typo";
 import { api } from "~/utils/api";
 
+const ButtonConfigs = [
+  {
+    text1: "추가설정",
+    text2: "완료하고 링크공유",
+  },
+  {
+    text1: "이전화면",
+    text2: "완료하고 링크공유",
+  },
+];
+
 const Create = () => {
-  const router = useRouter();
   const createInfo = api.meeting.create.useMutation();
   const [curIdx, setCurIdx] = useState<number>(0);
-  const [modalIdx, setModalIdx] = useState<number>(0);
+  // const [modalIdx, setModalIdx] = useState<number>(0);
   const { isShowing, toggle } = useModal();
-
+  const CurSection = SECTIONS[curIdx];
   const [body, setBody] = useAtom(createAtom);
 
   const createMeeting = () => {
@@ -36,8 +45,8 @@ const Create = () => {
         type: "day", //고정
         TimeRanges: "", //고정
         isPriorityOption: false, //고정
-        dayList: body?.dayList || "",
-        dateRange: body?.dayRange || [],
+        dayList: body?.dayList,
+        dateRange: body?.dateRange,
       },
       votes: [
         {
@@ -50,35 +59,36 @@ const Create = () => {
     createInfo.mutate(meetingData);
   };
 
-  const ButtonConfigs = [
-    {
-      text1: "추가설정",
-      text2: "완료하고 링크공유",
-    },
-    {
-      text1: "이전화면",
-      text2: "완료하고 링크공유",
-    },
-  ];
-
-  const CurSection = SECTIONS[curIdx];
-
+  // 페이지 이동
   const nextSection = () => {
     setCurIdx((prev) => prev + 1);
   };
-  //TODO: 아래 함수 개선 필요
+
   const prevSection = () => {
-    setModalIdx(0);
-    toggle();
+    setCurIdx((prev) => prev - 1);
   };
+
+  // 필수값 확인 후 생성 모달 띄우는 함수
   const ModalHandler = () => {
-    setModalIdx(1);
+    if (!body?.title) {
+      alert("모임 제목을 입력해주세요.");
+      return;
+    }
+    if (
+      (body?.dayList == undefined || body?.dayList?.length == 0) &&
+      !body?.dateRange
+    ) {
+      alert("스케줄 조정 범위를 선택해주세요.");
+      return;
+    }
     toggle();
   };
+
+  // 모달 내에서 최종 확인하는 함수
   const goToMeeting = () => {
-    toggle();
-    createMeeting();
-    nextSection();
+    toggle(); // Modal onHide()
+    createMeeting(); // mutate
+    setCurIdx(2);
   };
 
   return (
@@ -111,9 +121,7 @@ const Create = () => {
       <Modal
         isShowing={isShowing}
         hide={toggle}
-        content={
-          <Popup num={modalIdx} onConfirm={goToMeeting} onHide={toggle} />
-        }
+        content={<Popup onConfirm={goToMeeting} onHide={toggle} />}
       />
     </>
   );
