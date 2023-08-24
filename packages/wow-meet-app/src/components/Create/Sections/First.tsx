@@ -32,7 +32,7 @@ const FirstSection = () => {
     setBody({
       ...body,
       dayList: selectedScheduleList,
-      dayRange: selectedScheduleRange,
+      dateRange: selectedScheduleRange,
     });
   }, [selectedScheduleList, selectedScheduleRange]);
 
