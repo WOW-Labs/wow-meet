@@ -68,6 +68,7 @@ export const meetingRouter = createTRPCRouter({
         }
 
         return {
+          mid: meetingResult.id, 
           success: true,
         };
       } catch (err) {
