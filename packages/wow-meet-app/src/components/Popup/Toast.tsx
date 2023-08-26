@@ -12,6 +12,7 @@ import ReactPortal from "./Portal";
 export enum ToastType {
   Postive = "positive",
   Negative = "negative",
+  NegativeBlack = "negative_black",
 }
 
 interface ToastProps {
@@ -34,6 +35,13 @@ const Toast = ({ content, type, open, close }: ToastProps) => {
       style: css`
         background-color: "#242424";
         color: white;
+      `,
+      emoji: negative_emoji,
+    },
+    negative_black: {
+      style: css`
+        background-color: "#fff";
+        color: black;
       `,
       emoji: negative_emoji,
     },

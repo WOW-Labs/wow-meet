@@ -12,23 +12,12 @@ import DetailLabel from "../DetailLabel";
 import TextArea from "../TextArea";
 
 const SecondSection = () => {
+  /**--- state ---*/
   const [body, setBody] = useAtom(createAtom);
   const [voteOpt, setVoteOpt] = useState<string[]>([]);
 
-  // createAtom 업데이트
-  function handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
-    const { name, value } = e.currentTarget;
-    setBody({ ...body, [name]: value });
-  }
-  useEffect(() => {
-    if (voteOpt.length === 0) return;
-    setBody((prev) => ({
-      ...prev,
-      votesOpt: voteOpt,
-    }));
-  }, [voteOpt, setBody]);
+  /**--- config ---*/
 
-  // 렌더링 텍스트
   const SecondConfigs = [
     {
       title: "모임 안내문구 작성",
@@ -56,6 +45,21 @@ const SecondSection = () => {
     },
   ];
 
+  /**--- function ---*/
+  function handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
+    const { name, value } = e.currentTarget;
+    setBody({ ...body, [name]: value });
+  }
+
+  /**--- useEffect ---*/
+  useEffect(() => {
+    setBody({
+      ...body,
+      votesOpt: voteOpt,
+    });
+  }, [voteOpt]);
+
+  /**--- render ---*/
   return (
     <Container css={injectAnimation("fadeIn")}>
       <Title>{`우리모임을 더 다채롭게!\n추가정보를 입력해주세요 :)`}</Title>

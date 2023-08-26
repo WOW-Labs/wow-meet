@@ -3,7 +3,6 @@ import styled from "@emotion/styled";
 import { faLink } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useAtom } from "jotai";
-import { useRouter } from "next/router";
 import { useState } from "react";
 import { Header } from "~/components/Bar";
 import Modal from "~/components/Common/Modal";
@@ -11,6 +10,8 @@ import { SECTIONS } from "~/components/Create";
 import FlexButton from "~/components/Create/FlexButton";
 import Popup from "~/components/Create/Popup";
 import Frame from "~/components/Frame";
+import { ToastType } from "~/components/Popup/Toast";
+import useToast from "~/components/Popup/useToast";
 import useModal from "~/hooks/useModal";
 import { createAtom } from "~/store/createAtom";
 import { injectAnimation } from "~/styles/animations";
@@ -19,82 +20,97 @@ import { COLORS } from "~/styles/colors";
 import { TYPO } from "~/styles/typo";
 import { api } from "~/utils/api";
 
+/**--- config ---*/
+const ButtonConfigs = [
+  {
+    text1: "추가설정",
+    text2: "완료하고 링크공유",
+  },
+  {
+    text1: "이전화면",
+    text2: "완료하고 링크공유",
+  },
+];
+
 const Create = () => {
-  const router = useRouter();
+  /**--- react-query ---*/
   const createInfo = api.meeting.create.useMutation();
+  /**--- state ---*/
   const [curIdx, setCurIdx] = useState<number>(0);
-  const [modalIdx, setModalIdx] = useState<number>(0);
+  const [body, setBody] = useAtom(createAtom);
+  const CurSection = SECTIONS[curIdx];
+  /**--- hook ---*/
+  const { Toast, open } = useToast();
   const { isShowing, toggle } = useModal();
 
-  const [body, setBody] = useAtom(createAtom);
-
+  /**--- function ---*/
   const createMeeting = () => {
-    const meetingData: {
-      title: string;
-      description: string;
-      schedule?: any;
-      votes?: any;
-    } = {
+    const meetingData = {
       title: body?.title || "",
       description: body?.description || "",
-    };
-
-    if (body?.dayList) {
-      meetingData.schedule = {
-        type: "day", //고정
+      schedule: {
+        type: body?.stype,
+        TimeRanges: "", //고정
         isPriorityOption: false, //고정
-        dayList: body?.dayList || [],
-      };
-    }
-
-    console.log(body?.votesOpt);
-    if (body?.votesOpt) {
-      meetingData.votes = [
+        dayList: body?.dayList,
+        dateRange: body?.dateRange,
+      },
+      votes: [
         {
           title: "장소 투표",
           type: "default",
           options: body?.votesOpt || [],
         },
-      ];
-    }
+      ],
+    };
 
-    createInfo.mutate(meetingData);
+    createInfo.mutate(meetingData, {
+      onSuccess: (data) => {
+        if (data.mid && typeof data.mid === "string") {
+          setBody({ ...body, mid: data.mid });
+        }
+      },
+    });
   };
-
-  const ButtonConfigs = [
-    {
-      text1: "추가설정",
-      text2: "완료하고 링크공유",
-    },
-    {
-      text1: "이전화면",
-      text2: "완료하고 링크공유",
-    },
-  ];
-
-  const CurSection = SECTIONS[curIdx];
 
   const nextSection = () => {
     setCurIdx((prev) => prev + 1);
   };
-  //TODO: 아래 함수 개선 필요
+
   const prevSection = () => {
-    setModalIdx(0);
-    toggle();
-  };
-  const ModalHandler = () => {
-    setModalIdx(1);
-    toggle();
-  };
-  const goToMeeting = () => {
-    toggle();
-    createMeeting();
-    nextSection();
+    setCurIdx((prev) => prev - 1);
   };
 
+  const ModalHandler = () => {
+    if (!body?.title) {
+      open("모임 제목을 입력해주세요!", ToastType.NegativeBlack);
+      return false;
+    }
+    if (
+      (body?.dayList == undefined || body?.dayList?.length == 0) &&
+      !body?.dateRange
+    ) {
+      open("스케줄 조정 범위를 선택해주세요!", ToastType.NegativeBlack);
+      return false;
+    }
+    // if (body?.dayList && body?.dateRange) {
+    //   open("스케줄 조정 범위는 하나만 선택해주세요!", ToastType.NegativeBlack);
+    //   return false;
+    // }
+    toggle();
+  };
+
+  const goToMeeting = () => {
+    toggle(); // Modal onHide
+    createMeeting(); // mutate
+    setCurIdx(2);
+  };
+
+  /**--- render ---*/
   return (
     <>
       <Frame css={frameStyle}>
+        <Toast />
         <Header title={"모임 생성"} />
         {CurSection ? <CurSection /> : <></>}
         {curIdx !== 2 && (
@@ -122,9 +138,7 @@ const Create = () => {
       <Modal
         isShowing={isShowing}
         hide={toggle}
-        content={
-          <Popup num={modalIdx} onConfirm={goToMeeting} onHide={toggle} />
-        }
+        content={<Popup onConfirm={goToMeeting} onHide={toggle} />}
       />
     </>
   );

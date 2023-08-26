@@ -11,28 +11,14 @@ import Label from "../Label";
 import ScheduleSelector from "../ScheduleSelector";
 
 const FirstSection = () => {
-  // createAtom
+  /**--- state ---*/
   const [body, setBody] = useAtom(createAtom);
-  // 상태
   const [selectedScheduleType, setSelectedScheduleType] = useState<number>(0);
   const [selectedScheduleList, setSelectedScheduleList] = useState<string[]>(
     []
   );
 
-  // createAtom 업데이트
-  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const { name, value } = e.currentTarget;
-    setBody({ ...body, [name]: value });
-  }
-
-  useEffect(() => {
-    setBody({
-      ...body,
-      dayList: selectedScheduleList,
-    });
-  }, [selectedScheduleList]);
-
-  // 렌더링 텍스트
+  /**--- config ---*/
   const title = `반가워요!\n모임 정보를 작성해주세요 :)`;
   const firstConfigs = [
     {
@@ -59,6 +45,22 @@ const FirstSection = () => {
     },
   ];
 
+  /**--- function ---*/
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const { name, value } = e.currentTarget;
+    setBody({ ...body, [name]: value });
+  }
+
+  /**--- useEffect ---*/
+  useEffect(() => {
+    setBody({
+      ...body,
+      dayList: selectedScheduleList,
+      dateRange: selectedScheduleRange,
+    });
+  }, [selectedScheduleList, selectedScheduleRange]);
+
+  /**--- render ---*/
   return (
     <Container css={injectAnimation("fadeIn", "500ms")}>
       <Title>{title}</Title>

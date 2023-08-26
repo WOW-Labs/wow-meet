@@ -1,11 +1,15 @@
 import styled from "@emotion/styled";
-import { useState } from "react";
+import { useAtom } from "jotai";
+import { useEffect, useState } from "react";
 import { type DateRange } from "react-day-picker";
+import { createAtom } from "~/store/createAtom";
 import SegmentedControl from "../SegmentedControl";
 import CalendarSelector from "./CalendarSelector";
 import WeeklySelector from "./WeeklySelector";
 
+/**--- const ---*/
 const Menus = ["주간 정기모임", "후보 기간 중 하루"];
+/**--- type ---*/
 interface ScheduleSelectorProps {
   onItemSelectedType: (idx: number) => void;
   onItemSelectedList: (item: string[]) => void;
@@ -15,12 +19,13 @@ const ScheduleSelector = ({
   onItemSelectedType,
   onItemSelectedList,
 }: ScheduleSelectorProps) => {
-  //상태
+  /**--- state ---*/
   const [item, setItem] = useState(0);
+  const [body, setBody] = useAtom(createAtom);
   const [dayList, setDayList] = useState<string[]>([]);
   const [dayRange, setDayRange] = useState<DateRange>();
 
-  //select
+  /**--- function ---*/
   const itemSelectType = (idx: number) => {
     setItem(idx);
     onItemSelectedType(idx);
@@ -36,6 +41,18 @@ const ScheduleSelector = ({
     onItemSelectedList(item);
     setDayRange(range);
   };
+
+  /**--- useEffect ---*/
+  useEffect(() => {
+    setItem(item);
+    if (item === 0) {
+      onItemSelectedType(0);
+      setBody({ ...body, stype: "day" });
+    } else {
+      onItemSelectedType(1);
+      setBody({ ...body, stype: "dayRange" });
+    }
+  }, [item]);
 
   const SelectBox = () => {
     switch (item) {
@@ -55,6 +72,7 @@ const ScheduleSelector = ({
     }
   };
 
+  /**--- render ---*/
   return (
     <Container>
       <SegmentedControl

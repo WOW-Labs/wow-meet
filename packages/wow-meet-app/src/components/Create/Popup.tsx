@@ -4,7 +4,7 @@ import { COLORS } from "~/styles/colors";
 import { TYPO } from "~/styles/typo";
 
 type PopupProps = {
-  num: number;
+  num?: number;
   onConfirm: () => void;
   onHide: () => void;
 };
@@ -37,21 +37,21 @@ const PopupConfigs: PopupConfig[] = [
   },
 ];
 
-function Popup({ num, onHide, onConfirm }: PopupProps) {
+function Popup({ onHide, onConfirm }: PopupProps) {
   return (
     <PopupWrapper>
-      <StyledPopupTitle>{PopupConfigs[num]?.title}</StyledPopupTitle>
+      <StyledPopupTitle>{PopupConfigs[1]?.title}</StyledPopupTitle>
       <SubtitleWrapper>
-        <PopupSubtitle>{PopupConfigs[num]?.text1}</PopupSubtitle>
-        <PopupSubtitle>{PopupConfigs[num]?.text2}</PopupSubtitle>
+        <PopupSubtitle>{PopupConfigs[1]?.text1}</PopupSubtitle>
+        <PopupSubtitle>{PopupConfigs[1]?.text2}</PopupSubtitle>
       </SubtitleWrapper>
-      <Caption>{PopupConfigs[num]?.text3}</Caption>
+      <Caption>{PopupConfigs[1]?.text3}</Caption>
       <ButtonWrapper>
         <StyledPopupButton css={buttonStyles.disabled} onClick={onHide}>
-          {PopupConfigs[num]?.button1}
+          {PopupConfigs[1]?.button1}
         </StyledPopupButton>
         <StyledPopupButton css={buttonStyles.creating} onClick={onConfirm}>
-          {PopupConfigs[num]?.button2}
+          {PopupConfigs[1]?.button2}
         </StyledPopupButton>
       </ButtonWrapper>
     </PopupWrapper>
