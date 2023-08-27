@@ -49,7 +49,7 @@ const Create = () => {
       title: body?.title || "",
       description: body?.description || "",
       schedule: {
-        type: body?.stype,
+        type: body?.sType,
         TimeRanges: "", //고정
         isPriorityOption: false, //고정
         dayList: body?.dayList,

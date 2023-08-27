@@ -48,10 +48,10 @@ const ScheduleSelector = ({
     setItem(item);
     if (item === 0) {
       onItemSelectedType(0);
-      setBody({ ...body, stype: "day" });
+      setBody({ ...body, sType: "day" });
     } else {
       onItemSelectedType(1);
-      setBody({ ...body, stype: "dayRange" });
+      setBody({ ...body, sType: "dayRange" });
     }
   }, [item]);
 
