@@ -12,7 +12,7 @@ export const useInfo = () => {
 
     const prevMid = localStorage.getItem("mid");
     const curMid = router.query.mid;
-    if (prevMid !== curMid) return; //이전에 작성한 미팅주소와 현재 접속한 미팅 주소가 동일한 경우에만 받아옴.
+    if (prevMid !== curMid) return; //이전에 작성한 미팅주소와 현재 접속한 미팅 주소가 동일한 경우에 만 받아옴.
 
     const name = localStorage.getItem("name");
     const password = localStorage.getItem("password");
@@ -41,6 +41,9 @@ export const useInfo = () => {
   };
 
   const initializeInfo = () => {
+    localStorage.removeItem("name");
+    localStorage.removeItem("password");
+    localStorage.removeItem("mid");
     setInfo(defaultInfo);
   };
 

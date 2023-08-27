@@ -9,6 +9,7 @@ export type VoteItemType = {
 
 export type VoteConfigType = {
   voteList: VoteItemType[];
+  vId: string;
   userVote: string[];
   isVoted: (item: string, user: string) => boolean;
   vote: (item: string, user: string) => void;
@@ -16,22 +17,48 @@ export type VoteConfigType = {
   isChanged: () => boolean;
   innevitable: boolean;
   innevitableCheck: () => void;
-  handleUpdateVoteList: (mid: string, userVote: string[]) => void;
   getVoteList: () => void;
+  handleVote: (mId: string, name: string) => void;
 };
 
-export const useVote = (listArray: VoteItemType[]): VoteConfigType => {
+export const useVote = (): VoteConfigType => {
   const router = useRouter();
-  const [voteList, setVoteList] = useState<VoteItemType[]>(listArray);
+  const [voteList, setVoteList] = useState<VoteItemType[]>([]);
+  const [vId, setVid] = useState("");
   const [innevitable, setInnevitable] = useState(false);
   const [userVote, setUserVote] = useState<string[]>([]);
 
+  const { data } = api.meeting.read.useQuery({
+    meetingId: router.query.mid as string,
+  });
+
   const getVoteList = () => {
-    const { data } = api.meeting.read.useQuery({
-      meetingId: router.query.mid as string,
+    const voteItem = data?.data.votes![0]?.options!;
+    const votedUsers = data?.data.participants!.map((user) => {
+      return {
+        list: user.voteList,
+        name: user.name,
+      };
     });
-    const newList = data?.data.participants;
-    console.log(newList);
+    if (voteItem) {
+      const newVotes = voteItem.map((item) => {
+        let users: string[] = [];
+        votedUsers?.forEach((vote) => {
+          const votes = JSON.parse(vote.list!);
+          console.log(votes);
+          if (votes.length > 0)
+            votes.forEach((eachVote: any) => {
+              if (eachVote.option === item) users.push(vote.name);
+            });
+        });
+        return {
+          item,
+          users,
+        };
+      });
+      setVoteList(newVotes);
+      setVid(data.data.votes![0]?.id!);
+    }
   };
 
   /** user가 item에 투표했는가? */
@@ -97,37 +124,44 @@ export const useVote = (listArray: VoteItemType[]): VoteConfigType => {
   };
 
   const isChanged = () => {
-    if (JSON.stringify(listArray) === JSON.stringify(voteList)) {
-      return false;
-    } else {
-      return true;
-    }
+    return userVote.length > 0;
   };
 
-  /** vote db 연동 */
-  const updateVoteList = api.meeting.addVoteItem.useMutation({
-    onSuccess(data) {
-      console.log(data);
-    },
-    onError(err) {
-      console.log(err);
-    },
-  });
-
-  /** vote db 업데이트 함수 */
-  const handleUpdateVoteList = (mid: string, userVote: string[]) => {
-    updateVoteList.mutate({
-      meetingId: mid,
-      toBeAddedlist: userVote,
+  const updateVoteList =
+    api.paticipants.updateMeetingParticipationSchedule.useMutation({
+      onSuccess(voteData) {
+        console.log(voteData);
+      },
+      onError(err) {
+        console.log(err);
+      },
     });
+
+  const handleVote = (mId: string, name: string) => {
+    const voteData = {
+      meetingId: mId,
+      user: { name },
+      voteList: userVote.map((item) => {
+        return {
+          option: item,
+          voteId: vId,
+        };
+      }),
+    };
+    updateVoteList.mutate(voteData);
   };
 
   useEffect(() => {
     getTotalVoters();
   }, [voteList]);
 
+  useEffect(() => {
+    getVoteList();
+  }, [data]);
+
   return {
     voteList,
+    vId,
     userVote,
     isVoted,
     vote,
@@ -135,7 +169,7 @@ export const useVote = (listArray: VoteItemType[]): VoteConfigType => {
     isChanged,
     innevitable,
     innevitableCheck,
-    handleUpdateVoteList,
     getVoteList,
+    handleVote,
   };
 };

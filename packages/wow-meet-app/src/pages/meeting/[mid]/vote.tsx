@@ -1,6 +1,7 @@
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 import { dummyVoteData } from "~/assets/dummydata";
 import { Header } from "~/components/Bar";
 import { Button } from "~/components/Create";
@@ -8,6 +9,7 @@ import Frame, { frameStyle } from "~/components/Frame";
 import { VoteBanner } from "~/components/Vote";
 import Innevitable from "~/components/Vote/Innevitable";
 import VoteList from "~/components/Vote/VoteList";
+import { useInfo } from "~/hooks/useInfo";
 import { useVote } from "~/hooks/useVote";
 import { mq } from "~/styles/breakpoints";
 import { COLORS } from "~/styles/colors";
@@ -16,20 +18,24 @@ import { TYPO } from "~/styles/typo";
 const Vote = () => {
   const {
     voteList,
+    vId,
     userVote,
     isChanged,
     innevitable,
     innevitableCheck,
     getTotalVoters,
-    handleUpdateVoteList,
     getVoteList,
+    handleVote,
     ...voteConfigs
-  } = useVote(dummyVoteData.list);
+  } = useVote();
   const router = useRouter();
+  const { info, isAuth } = useInfo();
 
-  const tmpMeeting = "clk2i27t80000ajufx0hsc633";
+  useEffect(() => {
+    const mid = router.query.mid;
+    if (mid && !isAuth()) router.replace(`/meeting/${mid}/login`);
+  }, [router.query.mid]);
 
-  getVoteList();
   return (
     <Frame css={frameStyle}>
       <Header title={dummyVoteData.title} />
@@ -46,7 +52,7 @@ const Vote = () => {
             innevitableCheck={innevitableCheck}
           />
           <Button
-            onClick={() => handleUpdateVoteList(tmpMeeting, userVote)}
+            onClick={() => handleVote(router.query.mid as string, info.name)}
             css={[
               buttonStyles.deafult,
               isChanged() ? buttonStyles.success : buttonStyles.failed,

@@ -35,7 +35,7 @@ const Frame = ({ children, ...props }: FrameProps) => {
 };
 
 export const frameStyle = css`
-  padding: 4rem 0rem;
+  padding: 7rem 0rem;
 
   ${mq[4]} {
     padding: 7rem 0rem;

@@ -84,6 +84,17 @@ const Home: NextPage = () => {
     });
   };
 
+  const handleUpdatevoteInfo = () => {
+    updateParicipantSchedule.mutate({
+      meetingId: "clk2i27t80000ajufx0hsc633",
+      user: { name: "봉승우" },
+      voteList: [
+        { option: "안녕", voteId: "95af2e64-8c2d-4386-8a50-930efed74f70" },
+        { option: "배고파", voteId: "95af2e64-8c2d-4386-8a50-930efed74f70" },
+      ],
+    });
+  };
+
   const handleUpdateVoteList = () => {
     updateVoteList.mutate({
       meetingId: "clk2i27t80000ajufx0hsc633",
