@@ -21,6 +21,7 @@ export type VoteConfigType = {
   getVoteList: () => void;
   handleVote: (mId: string, name: string) => void;
   isFailed: boolean;
+  showLottie: boolean;
 };
 
 export const useVote = (): VoteConfigType => {
@@ -30,6 +31,7 @@ export const useVote = (): VoteConfigType => {
   const [innevitable, setInnevitable] = useState(false);
   const [userVote, setUserVote] = useState<string[]>([]);
   const [isFailed, setIsFailed] = useState(false);
+  const [showLottie, setShowLottie] = useState(false);
 
   const { data } = api.meeting.read.useQuery({
     meetingId: router.query.mid as string,
@@ -135,6 +137,12 @@ export const useVote = (): VoteConfigType => {
       onSuccess(voteData) {
         console.log(voteData);
         if (!voteData.success) setIsFailed(true);
+        else {
+          setShowLottie(true);
+          setTimeout(() => {
+            setShowLottie(false);
+          }, 1500);
+        }
       },
       onError(err) {
         setIsFailed(true);
@@ -178,5 +186,6 @@ export const useVote = (): VoteConfigType => {
     getVoteList,
     handleVote,
     isFailed,
+    showLottie,
   };
 };

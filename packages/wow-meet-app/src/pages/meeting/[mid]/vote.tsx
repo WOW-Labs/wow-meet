@@ -1,7 +1,9 @@
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
+import Lottie from "lottie-react";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
+import sprinkle from "~/assets/lotties/sprinkle.json";
 import { Header } from "~/components/Bar";
 import { Button } from "~/components/Create";
 import Frame, { frameStyle } from "~/components/Frame";
@@ -27,6 +29,7 @@ const Vote = () => {
     getTotalVoters,
     getVoteList,
     handleVote,
+    showLottie,
     ...voteConfigs
   } = useVote();
   const router = useRouter();
@@ -59,6 +62,13 @@ const Vote = () => {
               isChanged() ? buttonStyles.success : buttonStyles.failed,
             ]}
           >
+            {showLottie && (
+              <Lottie
+                animationData={sprinkle}
+                loop={false}
+                css={sprinkleStyle}
+              />
+            )}
             <span>투표완료</span>
           </Button>
         </BottomWrapper>
@@ -111,6 +121,14 @@ const Warning = styled.span`
   white-space: pre-line;
   margin-top: 2rem;
   text-align: center;
+`;
+const sprinkleStyle = css`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: auto;
 `;
 
 export default Vote;
