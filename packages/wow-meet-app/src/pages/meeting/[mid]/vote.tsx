@@ -2,7 +2,6 @@ import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import { dummyVoteData } from "~/assets/dummydata";
 import { Header } from "~/components/Bar";
 import { Button } from "~/components/Create";
 import Frame, { frameStyle } from "~/components/Frame";
@@ -17,7 +16,9 @@ import { TYPO } from "~/styles/typo";
 
 const Vote = () => {
   const {
+    title,
     voteList,
+    isFailed,
     vId,
     userVote,
     isChanged,
@@ -38,7 +39,7 @@ const Vote = () => {
 
   return (
     <Frame css={frameStyle}>
-      <Header title={dummyVoteData.title} />
+      <Header title={title} />
       <VoteBanner content={"지금 와우밋 투표에 참여해보세요!"} />
       <ContentWrapper>
         <VoteList
@@ -61,6 +62,9 @@ const Vote = () => {
             <span>투표완료</span>
           </Button>
         </BottomWrapper>
+        {isFailed && (
+          <Warning>{`투표에 실패하였습니다.\n스케줄 투표를 완료하지 않았다면, 먼저 진행해주세요.`}</Warning>
+        )}
       </ContentWrapper>
     </Frame>
   );
@@ -95,6 +99,18 @@ const BottomWrapper = styled.div`
   width: 100%;
   margin-top: 15rem;
   position: relative;
+`;
+
+const Warning = styled.span`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  ${TYPO.text3.Reg};
+  color: #d63e14;
+  white-space: pre-line;
+  margin-top: 2rem;
+  text-align: center;
 `;
 
 export default Vote;

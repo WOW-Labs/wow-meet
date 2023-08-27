@@ -8,6 +8,7 @@ export type VoteItemType = {
 };
 
 export type VoteConfigType = {
+  title: string;
   voteList: VoteItemType[];
   vId: string;
   userVote: string[];
@@ -19,6 +20,7 @@ export type VoteConfigType = {
   innevitableCheck: () => void;
   getVoteList: () => void;
   handleVote: (mId: string, name: string) => void;
+  isFailed: boolean;
 };
 
 export const useVote = (): VoteConfigType => {
@@ -27,6 +29,7 @@ export const useVote = (): VoteConfigType => {
   const [vId, setVid] = useState("");
   const [innevitable, setInnevitable] = useState(false);
   const [userVote, setUserVote] = useState<string[]>([]);
+  const [isFailed, setIsFailed] = useState(false);
 
   const { data } = api.meeting.read.useQuery({
     meetingId: router.query.mid as string,
@@ -131,8 +134,10 @@ export const useVote = (): VoteConfigType => {
     api.paticipants.updateMeetingParticipationSchedule.useMutation({
       onSuccess(voteData) {
         console.log(voteData);
+        if (!voteData.success) setIsFailed(true);
       },
       onError(err) {
+        setIsFailed(true);
         console.log(err);
       },
     });
@@ -160,6 +165,7 @@ export const useVote = (): VoteConfigType => {
   }, [data]);
 
   return {
+    title: data?.data.title!,
     voteList,
     vId,
     userVote,
@@ -171,5 +177,6 @@ export const useVote = (): VoteConfigType => {
     innevitableCheck,
     getVoteList,
     handleVote,
+    isFailed,
   };
 };
