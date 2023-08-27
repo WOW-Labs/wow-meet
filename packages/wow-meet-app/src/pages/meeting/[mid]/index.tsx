@@ -8,6 +8,7 @@ import { Button } from "~/components/Create";
 import Frame, { frameStyle } from "~/components/Frame";
 import Caption from "~/components/Meeting/Caption";
 import CellInfo from "~/components/Meeting/CellInfo";
+import Description from "~/components/Meeting/Description";
 import Header from "~/components/Meeting/Header";
 import TimeTable from "~/components/Meeting/Table";
 import { type ScheduleElement } from "~/components/Meeting/Table/MOCK";
@@ -61,15 +62,18 @@ const Meeting = () => {
     [data]
   );
 
+  const title = useMemo(() => data?.data.title, [data]);
+  const desc = useMemo(() => data?.data.description, [data]);
+
   /**--- config ---*/
   const buttonConfigs = {
     view: {
-      title: "내 스케줄도 반영하기 ⏱️",
+      title: "내 스케줄도 반영하기",
       style: buttonStyles.mode,
       navi: "리포트 보기",
     },
     check: {
-      title: "내 스케줄 반영완료 ⏱️",
+      title: "내 스케줄 반영완료",
       style: buttonStyles.mode,
       navi: "투표하기",
     },
@@ -190,10 +194,10 @@ const Meeting = () => {
               participants={cellInfo?.participants}
             />
           ) : (
-            <Header title="GDSC 7월 정기모임" mode={mode} />
+            title && <Header title={title} mode={mode} />
           )}
         </div>
-
+        {desc && <Description desc={desc} />}
         <Caption />
         {data?.data && (
           <TimeTable
