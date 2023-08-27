@@ -92,7 +92,7 @@ const Meeting = () => {
     content: "",
     type: ToastType.Postive,
   });
-  const { isAuth } = useInfo();
+  const { isAuth, info } = useInfo();
 
   const { getCellWeightByDate, getParticipantsInfoByDate } = useCell(
     참여자_스케줄_정보 || []
@@ -162,7 +162,7 @@ const Meeting = () => {
       updateTable.mutate({
         meetingId: meetingId,
         isPriority: false,
-        name: "0823 테스트",
+        name: info.name,
         schelduleList: mySelectedDate,
       });
     }
