@@ -56,12 +56,12 @@ const FirstSection = () => {
 
   /**--- useEffect ---*/
   useEffect(() => {
-    setBody({
-      ...body,
+    setBody((prev) => ({
+      ...prev,
       dayList: selectedScheduleList,
-      dateRange: selectedScheduleRange,
-    });
-  }, [selectedScheduleList, selectedScheduleRange]);
+      // dateRange: selectedScheduleRange,
+    }));
+  }, [selectedScheduleList, setBody]);
 
   /**--- render ---*/
   return (
