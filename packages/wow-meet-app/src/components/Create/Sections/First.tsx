@@ -2,6 +2,7 @@
 import styled from "@emotion/styled";
 import { useAtom } from "jotai";
 import React, { useEffect, useState } from "react";
+import { DateRange } from "react-day-picker";
 import { createAtom } from "~/store/createAtom";
 import { injectAnimation } from "~/styles/animations";
 import { mq } from "~/styles/breakpoints";
@@ -17,6 +18,8 @@ const FirstSection = () => {
   const [selectedScheduleList, setSelectedScheduleList] = useState<string[]>(
     []
   );
+  const [selectedScheduleRange, setSelectedScheduleRange] =
+    useState<DateRange>();
 
   /**--- config ---*/
   const title = `반가워요!\n모임 정보를 작성해주세요 :)`;
