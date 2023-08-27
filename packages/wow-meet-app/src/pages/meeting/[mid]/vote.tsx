@@ -1,5 +1,6 @@
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
+import { useRouter } from "next/router";
 import { dummyVoteData } from "~/assets/dummydata";
 import { Header } from "~/components/Bar";
 import { Button } from "~/components/Create";
@@ -21,11 +22,14 @@ const Vote = () => {
     innevitableCheck,
     getTotalVoters,
     handleUpdateVoteList,
+    getVoteList,
     ...voteConfigs
   } = useVote(dummyVoteData.list);
+  const router = useRouter();
 
   const tmpMeeting = "clk2i27t80000ajufx0hsc633";
 
+  getVoteList();
   return (
     <Frame css={frameStyle}>
       <Header title={dummyVoteData.title} />

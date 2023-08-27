@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { api } from "~/utils/api";
 
@@ -16,16 +17,22 @@ export type VoteConfigType = {
   innevitable: boolean;
   innevitableCheck: () => void;
   handleUpdateVoteList: (mid: string, userVote: string[]) => void;
+  getVoteList: () => void;
 };
 
 export const useVote = (listArray: VoteItemType[]): VoteConfigType => {
+  const router = useRouter();
   const [voteList, setVoteList] = useState<VoteItemType[]>(listArray);
   const [innevitable, setInnevitable] = useState(false);
   const [userVote, setUserVote] = useState<string[]>([]);
 
-  const { data } = api.meeting.read.useQuery({
-    meetingId: "clk2i27t80000ajufx0hsc633",
-  });
+  const getVoteList = () => {
+    const { data } = api.meeting.read.useQuery({
+      meetingId: router.query.mid as string,
+    });
+    const newList = data?.data.participants;
+    console.log(newList);
+  };
 
   /** user가 item에 투표했는가? */
   const isVoted = (item: string, user: string): boolean => {
@@ -129,5 +136,6 @@ export const useVote = (listArray: VoteItemType[]): VoteConfigType => {
     innevitable,
     innevitableCheck,
     handleUpdateVoteList,
+    getVoteList,
   };
 };
