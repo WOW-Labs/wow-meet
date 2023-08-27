@@ -14,7 +14,6 @@ import { type ScheduleElement } from "~/components/Meeting/Table/MOCK";
 import useCell from "~/components/Meeting/Table/hooks/useCell";
 import { Toast } from "~/components/Popup";
 import { ToastType } from "~/components/Popup/Toast";
-import { VoteTalk } from "~/components/Vote";
 import { modeState, type Mode } from "~/store/modeAtom";
 import { mq } from "~/styles/breakpoints";
 import { COLORS } from "~/styles/colors";
@@ -212,7 +211,6 @@ const Meeting = () => {
           </Button>
         </div>
       </Container>
-      <VoteTalk onClick={handlerVote} />
     </Frame>
   );
 };
