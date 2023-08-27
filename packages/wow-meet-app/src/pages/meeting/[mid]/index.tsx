@@ -28,6 +28,7 @@ type ComponentType = {
     title: string;
     style: SerializedStyles;
     navi: string;
+    goNavi: () => void;
   };
 };
 
@@ -71,11 +72,13 @@ const Meeting = () => {
       title: "내 스케줄도 반영하기",
       style: buttonStyles.mode,
       navi: "리포트 보기",
+      goNavi: () => router.push(`/meeting/${router.query.mid}/report`),
     },
     check: {
       title: "내 스케줄 반영완료",
       style: buttonStyles.mode,
       navi: "투표하기",
+      goNavi: () => router.push(`/meeting/${router.query.mid}/vote`),
     },
   };
 
@@ -216,7 +219,9 @@ const Meeting = () => {
             width: 100%;
           `}
         >
-          <Button css={buttonStyles.navi}>{curComp.button.navi}</Button>
+          <Button css={buttonStyles.navi} onClick={curComp.button.goNavi}>
+            {curComp.button.navi}
+          </Button>
           <Button css={curComp.button.style} onClick={handleCTAButton}>
             {curComp.button.title}
           </Button>

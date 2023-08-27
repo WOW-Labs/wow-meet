@@ -14,10 +14,11 @@ const Login = () => {
     meetingId: router.query.mid as string,
   });
   const device = useDevice();
-  const { handleInfo, isAuth } = useInfo();
+  const { handleInfo, isAuth, saveMid } = useInfo();
 
   const handleLogin = () => {
     const mid = router.query.mid;
+    saveMid();
     router.replace(`/meeting/${mid}`);
   };
 
