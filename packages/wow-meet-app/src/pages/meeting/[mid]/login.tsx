@@ -16,6 +16,11 @@ const Login = () => {
   const device = useDevice();
   const { handleInfo, isAuth } = useInfo();
 
+  const handleLogin = () => {
+    const mid = router.query.mid;
+    router.replace(`/meeting/${mid}`);
+  };
+
   return (
     <Gradient>
       {device !== "MOBILE" && <EmojiContainer />}
@@ -38,7 +43,11 @@ const Login = () => {
               onChange={handleInfo}
             />
           </InputWrapper>
-          <Button content="스케줄 조율 하러가기" able={isAuth()} />
+          <Button
+            content="스케줄 조율 하러가기"
+            able={isAuth()}
+            onClick={handleLogin}
+          />
         </>
       )}
     </Gradient>

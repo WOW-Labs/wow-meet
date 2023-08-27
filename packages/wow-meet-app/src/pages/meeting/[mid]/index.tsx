@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 import { produce } from "immer";
 import { useAtom } from "jotai";
 import { useRouter } from "next/router";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "~/components/Create";
 import Frame, { frameStyle } from "~/components/Frame";
 import Caption from "~/components/Meeting/Caption";
@@ -14,6 +14,7 @@ import { type ScheduleElement } from "~/components/Meeting/Table/MOCK";
 import useCell from "~/components/Meeting/Table/hooks/useCell";
 import { Toast } from "~/components/Popup";
 import { ToastType } from "~/components/Popup/Toast";
+import { useInfo } from "~/hooks/useInfo";
 import { modeState, type Mode } from "~/store/modeAtom";
 import { mq } from "~/styles/breakpoints";
 import { COLORS } from "~/styles/colors";
@@ -91,6 +92,7 @@ const Meeting = () => {
     content: "",
     type: ToastType.Postive,
   });
+  const { isAuth } = useInfo();
 
   const { getCellWeightByDate, getParticipantsInfoByDate } = useCell(
     참여자_스케줄_정보 || []
@@ -166,6 +168,11 @@ const Meeting = () => {
     }
     changeMode();
   };
+
+  useEffect(() => {
+    const mid = router.query.mid;
+    if (mid && !isAuth()) router.replace(`/meeting/${mid}/login`);
+  }, [router.query.mid]);
 
   return (
     <Frame css={frameStyle}>
