@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { api } from "~/utils/api";
 
 export type VoteItemType = {
@@ -10,6 +10,7 @@ export type VoteItemType = {
 export type VoteConfigType = {
   title: string;
   voteList: VoteItemType[];
+  scheduleList: { name: string; scheduleList: any }[] | undefined;
   vId: string;
   userVote: string[];
   isVoted: (item: string, user: string) => boolean;
@@ -36,6 +37,16 @@ export const useVote = (): VoteConfigType => {
   const { data } = api.meeting.read.useQuery({
     meetingId: router.query.mid as string,
   });
+
+  const scheduleList = useMemo(
+    () =>
+      data?.data.participants?.map((p) => ({
+        name: p.name,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        scheduleList: JSON.parse(p.schelduleList || ""),
+      })),
+    [data]
+  );
 
   const getVoteList = () => {
     const voteItem = data?.data.votes![0]?.options!;
@@ -174,6 +185,7 @@ export const useVote = (): VoteConfigType => {
 
   return {
     title: data?.data.title!,
+    scheduleList,
     voteList,
     vId,
     userVote,
