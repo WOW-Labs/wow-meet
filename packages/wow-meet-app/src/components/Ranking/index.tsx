@@ -40,10 +40,18 @@ const RankTitle = ({ type }: TitleProps) => {
 };
 
 const Ranking = ({ ranking, type }: Props) => {
+  const sortedRanking = [...ranking].sort((a, b) => {
+    if (a.ableMember > b.ableMember) {
+      return -1;
+    } else if (a.ableMember < b.ableMember) {
+      return 1;
+    }
+    return 0;
+  });
   return (
     <Container>
       <RankTitle type={type} />
-      {ranking.map((rank, idx) => (
+      {sortedRanking.map((rank, idx) => (
         <RankLine rankingData={rank} idx={idx} />
       ))}
     </Container>
@@ -61,6 +69,7 @@ const Container = styled.div`
   border-radius: 1rem;
 
   background-color: white;
+  box-shadow: rgba(0, 0, 0, 0.05) 0px 0px 0px 1px;
 `;
 
 const Title = styled.span`

@@ -1,12 +1,16 @@
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
-import { dummyVoteData } from "~/assets/dummydata";
+import Lottie from "lottie-react";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
+import sprinkle from "~/assets/lotties/sprinkle.json";
 import { Header } from "~/components/Bar";
 import { Button } from "~/components/Create";
 import Frame, { frameStyle } from "~/components/Frame";
 import { VoteBanner } from "~/components/Vote";
 import Innevitable from "~/components/Vote/Innevitable";
 import VoteList from "~/components/Vote/VoteList";
+import { useInfo } from "~/hooks/useInfo";
 import { useVote } from "~/hooks/useVote";
 import { mq } from "~/styles/breakpoints";
 import { COLORS } from "~/styles/colors";
@@ -14,21 +18,31 @@ import { TYPO } from "~/styles/typo";
 
 const Vote = () => {
   const {
+    title,
     voteList,
+    isFailed,
+    vId,
     userVote,
     isChanged,
     innevitable,
     innevitableCheck,
     getTotalVoters,
-    handleUpdateVoteList,
+    getVoteList,
+    handleVote,
+    showLottie,
     ...voteConfigs
-  } = useVote(dummyVoteData.list);
+  } = useVote();
+  const router = useRouter();
+  const { info, isAuth } = useInfo();
 
-  const tmpMeeting = "clk2i27t80000ajufx0hsc633";
+  useEffect(() => {
+    const mid = router.query.mid;
+    if (mid && !isAuth()) router.replace(`/meeting/${mid}/login`);
+  }, [router.query.mid]);
 
   return (
     <Frame css={frameStyle}>
-      <Header title={dummyVoteData.title} />
+      <Header title={title} />
       <VoteBanner content={"지금 와우밋 투표에 참여해보세요!"} />
       <ContentWrapper>
         <VoteList
@@ -42,15 +56,25 @@ const Vote = () => {
             innevitableCheck={innevitableCheck}
           />
           <Button
-            onClick={() => handleUpdateVoteList(tmpMeeting, userVote)}
+            onClick={() => handleVote(router.query.mid as string, info.name)}
             css={[
               buttonStyles.deafult,
               isChanged() ? buttonStyles.success : buttonStyles.failed,
             ]}
           >
+            {showLottie && (
+              <Lottie
+                animationData={sprinkle}
+                loop={false}
+                css={sprinkleStyle}
+              />
+            )}
             <span>투표완료</span>
           </Button>
         </BottomWrapper>
+        {isFailed && (
+          <Warning>{`투표에 실패하였습니다.\n스케줄 투표를 완료하지 않았다면, 먼저 진행해주세요.`}</Warning>
+        )}
       </ContentWrapper>
     </Frame>
   );
@@ -85,6 +109,26 @@ const BottomWrapper = styled.div`
   width: 100%;
   margin-top: 15rem;
   position: relative;
+`;
+
+const Warning = styled.span`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  ${TYPO.text3.Reg};
+  color: #d63e14;
+  white-space: pre-line;
+  margin-top: 2rem;
+  text-align: center;
+`;
+const sprinkleStyle = css`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: auto;
 `;
 
 export default Vote;

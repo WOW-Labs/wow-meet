@@ -3,18 +3,19 @@ import styled from "@emotion/styled";
 import { produce } from "immer";
 import { useAtom } from "jotai";
 import { useRouter } from "next/router";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "~/components/Create";
 import Frame, { frameStyle } from "~/components/Frame";
 import Caption from "~/components/Meeting/Caption";
 import CellInfo from "~/components/Meeting/CellInfo";
+import Description from "~/components/Meeting/Description";
 import Header from "~/components/Meeting/Header";
 import TimeTable from "~/components/Meeting/Table";
 import { type ScheduleElement } from "~/components/Meeting/Table/MOCK";
 import useCell from "~/components/Meeting/Table/hooks/useCell";
 import { Toast } from "~/components/Popup";
 import { ToastType } from "~/components/Popup/Toast";
-import { VoteTalk } from "~/components/Vote";
+import { useInfo } from "~/hooks/useInfo";
 import { modeState, type Mode } from "~/store/modeAtom";
 import { mq } from "~/styles/breakpoints";
 import { COLORS } from "~/styles/colors";
@@ -27,6 +28,7 @@ type ComponentType = {
     title: string;
     style: SerializedStyles;
     navi: string;
+    goNavi: () => void;
   };
 };
 
@@ -61,17 +63,22 @@ const Meeting = () => {
     [data]
   );
 
+  const title = useMemo(() => data?.data.title, [data]);
+  const desc = useMemo(() => data?.data.description, [data]);
+
   /**--- config ---*/
   const buttonConfigs = {
     view: {
-      title: "내 스케줄도 반영하기 ⏱️",
+      title: "내 스케줄도 반영하기",
       style: buttonStyles.mode,
       navi: "리포트 보기",
+      goNavi: () => router.push(`/meeting/${router.query.mid}/report`),
     },
     check: {
-      title: "내 스케줄 반영완료 ⏱️",
+      title: "내 스케줄 반영완료",
       style: buttonStyles.mode,
       navi: "투표하기",
+      goNavi: () => router.push(`/meeting/${router.query.mid}/vote`),
     },
   };
 
@@ -92,6 +99,7 @@ const Meeting = () => {
     content: "",
     type: ToastType.Postive,
   });
+  const { isAuth, info } = useInfo();
 
   const { getCellWeightByDate, getParticipantsInfoByDate } = useCell(
     참여자_스케줄_정보 || []
@@ -161,12 +169,17 @@ const Meeting = () => {
       updateTable.mutate({
         meetingId: meetingId,
         isPriority: false,
-        name: "0823 테스트",
+        name: info.name,
         schelduleList: mySelectedDate,
       });
     }
     changeMode();
   };
+
+  useEffect(() => {
+    const mid = router.query.mid;
+    if (mid && !isAuth()) router.replace(`/meeting/${mid}/login`);
+  }, [router.query.mid]);
 
   return (
     <Frame css={frameStyle}>
@@ -184,10 +197,10 @@ const Meeting = () => {
               participants={cellInfo?.participants}
             />
           ) : (
-            <Header title="GDSC 7월 정기모임" mode={mode} />
+            title && <Header title={title} mode={mode} />
           )}
         </div>
-
+        {desc && <Description desc={desc} />}
         <Caption />
         {data?.data && (
           <TimeTable
@@ -206,13 +219,14 @@ const Meeting = () => {
             width: 100%;
           `}
         >
-          <Button css={buttonStyles.navi}>{curComp.button.navi}</Button>
+          <Button css={buttonStyles.navi} onClick={curComp.button.goNavi}>
+            {curComp.button.navi}
+          </Button>
           <Button css={curComp.button.style} onClick={handleCTAButton}>
             {curComp.button.title}
           </Button>
         </div>
       </Container>
-      <VoteTalk onClick={handlerVote} />
     </Frame>
   );
 };

@@ -44,6 +44,9 @@ export const paticipantsRouter = createTRPCRouter({
         schelduleList: z
           .array(z.object({ weight: z.number(), date: z.date() }))
           .optional(),
+        voteList: z
+          .array(z.object({ voteId: z.string(), option: z.string() }))
+          .optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -64,7 +67,10 @@ export const paticipantsRouter = createTRPCRouter({
 
         await ctx.prisma.participants.update({
           where: { id: userInfoId.id },
-          data: { schelduleList: JSON.stringify(input?.schelduleList || []) },
+          data: {
+            schelduleList: JSON.stringify(input?.schelduleList || []),
+            voteList: JSON.stringify(input?.voteList || []),
+          },
         });
 
         return { success: true };

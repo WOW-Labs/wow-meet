@@ -1,7 +1,10 @@
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import { useAtom } from "jotai";
+import Lottie from "lottie-react";
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import sprinkle from "~/assets/lotties/sprinkle.json";
 import { ToastType } from "~/components/Popup/Toast";
 import useToast from "~/components/Popup/useToast";
 import { createAtom } from "~/store/createAtom";
@@ -16,6 +19,7 @@ const ThirdSection = () => {
   /**--- state ---*/
   const { Toast, open } = useToast();
   const [body, setBody] = useAtom(createAtom);
+  const [showLottie, setShowLottie] = useState(true);
 
   /**--- function ---*/
   const clipboard = () => {
@@ -39,6 +43,15 @@ const ThirdSection = () => {
     void router.push("/");
   };
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowLottie(false);
+    }, 1000);
+
+    // 컴포넌트 unmount 시 타이머를 정리합니다.
+    return () => clearTimeout(timer);
+  }, []);
+
   /**--- render ---*/
   return (
     <Container>
@@ -59,7 +72,9 @@ const ThirdSection = () => {
         <Button css={buttonStyles.create} onClick={goToCreate}>
           다른 모임 생성하기
         </Button>
-        {/* <Lottie animationData={sprinkle} loop={false} css={sprinkleStyle} /> */}
+        {showLottie && (
+          <Lottie animationData={sprinkle} loop={false} css={sprinkleStyle} />
+        )}
       </ButtonWrapper>
     </Container>
   );

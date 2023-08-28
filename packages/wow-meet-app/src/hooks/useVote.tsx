@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import { useEffect, useMemo, useState } from "react";
 import { api } from "~/utils/api";
 
 export type VoteItemType = {
@@ -7,7 +8,10 @@ export type VoteItemType = {
 };
 
 export type VoteConfigType = {
+  title: string;
   voteList: VoteItemType[];
+  scheduleList: { name: string; scheduleList: any }[] | undefined;
+  vId: string;
   userVote: string[];
   isVoted: (item: string, user: string) => boolean;
   vote: (item: string, user: string) => void;
@@ -15,17 +19,63 @@ export type VoteConfigType = {
   isChanged: () => boolean;
   innevitable: boolean;
   innevitableCheck: () => void;
-  handleUpdateVoteList: (mid: string, userVote: string[]) => void;
+  getVoteList: () => void;
+  handleVote: (mId: string, name: string) => void;
+  isFailed: boolean;
+  showLottie: boolean;
 };
 
-export const useVote = (listArray: VoteItemType[]): VoteConfigType => {
-  const [voteList, setVoteList] = useState<VoteItemType[]>(listArray);
+export const useVote = (): VoteConfigType => {
+  const router = useRouter();
+  const [voteList, setVoteList] = useState<VoteItemType[]>([]);
+  const [vId, setVid] = useState("");
   const [innevitable, setInnevitable] = useState(false);
   const [userVote, setUserVote] = useState<string[]>([]);
+  const [isFailed, setIsFailed] = useState(false);
+  const [showLottie, setShowLottie] = useState(false);
 
   const { data } = api.meeting.read.useQuery({
-    meetingId: "clk2i27t80000ajufx0hsc633",
+    meetingId: router.query.mid as string,
   });
+
+  const scheduleList = useMemo(
+    () =>
+      data?.data.participants?.map((p) => ({
+        name: p.name,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        scheduleList: JSON.parse(p.schelduleList || ""),
+      })),
+    [data]
+  );
+
+  const getVoteList = () => {
+    const voteItem = data?.data.votes![0]?.options!;
+    const votedUsers = data?.data.participants!.map((user) => {
+      return {
+        list: user.voteList,
+        name: user.name,
+      };
+    });
+    if (voteItem) {
+      const newVotes = voteItem.map((item) => {
+        let users: string[] = [];
+        votedUsers?.forEach((vote) => {
+          const votes = JSON.parse(vote.list!);
+          console.log(votes);
+          if (votes.length > 0)
+            votes.forEach((eachVote: any) => {
+              if (eachVote.option === item) users.push(vote.name);
+            });
+        });
+        return {
+          item,
+          users,
+        };
+      });
+      setVoteList(newVotes);
+      setVid(data.data.votes![0]?.id!);
+    }
+  };
 
   /** user가 item에 투표했는가? */
   const isVoted = (item: string, user: string): boolean => {
@@ -90,37 +140,54 @@ export const useVote = (listArray: VoteItemType[]): VoteConfigType => {
   };
 
   const isChanged = () => {
-    if (JSON.stringify(listArray) === JSON.stringify(voteList)) {
-      return false;
-    } else {
-      return true;
-    }
+    return userVote.length > 0;
   };
 
-  /** vote db 연동 */
-  const updateVoteList = api.meeting.addVoteItem.useMutation({
-    onSuccess(data) {
-      console.log(data);
-    },
-    onError(err) {
-      console.log(err);
-    },
-  });
-
-  /** vote db 업데이트 함수 */
-  const handleUpdateVoteList = (mid: string, userVote: string[]) => {
-    updateVoteList.mutate({
-      meetingId: mid,
-      toBeAddedlist: userVote,
+  const updateVoteList =
+    api.paticipants.updateMeetingParticipationSchedule.useMutation({
+      onSuccess(voteData) {
+        console.log(voteData);
+        if (!voteData.success) setIsFailed(true);
+        else {
+          setShowLottie(true);
+          setTimeout(() => {
+            setShowLottie(false);
+          }, 1500);
+        }
+      },
+      onError(err) {
+        setIsFailed(true);
+        console.log(err);
+      },
     });
+
+  const handleVote = (mId: string, name: string) => {
+    const voteData = {
+      meetingId: mId,
+      user: { name },
+      voteList: userVote.map((item) => {
+        return {
+          option: item,
+          voteId: vId,
+        };
+      }),
+    };
+    updateVoteList.mutate(voteData);
   };
 
   useEffect(() => {
     getTotalVoters();
   }, [voteList]);
 
+  useEffect(() => {
+    getVoteList();
+  }, [data]);
+
   return {
+    title: data?.data.title!,
+    scheduleList,
     voteList,
+    vId,
     userVote,
     isVoted,
     vote,
@@ -128,6 +195,9 @@ export const useVote = (listArray: VoteItemType[]): VoteConfigType => {
     isChanged,
     innevitable,
     innevitableCheck,
-    handleUpdateVoteList,
+    getVoteList,
+    handleVote,
+    isFailed,
+    showLottie,
   };
 };
