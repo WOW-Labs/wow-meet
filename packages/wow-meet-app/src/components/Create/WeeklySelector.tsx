@@ -7,7 +7,7 @@ const DAYS = ["월", "화", "수", "목", "금", "토", "일"];
 
 type WeeklySelectorProps = {
   setCurItem: string[];
-  setSelector: (item: string[]) => void;
+  setSelector: (item: any) => void;
 };
 
 const WeeklySelector = ({ setCurItem, setSelector }: WeeklySelectorProps) => {
@@ -21,9 +21,9 @@ const WeeklySelector = ({ setCurItem, setSelector }: WeeklySelectorProps) => {
 
   const isClicked = (item: string) => {
     if (check(item)) {
-      setSelector((prev) => prev.filter((s) => s !== item));
+      setSelector((prev: string[]) => prev.filter((s) => s !== item));
     } else {
-      setSelector((prev) => [...prev, item]);
+      setSelector((prev: string[]) => [...prev, item]);
     }
   };
 
