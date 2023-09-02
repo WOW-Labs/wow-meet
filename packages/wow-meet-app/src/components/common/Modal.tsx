@@ -36,8 +36,6 @@ const Modal = ({ isShowing, hide, content }: ModalProps) => {
     : null;
 };
 
-export default Modal;
-
 const OutSide = styled.div`
   position: fixed;
   display: flex;
@@ -77,3 +75,4 @@ const Xmark = styled.button`
 
   cursor: pointer;
 `;
+export default Modal;
