@@ -63,7 +63,7 @@ const Create = () => {
       ],
     };
 
-    createInfo.mutate(meetingData, {
+    createInfo.mutate(meetingData as any, {
       onSuccess: (data) => {
         if (data.mid && typeof data.mid === "string") {
           setBody({ ...body, mid: data.mid });
