@@ -37,7 +37,6 @@ const View = () => {
         dayList={MOCK_UP_DAY_LIST}
         selectedList={MOCK_UP_SELECTED_LIST}
         mySelected={mySelectedDate}
-        onSelect={handlerTouchTimeSlot}
       />
     </>
   );

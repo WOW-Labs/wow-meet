@@ -20,11 +20,11 @@ const WeeklySelector = ({ setCurItem, setSelector }: WeeklySelectorProps) => {
   };
 
   const isClicked = (item: string) => {
-    if (check(item)) {
-      setSelector((prev) => prev.filter((s) => s !== item));
-    } else {
-      setSelector((prev) => [...prev, item]);
-    }
+    // if (check(item)) {
+    //   setSelector((prev) => prev.filter((s) => s !== item));
+    // } else {
+    //   setSelector((prev) => [...prev, item]);
+    // }
   };
 
   return (

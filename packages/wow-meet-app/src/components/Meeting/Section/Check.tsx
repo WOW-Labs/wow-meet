@@ -18,7 +18,6 @@ const Check = () => {
         decoration={decorations}
       />
       <Caption />
-      <Table />
     </>
   );
 };
