@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useAtom } from "jotai";
 import { useState } from "react";
 import { Header } from "~/components/Bar";
-import Modal from "~/components/Common/Modal";
+import Modal from "../components/Common/Modal";
 import { SECTIONS } from "~/components/Create";
 import FlexButton from "~/components/Create/FlexButton";
 import Popup from "~/components/Create/Popup";
