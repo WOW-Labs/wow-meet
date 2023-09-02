@@ -13,7 +13,7 @@ type ModalProps = {
   content: React.ReactNode;
 };
 
-const Modal = ({ isShowing, hide, content }: ModalProps) => {
+const ModalPopUp = ({ isShowing, hide, content }: ModalProps) => {
   const ref = useRef<HTMLDivElement>(null);
 
   useOutsideClose(ref, hide);
@@ -36,7 +36,7 @@ const Modal = ({ isShowing, hide, content }: ModalProps) => {
     : null;
 };
 
-export default Modal;
+export default ModalPopUp;
 
 const OutSide = styled.div`
   position: fixed;
