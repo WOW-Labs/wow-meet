@@ -14,7 +14,7 @@ import { TYPO } from "~/styles/typo";
 const ThirdSection = () => {
   /**--- router ---*/
   const router = useRouter();
-  const dummyUrl = "http://localhost:3000";
+  const dummyUrl = "https://wow.itjustbong.me";
 
   /**--- state ---*/
   const { Toast, open } = useToast();
